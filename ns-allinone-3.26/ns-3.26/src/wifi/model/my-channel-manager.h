@@ -3,8 +3,14 @@
 #define MY_CHANNEL_MANAGER_H
 namespace ns3 {
 
-class ChannelManager
+class ChannelManager : public Object
 {
+public:
+  static TypeId GetTypeId (void);
+
+
+  ChannelManager();
+  virtual ~ChannelManager();
 
 
 
