@@ -15,13 +15,17 @@ public:
   uint32_t GetMaxWidth();
   
   void SetChannelOption(uint32_t Primary_Ch,uint32_t Max_Width);
-
+  void MakePhy(YansWifiPhyHelper phy);
   
 
 
 protect:
   uint32_t Max_Width;
   uint32_t Primary_Ch;
+  
+  Ptr<WifiPhy> m_phys[8];
+
+  
   
   
   
