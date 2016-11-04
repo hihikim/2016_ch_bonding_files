@@ -1,3 +1,5 @@
+#include <map>
+#include <utility>
 
 #ifndef MY_CHANNEL_MANAGER_H
 #define MY_CHANNEL_MANAGER_H
@@ -25,18 +27,19 @@ public:
 
   void SendPacket();
 
+  void ChannelMapping() const;
 
 
-protect:
-  uint32_t Max_Width;
-  uint32_t Primary_Ch;
+
+private:
+  uint32_t max_width;
+  uint32_t primary_ch;
   
   
   Ptr<WifiPhy> m_phys[8];
 
   
-  
-  
+  const std::map < int, std::pair<int,int> > ch_map;
   
   
 };

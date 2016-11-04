@@ -3341,7 +3341,10 @@ MacLow::PerformMsduAggregation (Ptr<const Packet> packet, WifiMacHeader *hdr, Ti
 }
 
 void MacLow::EnableChannelBonding (void){
-	enable_ch_bonding = true;
+	if(!enable_ch_bonding){
+		enable_ch_bonding = true;
+		ResetPhy();
+	}
 }
 
 } //namespace ns3
