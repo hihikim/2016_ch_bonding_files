@@ -844,6 +844,14 @@ public:
    */
   virtual WifiTxVector GetDataTxVector (Ptr<const Packet> packet, const WifiMacHeader *hdr) const;
 
+
+
+  /**---------------------MY EDIT-----------------------------------------------
+   * using channel bonding enable
+   */
+
+   void EnableChannelBonding (void);
+
 private:
   /**
    * Cancel all scheduled events. Called before beginning a transmission
@@ -1390,6 +1398,13 @@ private:
   WifiTxVector m_currentTxVector;     //!< TXVECTOR used for the current packet transmission
   std::vector<Item> m_txPackets;      //!< Contain temporary items to be sent with the next A-MPDU transmission, once RTS/CTS exchange has succeeded. It is not used in other cases.
   uint32_t m_nTxMpdus;                //!<Holds the number of transmitted MPDUs in the last A-MPDU transmission
+
+  /*
+   *------------------------------------MY EDIT---------------------------
+   *add bool
+   */
+  bool enable_ch_bonding;
+
 };
 
 } //namespace ns3

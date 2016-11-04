@@ -378,6 +378,8 @@ MacLow::MacLow ()
   m_ampdu = false;
   m_sentMpdus = 0;
   m_aggregateQueue = CreateObject<WifiMacQueue> ();
+
+  enable_ch_bonding = false;
 }
 
 MacLow::~MacLow ()
@@ -3336,6 +3338,10 @@ MacLow::PerformMsduAggregation (Ptr<const Packet> packet, WifiMacHeader *hdr, Ti
       queue->PushFront (packet, *hdr);
       return 0;
     }
+}
+
+void MacLow::EnableChannelBonding (void){
+	enable_ch_bonding = true;
 }
 
 } //namespace ns3

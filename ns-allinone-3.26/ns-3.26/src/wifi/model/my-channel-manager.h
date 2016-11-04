@@ -16,12 +16,21 @@ public:
   
   void SetChannelOption(uint32_t Primary_Ch,uint32_t Max_Width);
   void MakePhy(YansWifiPhyHelper phy);
+
+  void ResetPhy();
   
+  void ReceiveOk();
+  void ReceiveError();
+
+
+  void SendPacket();
+
 
 
 protect:
   uint32_t Max_Width;
   uint32_t Primary_Ch;
+  
   
   Ptr<WifiPhy> m_phys[8];
 
