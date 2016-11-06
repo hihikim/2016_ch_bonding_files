@@ -529,6 +529,7 @@ MacLow::SetPhy (Ptr<WifiPhy> phy)
 
 void MacLow::SetChannelManager(YansWifiPhyHelper phy,uint32_t ch_num, uint32_t ch_width, enum WifiPhyStandard standard){
 	ch_m = CreateObject<ChannelManager>();
+	ch_m->SetMyMac(this);
 	ch_m->MakePhys(phy, m_phy, ch_num, ch_width, standard);
 
 	m_phy->SetReceiveOkCallback (MakeNullCallback<void, Ptr<Packet>, double, WifiTxVector, enum WifiPreamble> ());

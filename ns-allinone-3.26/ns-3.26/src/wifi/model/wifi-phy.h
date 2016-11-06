@@ -204,6 +204,7 @@ public:
    * arg1: packet received unsuccessfully
    * arg2: snr of packet
    */
+
   typedef Callback<void, Ptr<Packet>, double> RxErrorCallback;
 
   static TypeId GetTypeId (void);

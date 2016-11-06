@@ -17,6 +17,10 @@ ChannelManager::ChannelManager()
 	received_channel[36] = false; received_channel[40] = false; received_channel[44] = false; received_channel[48] = false;
 	received_channel[52] = false; received_channel[56] = false; received_channel[60] = false; received_channel[64] = false;
 }
+void ChannelManager::SetMyMac(Ptr<MacLow> mac)
+{
+	m_mac = mac;
+}
 
 void ChannelManager::ChannelMapping() const
 {
@@ -44,12 +48,12 @@ void ChannelManager::ChannelMapping() const
 	ch_map[50] = std::make_pair(50, 160);
 }
 
-void ChannelManager::SetChannelOption(uint32_t primary_ch,uint32_t max_width){
+void ChannelManager::SetChannelOption(uint16_t primary_ch,uint32_t max_width){
 	this->max_width = max_width;
 	this->primary_ch = primary_ch;
 }
 
-void ChannelManager::MakePhys(YansWifiPhyHelper phy, Ptr<WifiPhy> primary, uint32_t ch_num, uint32_t channel_width, enum WifiPhyStandard standard){
+void ChannelManager::MakePhys(YansWifiPhyHelper phy, Ptr<WifiPhy> primary, uint16_t ch_num, uint32_t channel_width, enum WifiPhyStandard standard){
    SetChannelOption(ch_num, channel_width);
 
    Ptr<NetDevice> device = primary->GetDevice();
@@ -61,21 +65,21 @@ void ChannelManager::MakePhys(YansWifiPhyHelper phy, Ptr<WifiPhy> primary, uint3
 	   if(ch_numbers[i] == ch_num)
 	   {
 		   m_phys[ch_num] = primary;
+		   m_phys[ch_num]->SetChannelNumber(ch_num);
 	   }
 	   else
 	   {
 		   m_phys[ch_numbers[i]] = phy.Create (node, device);
 		   m_phys[ch_numbers[i]]->ConfigureStandard (standard);
+		   m_phys[ch_numbers[i]]->SetChannelNumber(ch_numbers[i]);
 	   }
    }
-
-
-
-
 }
 
 void ChannelManager::ResetPhys(){
 	for(int i =0;i<8;++i){
+		m_phys[ch_numbers[i]]->SetReceiveOkCallback (MakeNullCallback<void, Ptr<Packet>, double, WifiTxVector, enum WifiPreamble> ());
+		m_phys[ch_numbers[i]]->SetReceiveErrorCallback (MakeNullCallback<void, Ptr<Packet>, double> ());
 		m_phys[ch_numbers[i]] = 0;
 	}
 }
@@ -92,9 +96,9 @@ void ChannelManager::ClearReceiveRecord(){
 }
 
 
-uint32_t ChannelManager::CheckChBonding(uint32_t primary)
+uint16_t ChannelManager::CheckChBonding(uint16_t primary)
 {
-	std::pair<uint32_t,uint32_t> ch_info;
+	std::pair<uint16_t,uint32_t> ch_info;
 
 	ch_info = ch_map[primary];
 
@@ -120,12 +124,12 @@ uint32_t ChannelManager::CheckChBonding(uint32_t primary)
 
 }
 
-bool ChannelManager::CheckAllSubChannelIdle(uint32_t ch_num){
-	std::pair<uint32_t,uint32_t> ch_info;
+bool ChannelManager::CheckAllSubChannelIdle(uint16_t ch_num){
+	std::pair<uint16_t,uint32_t> ch_info;
 	ch_info = ch_map[ch_num];
 
 	uint32_t ch_width = ch_info.second;
-	uint32_t side_num = ch_width / 20;
+	uint16_t side_num = ch_width / 20;
 
 	if(ch_width == 20){
 		if(m_phys[ch_num]->IsStateIdle ())
@@ -148,14 +152,14 @@ bool ChannelManager::CheckAllSubChannelIdle(uint32_t ch_num){
 
 }
 
-uint32_t ChannelManager::GetUsableChannelBonding(uint32_t primary)
+uint16_t ChannelManager::GetUsableChannelBonding(uint16_t primary)
 {
-	std::pair<uint32_t,uint32_t> ch_info;
+	std::pair<uint16_t,uint32_t> ch_info;
 
 	ch_info = ch_map[primary];
 
 
-	uint32_t usable_ch = primary;
+	uint16_t usable_ch = primary;
 
 	while(true)
 	{
@@ -175,13 +179,13 @@ uint32_t ChannelManager::GetUsableChannelBonding(uint32_t primary)
 	return usable_ch;
 }
 
-bool ChannelManager::CheckAllSubChannelReceived(uint32_t ch_num)
+bool ChannelManager::CheckAllSubChannelReceived(uint16_t ch_num)
 {
-	std::pair<uint32_t,uint32_t> ch_info;
+	std::pair<uint16_t,uint32_t> ch_info;
 	ch_info = ch_map[ch_num];
 
 	uint32_t ch_width = ch_info.second;
-	uint32_t side_num = ch_width / 20;
+	uint16_t side_num = ch_width / 20;
 
 
 	if(ch_width == 20){
@@ -197,6 +201,96 @@ bool ChannelManager::CheckAllSubChannelReceived(uint32_t ch_num)
 			return false;
 	}
 
+}
+uint16_t ChannelManager::GetPrimaryCh()
+{
+	return primary_ch;
+}
+uint32_t ChannelManager::GetMaxWidth()
+{
+	return max_width;
+}
+void ChannelManager::SetPhysCallback()
+{
+	for(int i =0;i<8;++i){
+		m_phys[ch_numbers[i]]->SetReceiveErrorCallback (MakeCallback (&ChannelManager::ReceiveError, this));
+	}
+	m_phys[ch_numbers[36]]->SetReceiveOkCallback (MakeCallback (&ChannelManager::Receive36Channel, this));
+	m_phys[ch_numbers[40]]->SetReceiveOkCallback (MakeCallback (&ChannelManager::Receive40Channel, this));
+	m_phys[ch_numbers[44]]->SetReceiveOkCallback (MakeCallback (&ChannelManager::Receive44Channel, this));
+	m_phys[ch_numbers[48]]->SetReceiveOkCallback (MakeCallback (&ChannelManager::Receive48Channel, this));
+	m_phys[ch_numbers[52]]->SetReceiveOkCallback (MakeCallback (&ChannelManager::Receive52Channel, this));
+	m_phys[ch_numbers[56]]->SetReceiveOkCallback (MakeCallback (&ChannelManager::Receive56Channel, this));
+	m_phys[ch_numbers[60]]->SetReceiveOkCallback (MakeCallback (&ChannelManager::Receive60Channel, this));
+	m_phys[ch_numbers[64]]->SetReceiveOkCallback (MakeCallback (&ChannelManager::Receive64Channel, this));
+}
+
+void ChannelManager::Receive36Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
+{
+	ReceiveSubChannel(Packet,rxSnr,txVector,preamble,36);
+}
+
+void ChannelManager::Receive40Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
+{
+	ReceiveSubChannel(Packet,rxSnr,txVector,preamble,40);
+}
+
+void ChannelManager::Receive44Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
+{
+	ReceiveSubChannel(Packet,rxSnr,txVector,preamble,44);
+}
+
+void ChannelManager::Receive48Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
+{
+	ReceiveSubChannel(Packet,rxSnr,txVector,preamble,48);
+}
+
+void ChannelManager::Receive52Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
+{
+	ReceiveSubChannel(Packet,rxSnr,txVector,preamble,52);
+}
+
+void ChannelManager::Receive56Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
+{
+	ReceiveSubChannel(Packet,rxSnr,txVector,preamble,56);
+}
+
+void ChannelManager::Receive60Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
+{
+	ReceiveSubChannel(Packet,rxSnr,txVector,preamble,60);
+}
+
+void ChannelManager::Receive64Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
+{
+	ReceiveSubChannel(Packet,rxSnr,txVector,preamble,64);
+}
+
+void ChannelManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, uint16_t ch_num)
+{
+	if(ch_num == primary_ch)
+	{
+		last_primary_packet = Packet;
+	}
+
+	else
+	{
+
+	}
+}
+
+void ChannelManager::ManageReceived  (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
+{
+	WifiMacHeader hdr;
+	Packet->PeekHeader(hdr);
+	if(!hdr.IsData())
+	{
+		m_mac->DeaggregateAmpduAndReceive(Packet, rxSnr,txVector, preamble);
+	}
+
+	else
+	{
+
+	}
 }
 
 }
