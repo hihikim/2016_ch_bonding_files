@@ -45,9 +45,13 @@ private:
   EventId primary_receive_rts;
   EventId primary_receive_cts;
 
-  bool CheckChBonding(uint32_t primary);
+  uint32_t CheckChBonding(uint32_t primary);
 
   bool CheckAllSubChannelIdle(uint32_t ch_num);
+
+  uint32_t GetUsableChannelBonding(uint32_t primary);
+
+  bool CheckAllSubChannelReceived(uint32_t ch_num);
 
   const std::map < uint32_t, std::pair<uint32_t, uint32_t> > ch_map;
   

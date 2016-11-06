@@ -53,23 +53,41 @@ void ChannelManager::MakePhys(YansWifiPhyHelper phy){
 
 }
 
+void ChannelManager::ResetPhys(){
+
+}
+
 void ChannelManager::ClearReceiveRecord(){
 	received_channel[36] = false; received_channel[40] = false; received_channel[44] = false; received_channel[48] = false;
 	received_channel[52] = false; received_channel[56] = false; received_channel[60] = false; received_channel[64] = false;
 }
 
 
-bool ChannelManager::CheckChBonding(uint32_t primary){
+uint32_t ChannelManager::CheckChBonding(uint32_t primary)
+{
 	std::pair<uint32_t,uint32_t> ch_info;
 
 	ch_info = ch_map[primary];
 
 
-	if(CheckAllSubChannelIdle(ch_info.first))   //if second channel is idle return true
-		return true;
+	uint32_t usable_ch = primary;
 
-	else                                //if second channel is not idle return false
-		return false;
+	while(true)
+	{
+		ch_info = ch_map[usable_ch];
+		if( ch_info.second == max_width)
+			break;
+
+		else if( CheckAllSubChannelIdle( ch_info.first ))
+		{
+			usable_ch = (usable_ch + ch_info.first) / 2;
+		}
+
+		else
+			break;
+	}
+
+	return usable_ch;
 
 }
 
@@ -77,10 +95,10 @@ bool ChannelManager::CheckAllSubChannelIdle(uint32_t ch_num){
 	std::pair<uint32_t,uint32_t> ch_info;
 	ch_info = ch_map[ch_num];
 
-	uint32_t ch_length = ch_info.second;
-	uint32_t side_num = ch_length / 20;
+	uint32_t ch_width = ch_info.second;
+	uint32_t side_num = ch_width / 20;
 
-	if(ch_length == 20){
+	if(ch_width == 20){
 		if(m_phys[ch_num]->IsStateIdle ())
 			return true;
 
@@ -101,6 +119,55 @@ bool ChannelManager::CheckAllSubChannelIdle(uint32_t ch_num){
 
 }
 
+uint32_t ChannelManager::GetUsableChannelBonding(uint32_t primary)
+{
+	std::pair<uint32_t,uint32_t> ch_info;
 
+	ch_info = ch_map[primary];
+
+
+	uint32_t usable_ch = primary;
+
+	while(true)
+	{
+		ch_info = ch_map[usable_ch];
+		if( ch_info.second >= max_width)
+			break;
+
+		else if( CheckAllSubChannelReceived( ch_info.first ))
+		{
+			usable_ch = (usable_ch + ch_info.first) / 2;
+		}
+
+		else
+			break;
+	}
+
+	return usable_ch;
+}
+
+bool ChannelManager::CheckAllSubChannelReceived(uint32_t ch_num)
+{
+	std::pair<uint32_t,uint32_t> ch_info;
+	ch_info = ch_map[ch_num];
+
+	uint32_t ch_width = ch_info.second;
+	uint32_t side_num = ch_width / 20;
+
+
+	if(ch_width == 20){
+		return received_channel[ch_num];
+	}
+
+	else
+	{
+		if(CheckAllSubChannelReceived(ch_num - side_num) && CheckAllSubChannelReceived (ch_num + side_num) )
+			return true;
+
+		else
+			return false;
+	}
+
+}
 
 }
