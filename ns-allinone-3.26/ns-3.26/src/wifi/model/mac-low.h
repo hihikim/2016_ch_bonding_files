@@ -851,7 +851,7 @@ public:
    */
 
    void EnableChannelBonding (void);
-   void MakeChannelManager (YansWifiPhyHelper phy);
+   void SetChannelManager (YansWifiPhyHelper phy);
 
 private:
   /**

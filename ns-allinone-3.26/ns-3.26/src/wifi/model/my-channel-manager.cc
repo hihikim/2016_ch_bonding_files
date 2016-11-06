@@ -14,6 +14,8 @@ ChannelManager::ChannelManager()
 	primary_ch = 36;
 
 	ChannelMapping();
+	received_channel[36] = false; received_channel[40] = false; received_channel[44] = false; received_channel[48] = false;
+	received_channel[52] = false; received_channel[56] = false; received_channel[60] = false; received_channel[64] = false;
 }
 
 void ChannelManager::ChannelMapping() const
@@ -41,5 +43,64 @@ void ChannelManager::ChannelMapping() const
 	//160Hz
 	ch_map[50] = std::make_pair(50, 160);
 }
+
+void ChannelManager::SetChannelOption(uint32_t primary_ch,uint32_t max_width){
+	this->max_width = max_width;
+	this->primary_ch = primary_ch;
+}
+
+void ChannelManager::MakePhys(YansWifiPhyHelper phy){
+
+}
+
+void ChannelManager::ClearReceiveRecord(){
+	received_channel[36] = false; received_channel[40] = false; received_channel[44] = false; received_channel[48] = false;
+	received_channel[52] = false; received_channel[56] = false; received_channel[60] = false; received_channel[64] = false;
+}
+
+
+bool ChannelManager::CheckChBonding(uint32_t primary){
+	std::pair<uint32_t,uint32_t> ch_info;
+
+	ch_info = ch_map[primary];
+
+
+	if(CheckAllSubChannelIdle(ch_info.first))   //if second channel is idle return true
+		return true;
+
+	else                                //if second channel is not idle return false
+		return false;
+
+}
+
+bool ChannelManager::CheckAllSubChannelIdle(uint32_t ch_num){
+	std::pair<uint32_t,uint32_t> ch_info;
+	ch_info = ch_map[ch_num];
+
+	uint32_t ch_length = ch_info.second;
+	uint32_t side_num = ch_length / 20;
+
+	if(ch_length == 20){
+		if(m_phys[ch_num]->IsStateIdle ())
+			return true;
+
+		else
+			return false;
+	}
+
+
+	else
+	{
+		if(CheckAllSubChannelIdle(ch_num - side_num) && CheckAllSubChannelIdle (ch_num + side_num) )
+			return true;
+
+		else
+			return false;
+	}
+
+
+}
+
+
 
 }

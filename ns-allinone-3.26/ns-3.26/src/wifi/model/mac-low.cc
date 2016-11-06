@@ -532,7 +532,7 @@ MacLow::SetPhy (Ptr<WifiPhy> phy)
   }
 }
 
-void MacLow::MakeChannelManager(YansWifiPhyHelper phy){
+void MacLow::SetChannelManager(YansWifiPhyHelper phy){
 	ch_m = CreateObject<ChannelManager>();
 	ch_m->MakePhy(phy);
 }
@@ -550,6 +550,7 @@ MacLow::ResetPhy (void)
   m_phy->SetReceiveErrorCallback (MakeNullCallback<void, Ptr<Packet>, double> ());
   RemovePhyMacLowListener (m_phy);
   m_phy = 0;
+  ch_m = 0;
 }
 
 void

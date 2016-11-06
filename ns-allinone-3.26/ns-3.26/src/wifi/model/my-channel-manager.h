@@ -17,9 +17,9 @@ public:
   uint32_t GetMaxWidth();
   
   void SetChannelOption(uint32_t Primary_Ch,uint32_t Max_Width);
-  void MakePhy(YansWifiPhyHelper phy);
+  void MakePhys(YansWifiPhyHelper phy);
 
-  void ResetPhy();
+  void ResetPhys();
   
   void ReceiveOk();
   void ReceiveError();
@@ -29,6 +29,8 @@ public:
 
   void ChannelMapping() const;
 
+  void ClearReceiveRecord();
+
 
 
 private:
@@ -36,10 +38,18 @@ private:
   uint32_t primary_ch;
   
   
-  Ptr<WifiPhy> m_phys[8];
+  std::map<uint32_t, Ptr<WifiPhy> > m_phys;
 
-  
-  const std::map < int, std::pair<int,int> > ch_map;
+  std::map<int,bool> received_channel;
+
+  EventId primary_receive_rts;
+  EventId primary_receive_cts;
+
+  bool CheckChBonding(uint32_t primary);
+
+  bool CheckAllSubChannelIdle(uint32_t ch_num);
+
+  const std::map < uint32_t, std::pair<uint32_t, uint32_t> > ch_map;
   
   
 };
