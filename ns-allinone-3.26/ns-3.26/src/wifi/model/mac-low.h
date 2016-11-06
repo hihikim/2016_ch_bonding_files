@@ -846,11 +846,12 @@ public:
 
 
 
-  /**---------------------MY EDIT-----------------------------------------------
+  /**---------------------MY EDIT #1-----------------------------------------------
    * using channel bonding enable
    */
 
    void EnableChannelBonding (void);
+   void MakeChannelManager (YansWifiPhyHelper phy);
 
 private:
   /**
@@ -1400,10 +1401,11 @@ private:
   uint32_t m_nTxMpdus;                //!<Holds the number of transmitted MPDUs in the last A-MPDU transmission
 
   /*
-   *------------------------------------MY EDIT---------------------------
+   *------------------------------------MY EDIT #2---------------------------
    *add bool
    */
   bool enable_ch_bonding;
+  Ptr<ChannelManager> ch_m;
 
 };
 

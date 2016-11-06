@@ -520,10 +520,21 @@ MacLow::CancelAllEvents (void)
 void
 MacLow::SetPhy (Ptr<WifiPhy> phy)
 {
-  m_phy = phy;
-  m_phy->SetReceiveOkCallback (MakeCallback (&MacLow::DeaggregateAmpduAndReceive, this));
-  m_phy->SetReceiveErrorCallback (MakeCallback (&MacLow::ReceiveError, this));
-  SetupPhyMacLowListener (phy);
+  if(!enable_ch_bonding){
+    m_phy = phy;
+    m_phy->SetReceiveOkCallback (MakeCallback (&MacLow::DeaggregateAmpduAndReceive, this));
+    m_phy->SetReceiveErrorCallback (MakeCallback (&MacLow::ReceiveError, this));
+
+    SetupPhyMacLowListener (phy);
+  }
+  else{
+	  m_phy = phy;  //primary
+  }
+}
+
+void MacLow::MakeChannelManager(YansWifiPhyHelper phy){
+	ch_m = CreateObject<ChannelManager>();
+	ch_m->MakePhy(phy);
 }
 
 Ptr<WifiPhy>
@@ -743,6 +754,8 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
    * QapScheduler has taken access to the channel from
    * one of the Edca of the QAP.
    */
+  //need edit #2
+
   m_currentPacket = packet->Copy ();
   // remove the priority tag attached, if any
   SocketPriorityTag priorityTag;
@@ -774,7 +787,7 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
         {
           //VHT single MPDUs are followed by normal ACKs
           m_txParams.EnableAck ();
-        }
+       }
     }
   else
     {
@@ -891,6 +904,7 @@ MacLow::NotifySleepNow (void)
 void
 MacLow::ReceiveOk (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, bool ampduSubframe)
 {
+  //need edit #3
   NS_LOG_FUNCTION (this << packet << rxSnr << txVector.GetMode () << preamble);
   /* A packet is received from the PHY.
    * When we have handled this packet,
