@@ -851,7 +851,7 @@ public:
    */
 
    void EnableChannelBonding (void);
-   void SetChannelManager (YansWifiPhyHelper phy);
+   void SetChannelManager(YansWifiPhyHelper phy,uint32_t ch_num, uint32_t ch_width, enum WifiPhyStandard standard);
 
 private:
   /**

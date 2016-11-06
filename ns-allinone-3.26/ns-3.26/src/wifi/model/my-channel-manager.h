@@ -17,7 +17,7 @@ public:
   uint32_t GetMaxWidth();
   
   void SetChannelOption(uint32_t Primary_Ch,uint32_t Max_Width);
-  void MakePhys(YansWifiPhyHelper phy);
+  void MakePhys(YansWifiPhyHelper phy, Ptr<WifiPhy> primary, uint32_t ch_num, uint32_t channel_width, enum WifiPhyStandard standard);
 
   void ResetPhys();
   
@@ -31,12 +31,14 @@ public:
 
   void ClearReceiveRecord();
 
+  void SetPhysCallback();
+
 
 
 private:
   uint32_t max_width;
   uint32_t primary_ch;
-  
+  uint32_t ch_numbers[] = {36 , 40, 44, 48, 52, 56, 60, 64};
   
   std::map<uint32_t, Ptr<WifiPhy> > m_phys;
 

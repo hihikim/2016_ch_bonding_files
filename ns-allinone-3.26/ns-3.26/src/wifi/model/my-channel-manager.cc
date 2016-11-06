@@ -49,17 +49,46 @@ void ChannelManager::SetChannelOption(uint32_t primary_ch,uint32_t max_width){
 	this->primary_ch = primary_ch;
 }
 
-void ChannelManager::MakePhys(YansWifiPhyHelper phy){
+void ChannelManager::MakePhys(YansWifiPhyHelper phy, Ptr<WifiPhy> primary, uint32_t ch_num, uint32_t channel_width, enum WifiPhyStandard standard){
+   SetChannelOption(ch_num, channel_width);
+
+   Ptr<NetDevice> device = primary->GetDevice();
+   Ptr<Node> node = device->GetNode();
+
+
+
+   for(int i =0;i<8;++i){
+	   if(ch_numbers[i] == ch_num)
+	   {
+		   m_phys[ch_num] = primary;
+	   }
+	   else
+	   {
+		   m_phys[ch_numbers[i]] = phy.Create (node, device);
+		   m_phys[ch_numbers[i]]->ConfigureStandard (standard);
+	   }
+   }
+
+
+
 
 }
 
 void ChannelManager::ResetPhys(){
-
+	for(int i =0;i<8;++i){
+		m_phys[ch_numbers[i]] = 0;
+	}
 }
 
 void ChannelManager::ClearReceiveRecord(){
-	received_channel[36] = false; received_channel[40] = false; received_channel[44] = false; received_channel[48] = false;
-	received_channel[52] = false; received_channel[56] = false; received_channel[60] = false; received_channel[64] = false;
+	/*
+	 * received_channel[36] = false; received_channel[40] = false; received_channel[44] = false; received_channel[48] = false;
+	 * received_channel[52] = false; received_channel[56] = false; received_channel[60] = false; received_channel[64] = false;
+	 */
+
+	for(int i =0;i<8;++i){
+		received_channel[ch_numbers[i]] = false;
+	}
 }
 
 

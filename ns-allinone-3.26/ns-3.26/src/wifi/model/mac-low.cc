@@ -520,21 +520,23 @@ MacLow::CancelAllEvents (void)
 void
 MacLow::SetPhy (Ptr<WifiPhy> phy)
 {
-  if(!enable_ch_bonding){
-    m_phy = phy;
-    m_phy->SetReceiveOkCallback (MakeCallback (&MacLow::DeaggregateAmpduAndReceive, this));
-    m_phy->SetReceiveErrorCallback (MakeCallback (&MacLow::ReceiveError, this));
+  m_phy = phy;
+  m_phy->SetReceiveOkCallback (MakeCallback (&MacLow::DeaggregateAmpduAndReceive, this));
+  m_phy->SetReceiveErrorCallback (MakeCallback (&MacLow::ReceiveError, this));
 
-    SetupPhyMacLowListener (phy);
-  }
-  else{
-	  m_phy = phy;  //primary
-  }
+  SetupPhyMacLowListener (phy);
 }
 
-void MacLow::SetChannelManager(YansWifiPhyHelper phy){
+void MacLow::SetChannelManager(YansWifiPhyHelper phy,uint32_t ch_num, uint32_t ch_width, enum WifiPhyStandard standard){
 	ch_m = CreateObject<ChannelManager>();
-	ch_m->MakePhys(phy);
+	ch_m->MakePhys(phy, m_phy, ch_num, ch_width, standard);
+
+	m_phy->SetReceiveOkCallback (MakeNullCallback<void, Ptr<Packet>, double, WifiTxVector, enum WifiPreamble> ());
+	m_phy->SetReceiveErrorCallback (MakeNullCallback<void, Ptr<Packet>, double> ());
+	RemovePhyMacLowListener (m_phy);
+
+	ch_m->SetPhysCallback();
+	SetupPhyMacLowListener (m_phy);
 }
 
 Ptr<WifiPhy>
@@ -1760,7 +1762,11 @@ void
 MacLow::SendMpdu (Ptr<const Packet> packet, WifiTxVector txVector, WifiPreamble preamble, enum mpduType mpdutype)
 {
   NS_LOG_DEBUG ("Sending MPDU as part of A-MPDU");
-  m_phy->SendPacket (packet, txVector, preamble, mpdutype);
+  if(!enable_ch_bonding)
+    m_phy->SendPacket (packet, txVector, preamble, mpdutype);
+
+  else
+    ch_m->SendPacket (packet, txVector, preamble, mpdutype);
 }
 
 void
