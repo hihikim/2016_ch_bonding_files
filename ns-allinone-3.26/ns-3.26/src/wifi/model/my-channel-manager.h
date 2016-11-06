@@ -24,8 +24,8 @@ public:
   void ReceiveOk();
   void ReceiveError();
 
-
-  void SendPacket();
+  void SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble, enum mpduType mpdutype);
+  void SendPacket(Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble);
 
   void ChannelMapping() const;
 

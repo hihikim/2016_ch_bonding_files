@@ -534,7 +534,7 @@ MacLow::SetPhy (Ptr<WifiPhy> phy)
 
 void MacLow::SetChannelManager(YansWifiPhyHelper phy){
 	ch_m = CreateObject<ChannelManager>();
-	ch_m->MakePhy(phy);
+	ch_m->MakePhys(phy);
 }
 
 Ptr<WifiPhy>
@@ -822,7 +822,7 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
   NS_LOG_DEBUG ("startTx size=" << GetSize (m_currentPacket, &m_currentHdr) <<
                 ", to=" << m_currentHdr.GetAddr1 () << ", listener=" << m_listener);
 
-  if (m_txParams.MustSendRts ())
+  if (m_txParams.MustSendRts ())   //need look
     {
       SendRtsForPacket ();
     }
@@ -1655,7 +1655,11 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
                 ", seq=0x" << std::hex << m_currentHdr.GetSequenceControl () << std::dec);
   if (!m_ampdu || hdr->IsRts () || hdr->IsBlockAck ())
     {
-      m_phy->SendPacket (packet, txVector, preamble);
+	  if(!enable_ch_bonding)
+        m_phy->SendPacket (packet, txVector, preamble);
+
+	  else
+		 ch_m->SendPacket(packet, txVector, preamble);
     }
   else
     {
@@ -1668,7 +1672,7 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
       bool vhtSingleMpdu = false;
       bool last = false;
       enum mpduType mpdutype = NORMAL_MPDU;
-      
+
       uint8_t tid = GetTid (packet, *hdr);
       AcIndex ac = QosUtilsMapTidToAc (tid);
       std::map<AcIndex, MacLowAggregationCapableTransmissionListener*>::const_iterator listenerIt = m_edcaListeners.find (ac);
@@ -1701,7 +1705,7 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
             }
 
           listenerIt->second->GetMpduAggregator ()->AddHeaderAndPad (newPacket, last, vhtSingleMpdu);
-          
+
           if (delay == Seconds (0))
             {
               if (!vhtSingleMpdu)
@@ -1714,7 +1718,7 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
                   mpdutype = NORMAL_MPDU;
                 }
             }
-          
+
           Time mpduDuration = m_phy->CalculateTxDuration (newPacket->GetSize (), txVector, preamble, m_phy->GetFrequency (), mpdutype, 0);
           remainingAmpduDuration -= mpduDuration;
 
@@ -1731,7 +1735,11 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
 
           if (delay == Seconds (0))
             {
-              m_phy->SendPacket (newPacket, txVector, preamble, mpdutype);
+        	   if(!enable_ch_bonding)
+                m_phy->SendPacket (newPacket, txVector, preamble, mpdutype);
+
+        	   else
+        		   ch_m->SendPacket (newPacket, txVector, preamble, mpdutype);
             }
           else
             {
@@ -1883,7 +1891,7 @@ MacLow::SendRtsForPacket (void)
       duration += GetSifs ();
       duration += GetCtsDuration (m_currentHdr.GetAddr1 (), rtsTxVector);
       duration += GetSifs ();
-      duration += m_phy->CalculateTxDuration (GetSize (m_currentPacket, &m_currentHdr),
+      duration += m_phy->CalculateTxDuration (GetSize (m_currentPacket, &m_currentHdr),              //can edit by police
                                               m_currentTxVector, preamble, m_phy->GetFrequency ());
       duration += GetSifs ();
       if (m_txParams.MustWaitBasicBlockAck ())
