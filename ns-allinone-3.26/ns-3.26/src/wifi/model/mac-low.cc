@@ -1664,6 +1664,7 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
 	  else
 		 ch_m->SendPacket(packet, txVector, preamble);
     }
+
   else
     {
       Ptr<Packet> newPacket;
@@ -1744,10 +1745,12 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
         	   else
         		   ch_m->SendPacket (newPacket, txVector, preamble, mpdutype);
             }
+
           else
             {
               Simulator::Schedule (delay, &MacLow::SendMpdu, this, newPacket, txVector, preamble, mpdutype);
             }
+
           if (queueSize > 1)
             {
               NS_ASSERT (remainingAmpduDuration > 0);

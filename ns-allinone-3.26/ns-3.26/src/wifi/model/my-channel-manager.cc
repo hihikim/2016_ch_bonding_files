@@ -12,6 +12,7 @@ ChannelManager::ChannelManager()
 {
 	max_width = 160;
 	primary_ch = 36;
+	num_received = 0;
 
 	ChannelMapping();
 	received_channel[36] = false; received_channel[40] = false; received_channel[44] = false; received_channel[48] = false;
@@ -60,19 +61,19 @@ void ChannelManager::MakePhys(YansWifiPhyHelper phy, Ptr<WifiPhy> primary, uint1
    Ptr<Node> node = device->GetNode();
 
 
-
+   num_received = 0;
    for(int i =0;i<8;++i){
 	   if(ch_numbers[i] == ch_num)
 	   {
 		   m_phys[ch_num] = primary;
-		   m_phys[ch_num]->SetChannelNumber(ch_num);
 	   }
 	   else
 	   {
 		   m_phys[ch_numbers[i]] = phy.Create (node, device);
 		   m_phys[ch_numbers[i]]->ConfigureStandard (standard);
-		   m_phys[ch_numbers[i]]->SetChannelNumber(ch_numbers[i]);
 	   }
+
+	   m_phys[ch_numbers[i]]->SetChannelNumber(ch_numbers[i]);
    }
 }
 
@@ -267,30 +268,90 @@ void ChannelManager::Receive64Channel (Ptr<Packet> Packet, double rxSnr, WifiTxV
 
 void ChannelManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, uint16_t ch_num)
 {
-	if(ch_num == primary_ch)
+	WifiMacHeader hdr;
+	Packet->PeekHeader(hdr);
+
+	num_received++;
+	last_received_packet[ch_num] = Packet;
+	received_channel[ch_num] = true;
+
+	if(num_received == 1)  //initial
 	{
-		last_primary_packet = Packet;
+		//start timer
+		if(hdr.IsRts())
+		{
+			receive_rts = Simulator::Schedule(m_mac->GetSifs(),
+													&ChannelManager::ClearReceiveRecord, this
+													);
+		}
+		else if(hdr.IsCts())
+		{
+			receive_rts = Simulator::Schedule(m_mac->GetSifs(),
+													&ChannelManager::ClearReceiveRecord, this
+													);
+		}
 	}
 
-	else
-	{
 
+	if(hdr.IsRts() || hdr.IsCts() )
+	{
+		std::pair<uint16_t,uint32_t> ch_info = ch_map[GetUsableChannelBonding(primary_ch)];
+		request_width = ch_info.second;
+
+		if (ch_num == primary_ch)
+		{
+			if(hdr.IsRts())
+				receive_rts.Cancel();
+
+			else
+				receive_cts.Cancel();
+		}
+	}
+
+	if (ch_num == primary_ch){
+		ManageReceived(Packet, rxSnr, txVector, preamble);
 	}
 }
+
+
+
 
 void ChannelManager::ManageReceived  (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
 {
 	WifiMacHeader hdr;
 	Packet->PeekHeader(hdr);
-	if(!hdr.IsData())
+	if(hdr.IsData())
 	{
-		m_mac->DeaggregateAmpduAndReceive(Packet, rxSnr,txVector, preamble);
-	}
-
-	else
-	{
+		//data merge
 
 	}
+
+	m_mac->DeaggregateAmpduAndReceive(Packet, rxSnr,txVector, preamble);
+}
+
+bool ChannelManager::CheckWidthUsable()
+{
+	uint16_t check_ch = primary_ch;
+	std::pair<uint16_t,uint32_t> ch_info;
+	ch_info = ch_map[check_ch];
+
+	if(request_width == 20)
+	{
+		return received_channel[check_ch];
+	}
+
+	for(uint32_t width = ch_info.second; width < request_width;)
+	{
+		if(!received_channel[ch_info.first])  //if second channel not received
+			return false;
+
+		check_ch = (check_ch + ch_info.first)/2;  //go to bigger channel
+
+		ch_info = ch_map[check_ch];
+	}
+
+	return true;
+
 }
 
 }

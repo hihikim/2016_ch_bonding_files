@@ -65,18 +65,20 @@ public:
 
 private:
   uint32_t max_width;
-  uint32_t requist_width;
+  uint32_t request_width;
   uint16_t primary_ch;
   uint16_t ch_numbers[] = {36 , 40, 44, 48, 52, 56, 60, 64};
+
   Ptr<MacLow> m_mac;
-  Ptr<Packet> last_primary_packet;
+  std::map< uint16_t, Ptr<Packet> > last_received_packet;
+  uint16_t num_received;
   
   std::map<uint16_t, Ptr<WifiPhy> > m_phys;
 
   std::map<int,bool> received_channel;
 
-  EventId primary_receive_rts;
-  EventId primary_receive_cts;
+  EventId receive_rts;
+  EventId receive_cts;
 
   uint16_t CheckChBonding(uint16_t primary);
 
@@ -87,6 +89,9 @@ private:
   uint16_t GetUsableChannelBonding(uint16_t primary);
 
   bool CheckAllSubChannelReceived(uint16_t ch_num);
+
+  bool CheckWidthUsable (void);
+
 
 
   const std::map < uint16_t, std::pair<uint16_t, uint32_t> > ch_map;
