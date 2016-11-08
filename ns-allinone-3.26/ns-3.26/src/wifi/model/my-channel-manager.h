@@ -27,6 +27,8 @@
 namespace ns3 {
 class MacLow;
 
+typedef std::pair<uint16_t, uint32_t> ChannelInfo;
+
 class ChannelBondingManager : public Object
 {
 public:
@@ -59,7 +61,7 @@ public:
   void SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble, enum mpduType mpdutype);
   void SendPacket(Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble);
 
-  std::map<uint16_t, std::pair<uint16_t,uint32_t> > ChannelMapping();
+  std::map<uint16_t, ChannelInfo> ChannelMapping();
 
   void ClearReceiveRecord();
 
@@ -73,12 +75,17 @@ public:
 
 private:
   uint32_t max_width;
+
   uint32_t request_width;
+  uint16_t request_ch;
+
+
   uint16_t primary_ch;
   uint16_t ch_numbers[8] = {36 , 40, 44, 48, 52, 56, 60, 64};
 
   Ptr<MacLow> m_mac;
   std::map< uint16_t, Ptr<Packet> > last_received_packet;
+  std::map< uint16_t, Ptr<Packet> > packet_pieces;
   uint16_t num_received;
   
   std::map<uint16_t, Ptr<WifiPhy> > m_phys;
@@ -89,21 +96,21 @@ private:
   EventId receive_cts;
   EventId receive_orther;
 
-  uint16_t CheckChBonding(uint16_t primary);
+  uint16_t CheckChBonding(uint16_t primary);  //
 
   bool CheckAllSubChannelIdle(uint16_t ch_num);
 
-  uint16_t GetUsableBondedChannel(uint16_t primary);
-
-  uint32_t GetUsableWidth(void);
+  uint16_t GetUsableBondingChannel(uint16_t primary);
 
   bool CheckAllSubChannelReceived(uint16_t ch_num);
 
-  bool CheckWidthUsable (uint32_t width);
+  void CleanPacketPieces();
+  std::vector<uint16_t> FindSubChannels(uint16_t ch_num);
 
 
 
-  const std::map < uint16_t, std::pair<uint16_t, uint32_t> > ch_map;
+
+  const std::map < uint16_t, ChannelInfo > ch_map;
   
   
 };
