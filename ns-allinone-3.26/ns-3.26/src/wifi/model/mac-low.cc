@@ -527,8 +527,8 @@ MacLow::SetPhy (Ptr<WifiPhy> phy)
   SetupPhyMacLowListener (phy);
 }
 
-void MacLow::SetChannelManager(YansWifiPhyHelper phy,uint32_t ch_num, uint32_t ch_width, enum WifiPhyStandard standard){
-	ch_m = CreateObject<ChannelManager>();
+void MacLow::SetChannelManager(const WifiPhyHelper &phy,uint32_t ch_num, uint32_t ch_width, enum WifiPhyStandard standard){
+	ch_m = CreateObject<ChannelBondingManager>();
 	ch_m->SetMyMac(this);
 	ch_m->MakePhys(phy, m_phy, ch_num, ch_width, standard);
 

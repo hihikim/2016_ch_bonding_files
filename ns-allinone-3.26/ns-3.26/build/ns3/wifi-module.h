@@ -49,6 +49,7 @@
 #include "mpdu-standard-aggregator.h"
 #include "msdu-aggregator.h"
 #include "msdu-standard-aggregator.h"
+#include "my-channel-manager.h"
 #include "nist-error-rate-model.h"
 #include "nqos-wifi-mac-helper.h"
 #include "onoe-wifi-manager.h"

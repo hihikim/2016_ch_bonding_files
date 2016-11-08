@@ -45,6 +45,9 @@
 #include "wifi-tx-vector.h"
 #include "mpdu-aggregator.h"
 #include "msdu-aggregator.h"
+#include "ns3/wifi-helper.h"
+
+#include "my-channel-manager.h"
 
 class TwoLevelAggregationTest;
 class AmpduAggregationTest;
@@ -55,6 +58,7 @@ class WifiPhy;
 class WifiMac;
 class EdcaTxopN;
 class WifiMacQueue;
+class ChannelBondingManager;
 
 /**
  * \ingroup wifi
@@ -851,7 +855,7 @@ public:
    */
 
    void EnableChannelBonding (void);
-   void SetChannelManager(YansWifiPhyHelper phy,uint32_t ch_num, uint32_t ch_width, enum WifiPhyStandard standard);
+   void SetChannelManager(const WifiPhyHelper &phy,uint32_t ch_num, uint32_t ch_width, enum WifiPhyStandard standard);
 
 private:
   /**
@@ -1405,7 +1409,7 @@ private:
    *add bool
    */
   bool enable_ch_bonding;
-  Ptr<ChannelManager> ch_m;
+  Ptr<ChannelBondingManager> ch_m;
 
 };
 
