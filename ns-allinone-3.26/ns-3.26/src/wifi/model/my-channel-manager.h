@@ -63,7 +63,7 @@ public:
 
   void ClearReceiveRecord();
 
-  Ptr<Packet> ConvertPacket(Ptr<Packet> packet);
+  Ptr<Packet> ConvertPacket(const Ptr<Packet> packet);
 
 
   void SetPhysCallback();

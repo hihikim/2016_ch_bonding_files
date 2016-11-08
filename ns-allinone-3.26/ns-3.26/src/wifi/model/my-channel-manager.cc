@@ -12,7 +12,7 @@
 
 
 namespace ns3 {
-class MacLow;
+
 
 NS_LOG_COMPONENT_DEFINE ("ChannelBondingManager");
 
@@ -285,13 +285,18 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 	WifiMacHeader hdr;
 	Packet->PeekHeader(hdr);
 
-	num_received++;
-	last_received_packet[ch_num] = Packet;
+
+
 
 	if(ch_num == primary_ch ||
 		hdr.GetAddr1() == m_mac->GetAddress()	  //2nd channal don't have nav
 	)
+	{
+		num_received++;
 		received_channel[ch_num] = true;
+		last_received_packet[ch_num] = Packet;
+	}
+
 
 
 	//start timer
@@ -397,6 +402,35 @@ uint32_t ChannelBondingManager::GetUsableWidth(void)
 
 void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
 {
+
+	WifiMacHeader hdr;
+	last_received_packet[primary_ch]->PeekHeader(hdr);
+
+	if(hdr.IsData())
+	{
+		std::ostringstream os;
+		os.clear();
+		Ptr<ns3::Packet> p;
+
+		for(int i=0;i<8;i++)
+		{
+			if(received_channel[ch_numbers[i]]){
+				p = last_received_packet[ch_numbers[i]];
+				p->CopyData(&os, p->GetSize());
+			}
+		}
+
+		uint8_t *b = new uint8_t[os.width()];
+		const char* t_str = os.str().c_str();
+		for(int i=0;i<os.width();i++)
+		{
+			b[i] = (uint8_t)t_str[i];
+		}
+
+
+		p = Create<ns3::Packet>(b, os.width());
+		Packet = p;
+	}
 
 
 	m_mac->DeaggregateAmpduAndReceive(Packet, rxSnr,txVector, preamble);
