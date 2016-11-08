@@ -13,6 +13,7 @@ ChannelManager::ChannelManager()
 	max_width = 160;
 	primary_ch = 36;
 	num_received = 0;
+	request_width = 160;
 
 	ChannelMapping();
 	received_channel[36] = false; received_channel[40] = false; received_channel[44] = false; received_channel[48] = false;
@@ -153,7 +154,7 @@ bool ChannelManager::CheckAllSubChannelIdle(uint16_t ch_num){
 
 }
 
-uint16_t ChannelManager::GetUsableChannelBonding(uint16_t primary)
+uint16_t ChannelManager::GetUsableBondedChannel(uint16_t primary)
 {
 	std::pair<uint16_t,uint32_t> ch_info;
 
@@ -275,41 +276,62 @@ void ChannelManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr, WifiTx
 	last_received_packet[ch_num] = Packet;
 	received_channel[ch_num] = true;
 
-	if(num_received == 1)  //initial
+
+	//start timer
+	if(hdr.IsRts())
 	{
-		//start timer
-		if(hdr.IsRts())
-		{
-			receive_rts = Simulator::Schedule(m_mac->GetSifs(),
-													&ChannelManager::ClearReceiveRecord, this
-													);
-		}
-		else if(hdr.IsCts())
-		{
-			receive_rts = Simulator::Schedule(m_mac->GetSifs(),
-													&ChannelManager::ClearReceiveRecord, this
-													);
-		}
+		if(receive_rts.IsRunning())
+			receive_rts.Cancel();
+
+		receive_rts = Simulator::Schedule(m_mac->GetSifs(),
+												&ChannelManager::ClearReceiveRecord, this
+												);
 	}
+
+	else if(hdr.IsCts())
+	{
+		if(receive_rts.IsRunning())
+			receive_cts.Cancel();
+
+		receive_cts = Simulator::Schedule(m_mac->GetSifs(),
+												&ChannelManager::ClearReceiveRecord, this
+												);
+	}
+
+	else
+	{
+
+	}
+
 
 
 	if(hdr.IsRts() || hdr.IsCts() )
 	{
-		std::pair<uint16_t,uint32_t> ch_info = ch_map[GetUsableChannelBonding(primary_ch)];
-		request_width = ch_info.second;
 
-		if (ch_num == primary_ch)
+		request_width = GetUsableWidth();
+
+
+		if (request_width != 0)
 		{
-			if(hdr.IsRts())
-				receive_rts.Cancel();
-
-			else
-				receive_cts.Cancel();
+			ManageReceived(Packet, rxSnr, txVector, preamble);
 		}
 	}
 
-	if (ch_num == primary_ch){
+	else if(hdr.IsData())
+	{
+		if(num_received == (request_width/20) ){
+			uint8_t * b;
+
+			uint32_t size = Packet->GetSize();
+			size *= ((request_width)/20);
+			Packet->CopyData(b,32);
+		}
+	}
+
+	else
+	{
 		ManageReceived(Packet, rxSnr, txVector, preamble);
+		ClearReceiveRecord();
 	}
 }
 
@@ -329,18 +351,18 @@ void ChannelManager::ManageReceived  (Ptr<Packet> Packet, double rxSnr, WifiTxVe
 	m_mac->DeaggregateAmpduAndReceive(Packet, rxSnr,txVector, preamble);
 }
 
-bool ChannelManager::CheckWidthUsable()
+bool ChannelManager::CheckWidthUsable(uint32_t width)
 {
 	uint16_t check_ch = primary_ch;
 	std::pair<uint16_t,uint32_t> ch_info;
 	ch_info = ch_map[check_ch];
 
-	if(request_width == 20)
+	if(width == 20)
 	{
 		return received_channel[check_ch];
 	}
 
-	for(uint32_t width = ch_info.second; width < request_width;)
+	for(uint32_t w = ch_info.second; w < width;)
 	{
 		if(!received_channel[ch_info.first])  //if second channel not received
 			return false;

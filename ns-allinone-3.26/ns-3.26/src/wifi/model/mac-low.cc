@@ -768,7 +768,13 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
   CancelAllEvents ();
   m_listener = listener;
   m_txParams = params;
+
+  m_currentPacket = ch_m->ConvertPacket(m_currentPacket);
+
+
   m_currentTxVector = GetDataTxVector (m_currentPacket, &m_currentHdr);
+
+
 
   if (!m_currentHdr.IsQosData () && !m_currentHdr.IsBlockAck () && !m_currentHdr.IsBlockAckReq ())
     {

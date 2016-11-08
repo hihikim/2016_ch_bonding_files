@@ -58,6 +58,9 @@ public:
 
   void ClearReceiveRecord();
 
+  Ptr<const Packet> ConvertPacket(Ptr<const Packet> packet);
+
+
   void SetPhysCallback();
   void ManageReceived  (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
 
@@ -86,11 +89,13 @@ private:
 
   bool CheckAllSubChannelIdle(uint16_t ch_num);
 
-  uint16_t GetUsableChannelBonding(uint16_t primary);
+  uint16_t GetUsableBondedChannel(uint16_t primary);
+
+  uint32_t GetUsableWidth(void);
 
   bool CheckAllSubChannelReceived(uint16_t ch_num);
 
-  bool CheckWidthUsable (void);
+  bool CheckWidthUsable (uint32_t width);
 
 
 
