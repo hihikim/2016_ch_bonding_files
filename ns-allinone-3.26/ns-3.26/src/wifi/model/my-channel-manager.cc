@@ -95,6 +95,8 @@ void ChannelManager::ClearReceiveRecord(){
 	for(int i =0;i<8;++i){
 		received_channel[ch_numbers[i]] = false;
 	}
+
+	num_received = 0;
 }
 
 
@@ -274,7 +276,11 @@ void ChannelManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr, WifiTx
 
 	num_received++;
 	last_received_packet[ch_num] = Packet;
-	received_channel[ch_num] = true;
+
+	if(ch_num == primary_ch ||
+		hdr.GetAddr1() == m_mac->GetAddress()	  //
+	)
+		received_channel[ch_num] = true;
 
 
 	//start timer
@@ -290,7 +296,7 @@ void ChannelManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr, WifiTx
 
 	else if(hdr.IsCts())
 	{
-		if(receive_rts.IsRunning())
+		if(receive_cts.IsRunning())
 			receive_cts.Cancel();
 
 		receive_cts = Simulator::Schedule(m_mac->GetSifs(),
@@ -311,7 +317,7 @@ void ChannelManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr, WifiTx
 		request_width = GetUsableWidth();
 
 
-		if (request_width != 0)
+		if (request_width != 0)  //received primary
 		{
 			ManageReceived(Packet, rxSnr, txVector, preamble);
 		}
@@ -374,6 +380,22 @@ bool ChannelManager::CheckWidthUsable(uint32_t width)
 
 	return true;
 
+}
+
+uint32_t ChannelManager::GetUsableWidth(void)
+{
+	uint32_t width = 0;
+
+	for(uint32_t i = 20; i <= max_width; i *= 2)
+	{
+		if( CheckWidthUsable (i) )
+			width = i;
+
+		else
+			break;
+	}
+
+	return width;
 }
 
 }
