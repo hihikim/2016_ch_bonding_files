@@ -530,6 +530,7 @@ MacLow::SetPhy (Ptr<WifiPhy> phy)
 void MacLow::SetChannelManager(const WifiPhyHelper &phy,uint32_t ch_num, uint32_t ch_width, enum WifiPhyStandard standard){
 	ch_m = CreateObject<ChannelBondingManager>();
 	ch_m->SetMyMac(this);
+
 	ch_m->MakePhys(phy, m_phy, ch_num, ch_width, standard);
 
 	m_phy->SetReceiveOkCallback (MakeNullCallback<void, Ptr<Packet>, double, WifiTxVector, enum WifiPreamble> ());
@@ -769,7 +770,10 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
   m_listener = listener;
   m_txParams = params;
 
-  m_currentPacket = ch_m->ConvertPacket(m_currentPacket);
+  if(enable_ch_bonding)
+	  ch_m->CheckChannelBeforeSend();
+
+  //m_currentPacket = ch_m->ConvertPacket(m_currentPacket);
 
 
   m_currentTxVector = GetDataTxVector (m_currentPacket, &m_currentHdr);
@@ -818,7 +822,14 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
             }
         }
     }
-    
+
+  bool need = NeedRts ();
+
+  if(enable_ch_bonding)
+  {
+  	  ch_m->NeedRts(need);
+  }
+
   if (NeedRts ())
     {
       m_txParams.EnableRts ();
@@ -3382,7 +3393,7 @@ MacLow::PerformMsduAggregation (Ptr<const Packet> packet, WifiMacHeader *hdr, Ti
 void MacLow::EnableChannelBonding (void){
 	if(!enable_ch_bonding){
 		enable_ch_bonding = true;
-		ResetPhy();
+		//ResetPhy();
 	}
 }
 

@@ -43,6 +43,8 @@ public:
   void SetChannelOption(uint16_t Primary_Ch,uint32_t Max_Width);
   void MakePhys(const WifiPhyHelper &phy, Ptr<WifiPhy> primary, uint16_t ch_num, uint32_t channel_width, enum WifiPhyStandard standard);
 
+  void CheckChannelBeforeSend(void);
+
   void ResetPhys();
 
   void Receive36Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
@@ -65,12 +67,13 @@ public:
 
   void ClearReceiveRecord();
 
-  Ptr<Packet> ConvertPacket(const Ptr<Packet> packet);
+  Ptr<Packet> ConvertPacket(Ptr<const Packet> packet);
 
 
   void SetPhysCallback();
   void ManageReceived (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
   void SetMyMac(Ptr<MacLow> mac);
+  void NeedRts(bool need);
 
 
 private:
@@ -95,6 +98,7 @@ private:
   EventId receive_rts;
   EventId receive_cts;
   EventId receive_orther;
+  bool need_rts;
 
   uint16_t CheckChBonding(uint16_t primary);  //
 
@@ -104,8 +108,11 @@ private:
 
   bool CheckAllSubChannelReceived(uint16_t ch_num);
 
+  uint16_t GetChannelWithWidth(uint32_t width);
+
   void CleanPacketPieces();
   std::vector<uint16_t> FindSubChannels(uint16_t ch_num);
+
 
 
 
