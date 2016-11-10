@@ -8,6 +8,8 @@
 #include "ns3/node.h"
 #include "ns3/socket.h"
 #include "ns3/double.h"
+#include "mpdu-aggregator.h"
+#include "msdu-aggregator.h"
 
 
 
@@ -20,14 +22,17 @@ ChannelBondingManager::ChannelBondingManager()
 : ch_map(ChannelMapping())
 {
 	need_rts = false;
+	need_cts = false;
 	max_width = 160;
 	primary_ch = 36;
 	num_received = 0;
 	request_width = 160;
 
-	ChannelMapping();
+	alloc_last_primary_hdr = false;
+
 	received_channel[36] = false; received_channel[40] = false; received_channel[44] = false; received_channel[48] = false;
 	received_channel[52] = false; received_channel[56] = false; received_channel[60] = false; received_channel[64] = false;
+
 }
 ChannelBondingManager::~ChannelBondingManager()
 {
@@ -101,8 +106,8 @@ void ChannelBondingManager::MakePhys(const WifiPhyHelper &phy, Ptr<WifiPhy> prim
 
 	   else
 	   {
-		   //m_phys[ch_numbers[i]] = phy.Create (node, device);
-		   m_phys[ch_numbers[i]] = phy.Create (NULL,NULL);
+		   m_phys[ch_numbers[i]] = phy.Create (node, device);
+		   //m_phys[ch_numbers[i]] = phy.Create (NULL,NULL);
 		   m_phys[ch_numbers[i]]->ConfigureStandard (standard);
 	   }
 
@@ -229,9 +234,27 @@ bool ChannelBondingManager::CheckAllSubChannelReceived(uint16_t ch_num)
 	uint32_t ch_width = ch_info.second;
 	uint16_t side_num = ch_width / 20;
 
-
 	if(ch_width == 20){
-		return received_channel[ch_num];
+		if(received_channel[ch_num])
+		{
+			WifiMacHeader hdr1,hdr2;
+			if(received_channel[primary_ch])
+			{
+				last_received_packet[ch_num]->PeekHeader(hdr1);
+				last_received_packet[primary_ch]->PeekHeader(hdr2);
+				if(hdr1.GetAddr1() == hdr2.GetAddr2() &&
+					hdr1.GetType() == hdr2.GetType()
+				   )
+					return true;
+
+				else
+					return false;
+			}
+			else
+				return false;
+		}
+		else
+			return false;
 	}
 
 	else
@@ -312,53 +335,46 @@ void ChannelBondingManager::Receive64Channel (Ptr<Packet> Packet, double rxSnr, 
 void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, uint16_t ch_num)
 {
 	WifiMacHeader hdr;
+
 	Packet->PeekHeader(hdr);
 
-	if(ch_num == primary_ch ||
-	   (hdr.GetAddr1() == m_mac->GetAddress()
-	   )
-			  //2nd channal don't have nav
-	)
+	//test
+	//AmpduTag ampdu;
+
+
+	if(ch_num == primary_ch){
+		alloc_last_primary_hdr = true;
+		last_primary_hdr = hdr;
+	}
+
+	if(true)
 	{
 		num_received++;
 		received_channel[ch_num] = true;
 		last_received_packet[ch_num] = Packet;
 
+
 		//start timer
-		if(hdr.IsRts())
+		if(ch_num == primary_ch)
 		{
-			if(receive_rts.IsRunning())
-				receive_rts.Cancel();
+			if(clean_timer.IsRunning())
+				clean_timer.Cancel();
 
-			receive_rts = Simulator::Schedule(m_mac->GetSifs(),
+			clean_timer = Simulator::Schedule(m_mac->GetSifs(),
 													&ChannelBondingManager::ClearReceiveRecord, this
 													);
 		}
-
-		else if(hdr.IsCts())
-		{
-			if(receive_cts.IsRunning())
-				receive_cts.Cancel();
-
-			receive_cts = Simulator::Schedule(m_mac->GetSifs(),
-													&ChannelBondingManager::ClearReceiveRecord, this
-													);
-		}
-
-		else
-		{
-			if(receive_orther.IsRunning())
-				receive_orther.Cancel();
-
-			receive_orther = Simulator::Schedule (m_mac->GetSifs(),
-														&ChannelBondingManager::ClearReceiveRecord, this
-														);
-		}
-
 
 
 		if(hdr.IsRts() || hdr.IsCts() )
 		{
+			if(primary_ch == ch_num ||
+				hdr.GetAddr1() == m_mac->GetAddress()
+				)
+			{
+				NeedRts(true);
+				NeedCts(true);
+			}
 
 			request_ch = GetUsableBondingChannel(primary_ch);
 
@@ -375,8 +391,18 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 			}
 		}
 
-		else if(hdr.IsData())
+
+		//else if(hdr.IsData() || hdr.IsMgt ())
+		else if(hdr.IsData() || hdr.IsQosData())
 		{
+
+			if(alloc_last_primary_hdr &&
+			   (last_primary_hdr.IsRts() || last_primary_hdr.IsCts()
+				))
+			{
+				need_rts = false;
+			}
+
 			if(num_received == 1 && !need_rts)
 			{
 				request_width = max_width;
@@ -390,7 +416,9 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 
 		else
 		{
-			ManageReceived(Packet, rxSnr, txVector, preamble);
+			if(ch_num == primary_ch){
+				ManageReceived(Packet, rxSnr, txVector, preamble);
+			}
 		}
 	}
 }
@@ -401,70 +429,66 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 {
 	WifiMacHeader hdr, etc;
 	//last_received_packet[primary_ch]->PeekHeader(hdr);
+
 	Packet->PeekHeader(hdr);
-	Ptr<ns3::Packet> p;
 
 
+	Ptr<ns3::Packet> p, temp_p;
 
-	if(hdr.IsData())
+
+	//std::cout<<"receive packet: "<<hdr.GetTypeString()<<std::endl;
+
+
+	//if(hdr.IsData() || hdr.IsMgt ())
+	if(hdr.IsData() || hdr.IsQosData())
 	{
-		std::string str;
-		uint8_t *b = NULL;
-
-		unsigned int total_size = 0;
-
+		//std::cout<<"receive data\n";
 
 		for(int i=0;i<8;i++)
 		{
 			if(received_channel[ch_numbers[i]])
 			{
-				p = last_received_packet[ch_numbers[i]];
+				temp_p = last_received_packet[ch_numbers[i]];
 
 				if(ch_numbers[i] == primary_ch)
-					p->RemoveHeader(hdr);
+					temp_p->RemoveHeader(hdr);
 				else
-					p->RemoveHeader(etc);
+					temp_p->RemoveHeader(etc);
 
-				int size_p = p->GetSerializedSize();
+				if(p == 0)
+					p = temp_p;
 
-				if(b != NULL){
-					delete [] b;
-					b = NULL;
-				}
-
-				b = new uint8_t [size_p];
-
-				p->Serialize(b,size_p);
-				total_size += size_p;
-				str.append((char *)b);
+				else
+					p->AddAtEnd(temp_p);
 			}
 		}
-
-
-		if(b != NULL){
-			delete [] b;
-			b = NULL;
-		}
-
-		const char* t_str = str.c_str();
-
-		b = new uint8_t[total_size];
-
-		for(unsigned int i=0;i<total_size;i++)
-		{
-			b[i] = (uint8_t)t_str[i];
-		}
-
-		p = Create<ns3::Packet>(b, total_size);
-		p->RemoveAtStart(p->GetSerializedSize() - total_size);
-		p->AddHeader(hdr);
-
-		p = last_received_packet[primary_ch];
+		std::cout<<*p;
 		p->AddHeader(hdr);
 	}
 
 	else
 		p = Packet;
+
+	std::cout<<"size : "<<p->GetSize()<<std::endl;
+	std::cout<<"serial size: "<<p->GetSerializedSize()<<std::endl;
+
+	//p->RemoveHeader(hdr);
+
+	std::cout<<"remove size : "<<p->GetSize()<<std::endl;
+	std::cout<<"remove serial size: "<<p->GetSerializedSize()<<std::endl;
+
+	uint8_t *b;
+	b = new uint8_t[p->GetSerializedSize()];
+	temp_p = Create<ns3::Packet>(b,p->GetSerializedSize());
+
+	//temp_p = p->CreateFragment(0,p->GetSize()/2);
+
+	std::cout<<"b size : "<<p->GetSize()<<std::endl;
+	std::cout<<"b serial size: "<<p->GetSerializedSize()<<std::endl;
+
+
+	//p = temp_p;
+	//p->AddHeader(hdr);
 
 	m_mac->DeaggregateAmpduAndReceive(p, rxSnr,txVector, preamble);
 }
@@ -473,31 +497,19 @@ void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector t
 {
 	WifiMacHeader hdr;
 	packet->PeekHeader(hdr);
+
 	ConvertPacket(packet);
 	ClearReceiveRecord();
 
-
-	if(hdr.IsData())
+	for(int i=0;i<8;i++)
 	{
-		for(int i=0;i<8;i++)
-		{
-			if(packet_pieces[ch_numbers[i]] != 0)
-				m_phys[ch_numbers[i]]->SendPacket(packet_pieces[ch_numbers[i]], txVector, preamble, mpdutype);
-		}
-
-		CleanPacketPieces();
+		if(packet_pieces[ch_numbers[i]] != 0)
+			m_phys[ch_numbers[i]]->SendPacket(packet_pieces[ch_numbers[i]], txVector, preamble, mpdutype);
 	}
 
-	else
-	{
 
-		for(int i=0;i<8;i++)
-		{
-			if(packet_pieces[ch_numbers[i]] != 0)
-				m_phys[ch_numbers[i]]->SendPacket(packet, txVector, preamble, mpdutype);
-		}
-		CleanPacketPieces();
-	}
+	CleanPacketPieces();
+
 }
 
 void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble)
@@ -521,9 +533,12 @@ Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)
 {
 	CleanPacketPieces();
 
+	//AmpduTag ampdu;
 
 	WifiMacHeader hdr, etc;
 	Ptr<Packet> origin_p = packet->Copy();
+
+
 	origin_p->PeekHeader(hdr);
 
 	if(request_ch == 0){  //이상
@@ -533,64 +548,50 @@ Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)
 			return packet->Copy();
 	}
 
+	//std::cout<<"split packet: "<<hdr.GetTypeString()<<std::endl;
+
 
 	std::vector<uint16_t> sub_chs = FindSubChannels(request_ch);
 
 
-	//int using_channel = request_width / 20;
+	int using_channel = request_width / 20;
 
-
-	if(hdr.IsData())
+	//if(hdr.IsData()|| hdr.IsMgt ())
+	if(hdr.IsData() || hdr.IsQosData())
 	{
+		//std::cout<<"split data\n";
 		origin_p->RemoveHeader(hdr);
-
 
 		Ptr<Packet> p;
 
-		uint8_t *b = NULL;
+		int size_p = origin_p->GetSize();
 
-		int size_p = origin_p->GetSerializedSize();
-
-		//int point = 0;
-		//int unit = size_p/using_channel;
-
-		b = new uint8_t[size_p];
-
-		origin_p->Serialize(b,size_p);
+		int point = 0;
+		int unit = size_p/using_channel;
 
 
 		for(std::vector<uint16_t>::iterator i = sub_chs.begin() ;
 			i != sub_chs.end() ;
 			++i )
 		{
-			/*
+
 			if((size_p - point)%using_channel ==0 )
 			{
-				p = Create<Packet>(b+point,unit);
+				p = origin_p->CreateFragment(point,unit);
 				point += unit;
 				--using_channel;
-				uint32_t to_remove = p->GetSerializedSize() - unit;
-				p->RemoveAtStart(to_remove);
 			}
 
 			else
 			{
-				p = Create<Packet>(b+point,unit+1);
+				p = origin_p->CreateFragment(point,unit+1);
 				point += (1+unit);
 				--using_channel;
-				uint32_t to_remove = p->GetSerializedSize() - unit - 1;
-				p->RemoveAtStart(to_remove);
-			}*/
-			p = origin_p;  //for testing
+			}
 
 			p->AddHeader(hdr);
 			packet_pieces[*i] = p;
 			//packet_pieces[*i] = packet->Copy();
-		}
-
-		if(b != NULL){
-			delete[] b;
-			b = NULL;
 		}
 	}
 
@@ -667,6 +668,13 @@ uint16_t ChannelBondingManager::GetChannelWithWidth(uint32_t width)
 
 void ChannelBondingManager::NeedRts(bool need){
 	need_rts = need;
+
+	if(!need)
+		CheckChannelBeforeSend();
+}
+
+void ChannelBondingManager::NeedCts(bool need){
+	need_cts = need;
 
 	if(!need)
 		CheckChannelBeforeSend();

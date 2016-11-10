@@ -771,9 +771,11 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
   m_txParams = params;
 
   if(enable_ch_bonding)
+  {
 	  ch_m->CheckChannelBeforeSend();
-
-  //m_currentPacket = ch_m->ConvertPacket(m_currentPacket);
+	  //if(hdr->IsData())
+		 // m_currentPacket = ch_m->ConvertPacket(m_currentPacket);
+  }
 
 
   m_currentTxVector = GetDataTxVector (m_currentPacket, &m_currentHdr);
@@ -823,20 +825,23 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
         }
     }
 
-  bool need = NeedRts ();
-
-  if(enable_ch_bonding)
-  {
-  	  ch_m->NeedRts(need);
-  }
-
   if (NeedRts ())
     {
       m_txParams.EnableRts ();
+      if(enable_ch_bonding)
+        {
+        	  ch_m->NeedRts(true);
+        	  ch_m->NeedCts(true);
+        }
     }
   else
     {
       m_txParams.DisableRts ();
+      if(enable_ch_bonding)
+	  {
+		  ch_m->NeedRts(false);
+		  ch_m->NeedCts(false);
+	  }
     }
 
   NS_LOG_DEBUG ("startTx size=" << GetSize (m_currentPacket, &m_currentHdr) <<
@@ -850,6 +855,8 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
     {
       if ((m_ctsToSelfSupported || m_stationManager->GetUseNonErpProtection ()) && NeedCtsToSelf ())
         {
+    	  if(enable_ch_bonding)
+				ch_m->NeedCts(true);
           SendCtsToSelf ();
         }
       else
@@ -956,6 +963,9 @@ MacLow::ReceiveOk (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, Wifi
           if (isPrevNavZero
               && hdr.GetAddr1 () == m_self)
             {
+        	    if(enable_ch_bonding)
+        	    	ch_m->NeedCts(true);
+
               NS_LOG_DEBUG ("rx RTS from=" << hdr.GetAddr2 () << ", schedule CTS");
               NS_ASSERT (m_sendCtsEvent.IsExpired ());
               m_stationManager->ReportRxOk (hdr.GetAddr2 (), &hdr,
@@ -1719,6 +1729,7 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
           newHdr.SetDuration (hdr->GetDuration ());
           newPacket->AddHeader (newHdr);
           newPacket->AddTrailer (fcs);
+
           if (queueSize == 1)
             {
               last = true;
@@ -1752,6 +1763,8 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
             {
               ampdutag.SetRemainingAmpduDuration (NanoSeconds (0));
             }
+
+
           newPacket->AddPacketTag (ampdutag);
 
           if (delay == Seconds (0))
@@ -2052,6 +2065,7 @@ MacLow::StartDataTxTimers (WifiTxVector dataTxVector)
 void
 MacLow::SendDataPacket (void)
 {
+
   NS_LOG_FUNCTION (this);
   /* send this packet directly. No RTS is needed. */
   WifiPreamble preamble;

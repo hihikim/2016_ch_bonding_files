@@ -21,6 +21,7 @@
 #include "msdu-aggregator.h"
 #include "mac-low.h"
 #include "ns3/wifi-helper.h"
+#include "ampdu-tag.h"
 
 
 
@@ -74,6 +75,7 @@ public:
   void ManageReceived (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
   void SetMyMac(Ptr<MacLow> mac);
   void NeedRts(bool need);
+  void NeedCts(bool need);
 
 
 private:
@@ -91,14 +93,15 @@ private:
   std::map< uint16_t, Ptr<Packet> > packet_pieces;
   uint16_t num_received;
   
+  bool alloc_last_primary_hdr;
+  WifiMacHeader last_primary_hdr;
+
   std::map<uint16_t, Ptr<WifiPhy> > m_phys;
 
   std::map<int,bool> received_channel;
 
-  EventId receive_rts;
-  EventId receive_cts;
-  EventId receive_orther;
-  bool need_rts;
+  EventId clean_timer;
+  bool need_rts, need_cts;
 
   uint16_t CheckChBonding(uint16_t primary);  //
 
