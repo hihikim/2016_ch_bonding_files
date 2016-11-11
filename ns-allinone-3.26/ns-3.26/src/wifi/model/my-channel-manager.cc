@@ -334,38 +334,69 @@ void ChannelBondingManager::Receive64Channel (Ptr<Packet> Packet, double rxSnr, 
 
 void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, uint16_t ch_num)
 {
+	bool isampdu = false;
 	WifiMacHeader hdr;
-
-	Packet->PeekHeader(hdr);
-
-	//test
 	AmpduTag ampdu;
+	AmpduSubframeHeader ampduhdr;
 
-
-	if(ch_num == primary_ch){
-		alloc_last_primary_hdr = true;
-		last_primary_hdr = hdr;
+	if(Packet->PeekPacketTag(ampdu))
+	{
+		isampdu = true;
+		Packet->PeekHeader(ampduhdr);
+		alloc_last_primary_hdr = false;
 	}
 
-	if(true)
+	else
 	{
-		num_received++;
-		received_channel[ch_num] = true;
-		last_received_packet[ch_num] = Packet;
+		isampdu = false;
+		Packet->PeekHeader(hdr);
+
+		if(ch_num == primary_ch){
+			alloc_last_primary_hdr = true;
+
+			last_primary_hdr = hdr;
+		}
+	}
+
+	num_received++;
+	received_channel[ch_num] = true;
+	last_received_packet[ch_num] = Packet;
 
 
-		//start timer
-		if(ch_num == primary_ch)
+	//start timer
+	if(ch_num == primary_ch)
+	{
+		if(clean_timer.IsRunning())
+			clean_timer.Cancel();
+
+		clean_timer = Simulator::Schedule(m_mac->GetSifs(),
+												&ChannelBondingManager::ClearReceiveRecord, this
+												);
+	}
+
+	if(isampdu)
+	{
+		/*
+		 * i think ampdu not use rts cts
+		 */
+
+		need_rts = false;
+
+		if(num_received == 1 && !need_rts)
 		{
-			if(clean_timer.IsRunning())
-				clean_timer.Cancel();
-
-			clean_timer = Simulator::Schedule(m_mac->GetSifs(),
-													&ChannelBondingManager::ClearReceiveRecord, this
-													);
+			request_width = max_width;
+			request_ch = GetChannelWithWidth(request_width);
 		}
 
-		if(Packet->PeekPacketTag(ampdu) || hdr.IsData() || hdr.IsQosData())
+		if(num_received == (request_width/20) ){
+			ManageReceived(Packet, rxSnr, txVector, preamble);
+		}
+
+	}
+
+	else
+	{
+		if(hdr.IsData() || hdr.IsQosData())
 		{
 
 			if(alloc_last_primary_hdr &&
@@ -405,7 +436,7 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 				request_width = ch_map.at(request_ch).second;
 
 
-			if (request_width != 0)  //received primary
+			if (primary_ch == ch_num)  //received primary
 			{
 				ManageReceived(Packet, rxSnr, txVector, preamble);
 			}
@@ -428,14 +459,24 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 
 void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
 {
-	WifiMacHeader hdr, etc;
 
 	//last_received_packet[primary_ch]->PeekHeader(hdr);
+	bool isampdu = false;
 	AmpduTag ampdu;
+	WifiMacHeader hdr, etc;
 	AmpduSubframeHeader ampduhdr, etc_ampdu;
 
-	Packet->PeekHeader(hdr);
 
+	if(Packet->PeekPacketTag(ampdu))
+	{
+		Packet->PeekHeader(ampduhdr);
+		isampdu = true;
+	}
+	else
+	{
+		Packet->PeekHeader(hdr);
+		isampdu = false;
+	}
 
 	Ptr<ns3::Packet> p, temp_p;
 
@@ -444,9 +485,8 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 
 
 	//if(hdr.IsData() || hdr.IsMgt ())
-	if(Packet->PeekPacketTag(ampdu))
+	if(isampdu)
 	{
-		//std::cout<<"say ho~\n";
 		for(int i=0;i<8;i++)
 		{
 			if(received_channel[ch_numbers[i]])
@@ -466,9 +506,9 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 			}
 		}
 
-		//std::cout<<*p;
 		p->AddHeader(ampduhdr);
 	}
+
 	else if(hdr.IsData() || hdr.IsQosData())
 	{
 		//std::cout<<"receive data\n";
@@ -498,30 +538,11 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 	else
 		p = Packet;
 
-
-	/*if(p->PeekPacketTag(ampdu))
-	{
-		std::cout<<"say ho~\n";
-		p->RemoveHeader(ampduhdr);
-		int p_size = p->GetSize();
-
-		temp_p = p->CreateFragment(0,p_size/2);
-		temp_p->AddHeader(ampduhdr);
-		temp_p->RemoveHeader(ampduhdr);
-		temp_p->AddAtEnd(p->CreateFragment(p_size/2, p_size - p_size/2 ));
-		temp_p->AddHeader(ampduhdr);
-		p = temp_p;
-	}*/
-
-
 	m_mac->DeaggregateAmpduAndReceive(p, rxSnr,txVector, preamble);
 }
 
 void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble, enum mpduType mpdutype)
 {
-	WifiMacHeader hdr;
-	packet->PeekHeader(hdr);
-
 	ConvertPacket(packet);
 	ClearReceiveRecord();
 
@@ -530,7 +551,6 @@ void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector t
 		if(packet_pieces[ch_numbers[i]] != 0)
 			m_phys[ch_numbers[i]]->SendPacket(packet_pieces[ch_numbers[i]], txVector, preamble, mpdutype);
 	}
-
 
 	CleanPacketPieces();
 
@@ -565,15 +585,16 @@ Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)
 
 	if(origin_p->PeekPacketTag(ampdu))
 	{
-
+		isampdu = true;
+		origin_p->RemoveHeader(ampduhdr);
 	}
 
+	else
+	{
+		isampdu = false;
+		origin_p->PeekHeader(hdr);
+	}
 
-
-
-
-
-	origin_p->PeekHeader(hdr);
 
 	if(request_ch == 0){  //이상
 		if(!need_rts)
@@ -592,14 +613,12 @@ Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)
 
 	if(isampdu)
 	{
-		origin_p->RemoveHeader(ampduhdr);
-
 		Ptr<Packet> p;
 
 		int size_p = origin_p->GetSize();
 
 		int point = 0;
-		int unit = size_p/using_channel;
+		int unit = size_p / using_channel;
 
 
 		for(std::vector<uint16_t>::iterator i = sub_chs.begin() ;
@@ -630,10 +649,8 @@ Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)
 	//if(hdr.IsData()|| hdr.IsMgt ())
 	else if(hdr.IsData() || hdr.IsQosData())
 	{
-		//std::cout<<"split data\n";
-		origin_p->RemoveHeader(hdr);
-
 		Ptr<Packet> p;
+		origin_p->RemoveHeader(hdr);
 
 		int size_p = origin_p->GetSize();
 
