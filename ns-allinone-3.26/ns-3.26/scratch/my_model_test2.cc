@@ -63,7 +63,7 @@ int main (int argc, char *argv[])
   std::cout << "MCS value" << "\t\t" << "Channel width" << "\t\t" << "short GI" << "\t\t" << "Throughput" << '\n';
   for (int i = 0; i <= 9; i++) //MCS
     {
-      for (int j = 20; j <= 160; ) //channel width
+      for (int j = 80; j <= 160; ) //channel width
         {
           if (i == 9 && j == 20)
             {
@@ -120,8 +120,8 @@ int main (int argc, char *argv[])
               apDevice = wifi.Install (phy, mac, wifiApNode);
 
               // Set channel width
-              Config::Set ("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/ChannelWidth", UintegerValue (j));
-	      /*Ptr<RegularWifiMac> m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(apDevice.Get(0))->GetMac());
+              //Config::Set ("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/ChannelWidth", UintegerValue (j));
+	      Ptr<RegularWifiMac> m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(apDevice.Get(0))->GetMac());
 
               Ptr<MacLow> m_low = m_mac->GetLow();
               m_low->EnableChannelBonding();
@@ -134,7 +134,7 @@ int main (int argc, char *argv[])
 
               m_low->EnableChannelBonding();
               m_low->SetChannelManager(phy, 36, j, WIFI_PHY_STANDARD_80211ac);
-              */
+              
 
 
               // mobility.
