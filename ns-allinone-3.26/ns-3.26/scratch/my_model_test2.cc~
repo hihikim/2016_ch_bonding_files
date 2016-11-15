@@ -125,7 +125,7 @@ int main (int argc, char *argv[])
 
               Ptr<MacLow> m_low = m_mac->GetLow();
               m_low->EnableChannelBonding();
-              m_low->SetChannelManager(phy, 36, j, WIFI_PHY_STANDARD_80211ac);
+              m_low->SetChannelManager(phy, 40, j, WIFI_PHY_STANDARD_80211ac);
 
               
               m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(staDevice.Get(0))->GetMac());
@@ -133,7 +133,7 @@ int main (int argc, char *argv[])
               m_low = m_mac->GetLow();
 
               m_low->EnableChannelBonding();
-              m_low->SetChannelManager(phy, 36, j, WIFI_PHY_STANDARD_80211ac);
+              m_low->SetChannelManager(phy, 40, j, WIFI_PHY_STANDARD_80211ac);
               
 
 
