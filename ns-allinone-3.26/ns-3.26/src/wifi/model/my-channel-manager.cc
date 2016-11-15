@@ -549,7 +549,10 @@ void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector t
 	for(int i=0;i<8;i++)
 	{
 		if(packet_pieces[ch_numbers[i]] != 0)
+		{
+			std::cout<<"send channel number : "<<ch_numbers[i]<<std::endl;
 			m_phys[ch_numbers[i]]->SendPacket(packet_pieces[ch_numbers[i]], txVector, preamble, mpdutype);
+		}
 	}
 
 	CleanPacketPieces();
