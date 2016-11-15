@@ -242,7 +242,7 @@ bool ChannelBondingManager::CheckAllSubChannelReceived(uint16_t ch_num)
 			{
 				last_received_packet[ch_num]->PeekHeader(hdr1);
 				last_received_packet[primary_ch]->PeekHeader(hdr2);
-				if(hdr1.GetAddr1() == hdr2.GetAddr2() &&
+				if(hdr1.GetAddr1() == hdr2.GetAddr1() &&
 					hdr1.GetType() == hdr2.GetType()
 				   )
 					return true;
@@ -494,9 +494,15 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 				temp_p = last_received_packet[ch_numbers[i]];
 
 				if(ch_numbers[i] == primary_ch)
+				{
 					temp_p->RemoveHeader(ampduhdr);
+					temp_p->RemoveHeader(hdr);
+				}
 				else
+				{
 					temp_p->RemoveHeader(etc_ampdu);
+					temp_p->RemoveHeader(etc);
+				}
 
 				if(p == 0)
 					p = temp_p;
@@ -505,14 +511,12 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 					p->AddAtEnd(temp_p);
 			}
 		}
-
+		p->AddHeader(hdr);
 		p->AddHeader(ampduhdr);
 	}
 
 	else if(hdr.IsData() || hdr.IsQosData())
 	{
-		//std::cout<<"receive data\n";
-
 		for(int i=0;i<8;i++)
 		{
 			if(received_channel[ch_numbers[i]])
@@ -531,7 +535,6 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 					p->AddAtEnd(temp_p);
 			}
 		}
-		//std::cout<<*p;
 		p->AddHeader(hdr);
 	}
 
@@ -550,7 +553,6 @@ void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector t
 	{
 		if(packet_pieces[ch_numbers[i]] != 0)
 		{
-			std::cout<<"send channel number : "<<ch_numbers[i]<<std::endl;
 			m_phys[ch_numbers[i]]->SendPacket(packet_pieces[ch_numbers[i]], txVector, preamble, mpdutype);
 		}
 	}
@@ -590,6 +592,7 @@ Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)
 	{
 		isampdu = true;
 		origin_p->RemoveHeader(ampduhdr);
+		origin_p->RemoveHeader(hdr);
 	}
 
 	else
@@ -642,7 +645,7 @@ Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)
 				point += (1+unit);
 				--using_channel;
 			}
-
+			p->AddHeader(hdr);
 			p->AddHeader(ampduhdr);
 			packet_pieces[*i] = p;
 		}
