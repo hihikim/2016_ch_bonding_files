@@ -91,10 +91,10 @@ private:
   Ptr<MacLow> m_mac;
   std::map< uint16_t, Ptr<Packet> > last_received_packet;
   std::map< uint16_t, Ptr<Packet> > packet_pieces;
-  uint16_t num_received;
   
   bool alloc_last_primary_hdr;
   WifiMacHeader last_primary_hdr;
+
 
   std::map<uint16_t, Ptr<WifiPhy> > m_phys;
 
@@ -115,6 +115,8 @@ private:
 
   void CleanPacketPieces();
   std::vector<uint16_t> FindSubChannels(uint16_t ch_num);
+
+  uint8_t GetNumberOfReceive();
 
 
 

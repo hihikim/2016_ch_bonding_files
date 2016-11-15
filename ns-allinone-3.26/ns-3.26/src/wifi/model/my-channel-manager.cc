@@ -25,7 +25,6 @@ ChannelBondingManager::ChannelBondingManager()
 	need_cts = false;
 	max_width = 160;
 	primary_ch = 36;
-	num_received = 0;
 	request_width = 160;
 
 	alloc_last_primary_hdr = false;
@@ -97,7 +96,7 @@ void ChannelBondingManager::MakePhys(const WifiPhyHelper &phy, Ptr<WifiPhy> prim
    Ptr<NetDevice> device = primary->GetDevice();
    Ptr<Node> node = device->GetNode();
 
-   num_received = 0;
+
    for(int i =0;i<8;++i){
 	   if(ch_numbers[i] == ch_num)
 	   {
@@ -131,9 +130,9 @@ void ChannelBondingManager::ClearReceiveRecord(){
 
 	for(int i =0;i<8;++i){
 		received_channel[ch_numbers[i]] = false;
+		last_received_packet[ch_numbers[i]] = 0;
 	}
 
-	num_received = 0;
 }
 
 
@@ -342,8 +341,16 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 	if(Packet->PeekPacketTag(ampdu))
 	{
 		isampdu = true;
-		Packet->PeekHeader(ampduhdr);
+		Packet->RemoveHeader(ampduhdr);
+		Packet->PeekHeader(hdr);
+		Packet->AddHeader(ampduhdr);
 		alloc_last_primary_hdr = false;
+
+		if(ch_num == primary_ch){
+			alloc_last_primary_hdr = true;
+
+			last_primary_hdr = hdr;
+		}
 	}
 
 	else
@@ -358,7 +365,6 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 		}
 	}
 
-	num_received++;
 	received_channel[ch_num] = true;
 	last_received_packet[ch_num] = Packet;
 
@@ -382,13 +388,13 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 
 		need_rts = false;
 
-		if(num_received == 1 && !need_rts)
+		if(GetNumberOfReceive() == 1 && !need_rts)
 		{
 			request_width = max_width;
 			request_ch = GetChannelWithWidth(request_width);
 		}
 
-		if(num_received == (request_width/20) ){
+		if(GetNumberOfReceive() == (request_width/20) ){
 			ManageReceived(Packet, rxSnr, txVector, preamble);
 		}
 
@@ -396,6 +402,8 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 
 	else
 	{
+		uint8_t num_received = GetNumberOfReceive();
+
 		if(hdr.IsData() || hdr.IsQosData())
 		{
 
@@ -491,7 +499,7 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 		{
 			if(received_channel[ch_numbers[i]])
 			{
-				temp_p = last_received_packet[ch_numbers[i]];
+				temp_p = last_received_packet[ch_numbers[i]]->Copy();
 
 				if(ch_numbers[i] == primary_ch)
 				{
@@ -521,7 +529,7 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 		{
 			if(received_channel[ch_numbers[i]])
 			{
-				temp_p = last_received_packet[ch_numbers[i]];
+				temp_p = last_received_packet[ch_numbers[i]]->Copy();
 
 				if(ch_numbers[i] == primary_ch)
 					temp_p->RemoveHeader(hdr);
@@ -539,8 +547,11 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 	}
 
 	else
+	{
 		p = Packet;
-
+		ClearReceiveRecord();
+	}
+	std::cout<<hdr.GetTypeString()<<std::endl;
 	m_mac->DeaggregateAmpduAndReceive(p, rxSnr,txVector, preamble);
 }
 
@@ -774,5 +785,94 @@ void ChannelBondingManager::NeedCts(bool need){
 	if(!need)
 		CheckChannelBeforeSend();
 }
+
+uint8_t ChannelBondingManager::GetNumberOfReceive()
+{
+	uint8_t result = 0;
+
+	if(!received_channel[primary_ch])
+		return result;
+
+	else
+	{
+		Ptr<Packet> p;
+		p = last_received_packet[primary_ch]->Copy();
+		AmpduTag ampdu;
+		WifiMacHeader hdr;
+		AmpduSubframeHeader ampduhdr;
+		bool primary_mpdu_tf, mpdu_tf;
+		Mac48Address primary_sender_addr;
+		WifiMacType primary_hdr_type;
+
+		if(p->PeekPacketTag(ampdu))
+		{
+			p->RemoveHeader(ampduhdr);
+			p->RemoveHeader(hdr);
+			primary_mpdu_tf = true;
+		}
+
+		else
+		{
+			p->RemoveHeader(hdr);
+			primary_mpdu_tf = false;
+		}
+
+		p = 0;
+		primary_sender_addr = hdr.GetAddr2();
+		primary_hdr_type = hdr.GetType();
+
+		std::cout<<"add1 : "<<hdr.GetAddr1()<<std::endl;
+		std::cout<<"group : "<<hdr.GetAddr1().IsGroup()<<std::endl;
+
+
+		for(int i=0;i<8;i++)
+		{
+			if(received_channel[ch_numbers[i]])
+			{
+				p = last_received_packet[ch_numbers[i]]->Copy();
+				if(p->PeekPacketTag(ampdu))
+				{
+					p->RemoveHeader(ampduhdr);
+					p->RemoveHeader(hdr);
+					mpdu_tf = true;
+				}
+
+				else
+				{
+					p->RemoveHeader(hdr);
+					mpdu_tf = false;
+				}
+
+				p = 0;
+
+				if(primary_mpdu_tf == mpdu_tf)
+				{
+					if(primary_sender_addr == hdr.GetAddr2() &&
+							primary_hdr_type == hdr.GetType())
+					{
+						++result;
+					}
+
+					else
+					{
+						received_channel[ch_numbers[i]] = false;
+						last_received_packet[ch_numbers[i]] = 0;
+					}
+				}
+				else
+				{
+					received_channel[ch_numbers[i]] = false;
+					last_received_packet[ch_numbers[i]] = 0;
+				}
+			}
+		}
+		return result;
+	}
+
+
+
+
+}
+
 
 }
