@@ -110,6 +110,7 @@ void ChannelBondingManager::MakePhys(const WifiPhyHelper &phy, Ptr<WifiPhy> prim
 		   m_phys[ch_numbers[i]]->ConfigureStandard (standard);
 	   }
 
+	   m_phys[ch_numbers[i]]->EnableChannelBonding(true);
 	   m_phys[ch_numbers[i]]->SetChannelNumber(ch_numbers[i]);
    }
 }
@@ -368,6 +369,14 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 	received_channel[ch_num] = true;
 	last_received_packet[ch_num] = Packet;
 
+	if(primary_ch == 40)
+	{
+		std::cout<<"receive width : " <<txVector.GetChannelWidth()<<std::endl;
+		std::cout<<"receive type : "<<hdr.GetTypeString()<<std::endl;
+		std::cout<<"receive add2 : "<<hdr.GetAddr2()<<std::endl;
+		std::cout<<"receive ch_num : "<<ch_num<<std::endl<<std::endl;
+
+	}
 
 	//start timer
 	if(ch_num == primary_ch)
@@ -388,9 +397,9 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 
 		need_rts = false;
 
-		if(GetNumberOfReceive() == 1 && !need_rts)
+		if(!need_rts)
 		{
-			request_width = max_width;
+			request_width = txVector.GetChannelWidth();
 			request_ch = GetChannelWithWidth(request_width);
 		}
 
@@ -414,9 +423,9 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 				need_rts = false;
 			}
 
-			if(num_received == 1 && !need_rts)
+			if(!need_rts)
 			{
-				request_width = max_width;
+				request_width = txVector.GetChannelWidth();
 				request_ch = GetChannelWithWidth(request_width);
 			}
 
@@ -532,9 +541,13 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 				temp_p = last_received_packet[ch_numbers[i]]->Copy();
 
 				if(ch_numbers[i] == primary_ch)
+				{
 					temp_p->RemoveHeader(hdr);
+				}
 				else
+				{
 					temp_p->RemoveHeader(etc);
+				}
 
 				if(p == 0)
 					p = temp_p;
@@ -551,7 +564,7 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 		p = Packet;
 		ClearReceiveRecord();
 	}
-	std::cout<<hdr.GetTypeString()<<std::endl;
+	//std::cout<<hdr.GetTypeString()<<std::endl;
 	m_mac->DeaggregateAmpduAndReceive(p, rxSnr,txVector, preamble);
 }
 
@@ -560,13 +573,31 @@ void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector t
 	ConvertPacket(packet);
 	ClearReceiveRecord();
 
+	WifiMacHeader hdr;
+
+	packet->PeekHeader(hdr);
+
+	if(primary_ch == 40)
+	{
+		std::cout<<"switching? : "<<m_phys[primary_ch]->IsStateSwitching()<<std::endl;
+		std::cout<<"tx? : "<<m_phys[primary_ch]->IsStateTx()<<std::endl;
+		std::cout<<"send hdr type : "<<hdr.GetTypeString()<<std::endl;
+		std::cout<<"send primary channel :"<<primary_ch<<std::endl;
+		std::cout<<"send send width : "<<request_width<<std::endl;
+	}
+	txVector.SetChannelWidth(request_width);
+
 	for(int i=0;i<8;i++)
 	{
 		if(packet_pieces[ch_numbers[i]] != 0)
 		{
+			if(primary_ch == 40)
+				std::cout<<"send channel : "<<ch_numbers[i]<<std::endl;
 			m_phys[ch_numbers[i]]->SendPacket(packet_pieces[ch_numbers[i]], txVector, preamble, mpdutype);
 		}
 	}
+
+	std::cout<<std::endl;
 
 	CleanPacketPieces();
 
@@ -624,6 +655,20 @@ Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)
 
 
 	std::vector<uint16_t> sub_chs = FindSubChannels(request_ch);
+	if(primary_ch == 40)
+	{
+		std::cout<<"requst_ch : "<<request_ch<<std::endl;
+		std::cout<<"sub channel maker :";
+
+		for(std::vector<uint16_t>::iterator i = sub_chs.begin();
+					i != sub_chs.end();
+					++i)
+		{
+			std::cout<<*i<<" ";
+		}
+		std::cout<<std::endl;
+	}
+
 
 
 	int using_channel = request_width / 20;
@@ -774,16 +819,10 @@ uint16_t ChannelBondingManager::GetChannelWithWidth(uint32_t width)
 
 void ChannelBondingManager::NeedRts(bool need){
 	need_rts = need;
-
-	if(!need)
-		CheckChannelBeforeSend();
 }
 
 void ChannelBondingManager::NeedCts(bool need){
 	need_cts = need;
-
-	if(!need)
-		CheckChannelBeforeSend();
 }
 
 uint8_t ChannelBondingManager::GetNumberOfReceive()
@@ -821,9 +860,8 @@ uint8_t ChannelBondingManager::GetNumberOfReceive()
 		primary_sender_addr = hdr.GetAddr2();
 		primary_hdr_type = hdr.GetType();
 
-		std::cout<<"add1 : "<<hdr.GetAddr1()<<std::endl;
-		std::cout<<"group : "<<hdr.GetAddr1().IsGroup()<<std::endl;
-
+		//std::cout<<"add1 : "<<hdr.GetAddr1()<<std::endl;
+		//std::cout<<"group : "<<hdr.GetAddr1().IsGroup()<<std::endl;
 
 		for(int i=0;i<8;i++)
 		{

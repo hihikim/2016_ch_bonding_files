@@ -462,6 +462,11 @@ YansWifiPhy::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, WifiPr
 void
 YansWifiPhy::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, WifiPreamble preamble, enum mpduType mpdutype)
 {
+  uint32_t origin_width = txVector.GetChannelWidth();
+  if(enable_ch_bonding)
+    txVector.SetChannelWidth(20);
+
+
   NS_LOG_FUNCTION (this << packet << txVector.GetMode () 
     << txVector.GetMode ().GetDataRate (txVector)
     << preamble << (uint32_t)txVector.GetTxPowerLevel () << (uint32_t)mpdutype);
@@ -504,6 +509,11 @@ YansWifiPhy::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, WifiPr
       //send the first MPDU in an MPDU
       m_txMpduReferenceNumber++;
     }
+
+  if(enable_ch_bonding)
+    txVector.SetChannelWidth(origin_width);
+
+
   struct mpduInfo aMpdu;
   aMpdu.type = mpdutype;
   aMpdu.mpduRefNumber = m_txMpduReferenceNumber;

@@ -1,6 +1,6 @@
-# project ns (3.26) configured on Tue Nov 15 19:31:22 2016 by
+# project ns (3.26) configured on Tue Nov 15 21:27:35 2016 by
 # waf 1.8.19 (abi 98, python 20706f0 on linux2)
-# using ./waf configure --build-profile=debug
+# using ./waf --build-profile=debug configure
 #
 ----------------------------------------
 Setting top to
@@ -508,9 +508,9 @@ Checking for compilation flag -Wl,--soname=foo support
 ==>
 int main() { return 0; }
 <==
-[1/1] Compiling [32mbuild/.conf_check_743d1d0037552d534376577d3c1b2149/test.cpp[0m
+[1/1] Compiling [32mbuild/.conf_check_f67edcbca94800ed607892b37e06375c/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-Wl,--soname=foo', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_743d1d0037552d534376577d3c1b2149/testbuild/test.cpp.1.o']
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-Wl,--soname=foo', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_f67edcbca94800ed607892b37e06375c/testbuild/test.cpp.1.o']
 ok
 ------------------------------------------------------
 Checking for program 'python'
@@ -613,12 +613,12 @@ int main(int argc, char **argv)
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_f5a77e9ebaa7a475da3d3f4d1e28c32e/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_5f42446abcbfcad49c7de34d230ea852/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-fno-strict-aliasing', '-fstack-protector', '-fwrapv', '-I/usr/include/python2.7', '-I/usr/include/x86_64-linux-gnu/python2.7', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python2.7/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python2.7/dist-packages"', '-DHAVE_PYEMBED=1', '-D_FORTIFY_SOURCE=2', '-DNDEBUG', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_f5a77e9ebaa7a475da3d3f4d1e28c32e/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_f5a77e9ebaa7a475da3d3f4d1e28c32e/testbuild/testprog[0m
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-fno-strict-aliasing', '-fstack-protector', '-fwrapv', '-I/usr/include/python2.7', '-I/usr/include/x86_64-linux-gnu/python2.7', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python2.7/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python2.7/dist-packages"', '-DHAVE_PYEMBED=1', '-D_FORTIFY_SOURCE=2', '-DNDEBUG', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_5f42446abcbfcad49c7de34d230ea852/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_5f42446abcbfcad49c7de34d230ea852/testbuild/testprog[0m
 
-['/usr/bin/g++', '-Xlinker', '-export-dynamic', '-Wl,-O1', '-Wl,-Bsymbolic-functions', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_f5a77e9ebaa7a475da3d3f4d1e28c32e/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-L/usr/lib/python2.7/config-x86_64-linux-gnu', '-L/usr/lib', '-lpthread', '-ldl', '-lutil', '-lm', '-lpython2.7']
+['/usr/bin/g++', '-Xlinker', '-export-dynamic', '-Wl,-O1', '-Wl,-Bsymbolic-functions', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_5f42446abcbfcad49c7de34d230ea852/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-L/usr/lib/python2.7/config-x86_64-linux-gnu', '-L/usr/lib', '-lpthread', '-ldl', '-lutil', '-lm', '-lpython2.7']
 yes
 ------------------------------------------------------------------
 Asking python-config for pyext '--cflags --libs --ldflags' flags
@@ -650,30 +650,30 @@ int main(int argc, char **argv)
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_8cd54d6614e02c60947c41a713a28f77/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_4a6fea69532dd995299256eda93b4fb7/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-fPIC', '-fno-strict-aliasing', '-fstack-protector', '-fwrapv', '-I/usr/include/python2.7', '-I/usr/include/x86_64-linux-gnu/python2.7', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python2.7/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python2.7/dist-packages"', '-DHAVE_PYEMBED=1', '-DHAVE_PYEXT=1', '-D_FORTIFY_SOURCE=2', '-DNDEBUG', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_8cd54d6614e02c60947c41a713a28f77/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_8cd54d6614e02c60947c41a713a28f77/testbuild/testprog.so[0m
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-fPIC', '-fno-strict-aliasing', '-fstack-protector', '-fwrapv', '-I/usr/include/python2.7', '-I/usr/include/x86_64-linux-gnu/python2.7', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python2.7/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python2.7/dist-packages"', '-DHAVE_PYEMBED=1', '-DHAVE_PYEXT=1', '-D_FORTIFY_SOURCE=2', '-DNDEBUG', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_4a6fea69532dd995299256eda93b4fb7/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_4a6fea69532dd995299256eda93b4fb7/testbuild/testprog.so[0m
 
-['/usr/bin/g++', '-shared', '-Xlinker', '-export-dynamic', '-Wl,-O1', '-Wl,-Bsymbolic-functions', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_8cd54d6614e02c60947c41a713a28f77/testbuild/testprog.so', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-L/usr/lib/python2.7/config-x86_64-linux-gnu', '-L/usr/lib', '-lpthread', '-ldl', '-lutil', '-lm', '-lpython2.7']
+['/usr/bin/g++', '-shared', '-Xlinker', '-export-dynamic', '-Wl,-O1', '-Wl,-Bsymbolic-functions', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_4a6fea69532dd995299256eda93b4fb7/testbuild/testprog.so', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-L/usr/lib/python2.7/config-x86_64-linux-gnu', '-L/usr/lib', '-lpthread', '-ldl', '-lutil', '-lm', '-lpython2.7']
 yes
 ------------------------------------------------------------------
 Checking for compilation flag -fvisibility=hidden support
 ==>
 int main() { return 0; }
 <==
-[1/1] Compiling [32mbuild/.conf_check_743d1d0037552d534376577d3c1b2149/test.cpp[0m
+[1/1] Compiling [32mbuild/.conf_check_f67edcbca94800ed607892b37e06375c/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-fvisibility=hidden', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python2.7/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python2.7/dist-packages"', '-DHAVE_PYEMBED=1', '-DHAVE_PYEXT=1', '-DHAVE_PYTHON_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_743d1d0037552d534376577d3c1b2149/testbuild/test.cpp.1.o']
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-fvisibility=hidden', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python2.7/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python2.7/dist-packages"', '-DHAVE_PYEMBED=1', '-DHAVE_PYEXT=1', '-DHAVE_PYTHON_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_f67edcbca94800ed607892b37e06375c/testbuild/test.cpp.1.o']
 ok
 ------------------------------------------------------------------
 Checking for compilation flag -Wno-array-bounds support
 ==>
 int main() { return 0; }
 <==
-[1/1] Compiling [32mbuild/.conf_check_743d1d0037552d534376577d3c1b2149/test.cpp[0m
+[1/1] Compiling [32mbuild/.conf_check_f67edcbca94800ed607892b37e06375c/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-Wno-array-bounds', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python2.7/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python2.7/dist-packages"', '-DHAVE_PYEMBED=1', '-DHAVE_PYEXT=1', '-DHAVE_PYTHON_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_743d1d0037552d534376577d3c1b2149/testbuild/test.cpp.1.o']
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-Wno-array-bounds', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python2.7/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python2.7/dist-packages"', '-DHAVE_PYEMBED=1', '-DHAVE_PYEXT=1', '-DHAVE_PYTHON_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_f67edcbca94800ed607892b37e06375c/testbuild/test.cpp.1.o']
 ok
 ------------------------------------------------------------------
 Checking for pybindgen location
@@ -701,9 +701,9 @@ int main ()
 }
 
 <==
-[1/1] Compiling [32mbuild/.conf_check_5c53ba91423d4ff4ee3aa0e425a968db/test.cpp[0m
+[1/1] Compiling [32mbuild/.conf_check_2965619650b9d3967fd2916dfecb8561/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python2.7/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python2.7/dist-packages"', '-DHAVE_PYEMBED=1', '-DHAVE_PYEXT=1', '-DHAVE_PYTHON_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_5c53ba91423d4ff4ee3aa0e425a968db/testbuild/test.cpp.1.o']
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python2.7/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python2.7/dist-packages"', '-DHAVE_PYEMBED=1', '-DHAVE_PYEXT=1', '-DHAVE_PYTHON_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_2965619650b9d3967fd2916dfecb8561/testbuild/test.cpp.1.o']
 yes
 ------------------------------------------------------------------
 Checking for types uint64_t and unsigned long equivalence
@@ -722,9 +722,9 @@ int main ()
 }
 
 <==
-[1/1] Compiling [32mbuild/.conf_check_e01526508c7a2b036aa8c7d7688fcadf/test.cpp[0m
+[1/1] Compiling [32mbuild/.conf_check_6232ee00c6466a7e3f1b74bb75746263/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python2.7/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python2.7/dist-packages"', '-DHAVE_PYEMBED=1', '-DHAVE_PYEXT=1', '-DHAVE_PYTHON_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_e01526508c7a2b036aa8c7d7688fcadf/testbuild/test.cpp.1.o']
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python2.7/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python2.7/dist-packages"', '-DHAVE_PYEMBED=1', '-DHAVE_PYEXT=1', '-DHAVE_PYTHON_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_6232ee00c6466a7e3f1b74bb75746263/testbuild/test.cpp.1.o']
 err: ../test.cpp: In function ‘int main()’:
 ../test.cpp:7:67: error: conversion from ‘std::vector<long long unsigned int>’ to non-scalar type ‘std::vector<long unsigned int>’ requested
     std::vector< uint64_t > t = std::vector< unsigned long long > ();
@@ -737,8 +737,8 @@ from /home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/bindin
     raise Errors.BuildError(self.producer.error)
 BuildError: Build failed
  -> task in 'testprog' failed (exit status 1): 
-	{task 140354612821456: cxx test.cpp -> test.cpp.1.o}
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python2.7/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python2.7/dist-packages"', '-DHAVE_PYEMBED=1', '-DHAVE_PYEXT=1', '-DHAVE_PYTHON_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_e01526508c7a2b036aa8c7d7688fcadf/testbuild/test.cpp.1.o']
+	{task 140368301632976: cxx test.cpp -> test.cpp.1.o}
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python2.7/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python2.7/dist-packages"', '-DHAVE_PYEMBED=1', '-DHAVE_PYEXT=1', '-DHAVE_PYTHON_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_6232ee00c6466a7e3f1b74bb75746263/testbuild/test.cpp.1.o']
 
 no
 from /home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/bindings/python: The configuration failed
@@ -760,12 +760,12 @@ int main ()
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_c6b584faa961a2f029f05519cd5a9740/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_f58cd1fc09bc935d5cdc210981f67cc9/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python2.7/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python2.7/dist-packages"', '-DHAVE_PYEMBED=1', '-DHAVE_PYEXT=1', '-DHAVE_PYTHON_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_c6b584faa961a2f029f05519cd5a9740/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_c6b584faa961a2f029f05519cd5a9740/testbuild/testprog[0m
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python2.7/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python2.7/dist-packages"', '-DHAVE_PYEMBED=1', '-DHAVE_PYEXT=1', '-DHAVE_PYTHON_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_f58cd1fc09bc935d5cdc210981f67cc9/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_f58cd1fc09bc935d5cdc210981f67cc9/testbuild/testprog[0m
 
-['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_c6b584faa961a2f029f05519cd5a9740/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
+['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_f58cd1fc09bc935d5cdc210981f67cc9/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 complete
 ------------------------------------------------------------------
 Checking for python module 'pygccxml'
@@ -817,12 +817,12 @@ Checking for boost linkage
 int main() { boost::system::error_code c; }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_e3bd7222208c68631f77f18ca2da48b7/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_8563beb41c0ae332ce1188ebdaef8f07/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-I/usr/include', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python2.7/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python2.7/dist-packages"', '-DHAVE_PYEMBED=1', '-DHAVE_PYEXT=1', '-DHAVE_PYTHON_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_e3bd7222208c68631f77f18ca2da48b7/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_e3bd7222208c68631f77f18ca2da48b7/testbuild/testprog[0m
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-I/usr/include', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python2.7/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python2.7/dist-packages"', '-DHAVE_PYEMBED=1', '-DHAVE_PYEXT=1', '-DHAVE_PYTHON_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_8563beb41c0ae332ce1188ebdaef8f07/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_8563beb41c0ae332ce1188ebdaef8f07/testbuild/testprog[0m
 
-['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_e3bd7222208c68631f77f18ca2da48b7/testbuild/testprog', '-Wl,-Bstatic', '-L/usr/lib/x86_64-linux-gnu', '-Wl,-Bdynamic', '-L/usr/lib/x86_64-linux-gnu', '-lboost_system', '-lboost_signals', '-lboost_filesystem']
+['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_8563beb41c0ae332ce1188ebdaef8f07/testbuild/testprog', '-Wl,-Bstatic', '-L/usr/lib/x86_64-linux-gnu', '-Wl,-Bdynamic', '-L/usr/lib/x86_64-linux-gnu', '-lboost_system', '-lboost_signals', '-lboost_filesystem']
 ok
 ------------------------------------------------------------------
 Checking for click location
@@ -858,9 +858,9 @@ int main(int argc, char **argv) {
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_e87ef32ff93385d95949eccf37bea158/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_60e215861a09a35b5b72a26d92948a72/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_e87ef32ff93385d95949eccf37bea158/testbuild/test.cpp.1.o']
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_60e215861a09a35b5b72a26d92948a72/testbuild/test.cpp.1.o']
 err: ../test.cpp: In function ‘int main(int, char**)’:
 ../test.cpp:5:7: error: ‘uint128_t’ was not declared in this scope
   if ((uint128_t *) 0) return 0;
@@ -882,8 +882,8 @@ from /home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/src/co
     raise Errors.BuildError(self.producer.error)
 BuildError: Build failed
  -> task in 'testprog' failed (exit status 1): 
-	{task 140354612983440: cxx test.cpp -> test.cpp.1.o}
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_e87ef32ff93385d95949eccf37bea158/testbuild/test.cpp.1.o']
+	{task 140368301799056: cxx test.cpp -> test.cpp.1.o}
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_60e215861a09a35b5b72a26d92948a72/testbuild/test.cpp.1.o']
 
 not found
 from /home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/src/core: The configuration failed
@@ -900,12 +900,12 @@ int main(int argc, char **argv) {
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_d85503554d5cf8c7fd9509703de3033e/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_9558fd4c1702cc25626102eba5957e99/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_d85503554d5cf8c7fd9509703de3033e/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_d85503554d5cf8c7fd9509703de3033e/testbuild/testprog[0m
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_9558fd4c1702cc25626102eba5957e99/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_9558fd4c1702cc25626102eba5957e99/testbuild/testprog[0m
 
-['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_d85503554d5cf8c7fd9509703de3033e/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
+['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_9558fd4c1702cc25626102eba5957e99/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
 ------------------------------------------------------------------
 Checking high precision implementation
@@ -921,12 +921,12 @@ int main(int argc, char **argv) {
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_7278fa3a999bd164284d4443e7ab03e1/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_6fd5d66d2d4e8400c0add9fce8a84340/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_7278fa3a999bd164284d4443e7ab03e1/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_7278fa3a999bd164284d4443e7ab03e1/testbuild/testprog[0m
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_6fd5d66d2d4e8400c0add9fce8a84340/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_6fd5d66d2d4e8400c0add9fce8a84340/testbuild/testprog[0m
 
-['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_7278fa3a999bd164284d4443e7ab03e1/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
+['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_6fd5d66d2d4e8400c0add9fce8a84340/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
 ------------------------------------------------------------------
 Checking for header inttypes.h
@@ -939,12 +939,12 @@ int main(int argc, char **argv) {
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_93170a5888a3569cdbbee67ad13b6dda/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_0f235dfabd51c81f974e301de73e26dc/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_STDINT_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_93170a5888a3569cdbbee67ad13b6dda/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_93170a5888a3569cdbbee67ad13b6dda/testbuild/testprog[0m
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_STDINT_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_0f235dfabd51c81f974e301de73e26dc/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_0f235dfabd51c81f974e301de73e26dc/testbuild/testprog[0m
 
-['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_93170a5888a3569cdbbee67ad13b6dda/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
+['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_0f235dfabd51c81f974e301de73e26dc/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
 ------------------------------------------------------------------
 Checking for header sys/inttypes.h
@@ -957,9 +957,9 @@ int main(int argc, char **argv) {
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_ece95bb6a05a8717b367ab5b060cd7e1/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_bc39e38e6948e5aa760b3451a7fd0c83/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_STDINT_H=1', '-DHAVE_INTTYPES_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_ece95bb6a05a8717b367ab5b060cd7e1/testbuild/test.cpp.1.o']
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_STDINT_H=1', '-DHAVE_INTTYPES_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_bc39e38e6948e5aa760b3451a7fd0c83/testbuild/test.cpp.1.o']
 err: ../test.cpp:1:26: fatal error: sys/inttypes.h: 그런 파일이나 디렉터리가 없습니다
  #include <sys/inttypes.h>
                           ^
@@ -972,8 +972,8 @@ from /home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/src/co
     raise Errors.BuildError(self.producer.error)
 BuildError: Build failed
  -> task in 'testprog' failed (exit status 1): 
-	{task 140354612995664: cxx test.cpp -> test.cpp.1.o}
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_STDINT_H=1', '-DHAVE_INTTYPES_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_ece95bb6a05a8717b367ab5b060cd7e1/testbuild/test.cpp.1.o']
+	{task 140368301811280: cxx test.cpp -> test.cpp.1.o}
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_STDINT_H=1', '-DHAVE_INTTYPES_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_bc39e38e6948e5aa760b3451a7fd0c83/testbuild/test.cpp.1.o']
 
 not found
 from /home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/src/core: The configuration failed
@@ -988,12 +988,12 @@ int main(int argc, char **argv) {
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_80faa1baac779724c7fc0f20242a3e55/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_80d6ff2616b48566dd031b0e9a8bc8cf/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_STDINT_H=1', '-DHAVE_INTTYPES_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_80faa1baac779724c7fc0f20242a3e55/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_80faa1baac779724c7fc0f20242a3e55/testbuild/testprog[0m
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_STDINT_H=1', '-DHAVE_INTTYPES_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_80d6ff2616b48566dd031b0e9a8bc8cf/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_80d6ff2616b48566dd031b0e9a8bc8cf/testbuild/testprog[0m
 
-['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_80faa1baac779724c7fc0f20242a3e55/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
+['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_80d6ff2616b48566dd031b0e9a8bc8cf/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
 ------------------------------------------------------------------
 Checking for header sys/stat.h
@@ -1006,12 +1006,12 @@ int main(int argc, char **argv) {
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_dd655628acce207cc13c7b48d3fedefc/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_43f85fc79b162e36911f770b43086f4e/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_STDINT_H=1', '-DHAVE_INTTYPES_H=1', '-DHAVE_SYS_TYPES_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_dd655628acce207cc13c7b48d3fedefc/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_dd655628acce207cc13c7b48d3fedefc/testbuild/testprog[0m
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_STDINT_H=1', '-DHAVE_INTTYPES_H=1', '-DHAVE_SYS_TYPES_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_43f85fc79b162e36911f770b43086f4e/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_43f85fc79b162e36911f770b43086f4e/testbuild/testprog[0m
 
-['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_dd655628acce207cc13c7b48d3fedefc/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
+['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_43f85fc79b162e36911f770b43086f4e/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
 ------------------------------------------------------------------
 Checking for header dirent.h
@@ -1024,12 +1024,12 @@ int main(int argc, char **argv) {
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_714ef077e15c391ba731c18c93200464/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_a044d6cacbb9949d75f4e6584c92e5d9/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_STDINT_H=1', '-DHAVE_INTTYPES_H=1', '-DHAVE_SYS_TYPES_H=1', '-DHAVE_SYS_STAT_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_714ef077e15c391ba731c18c93200464/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_714ef077e15c391ba731c18c93200464/testbuild/testprog[0m
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_STDINT_H=1', '-DHAVE_INTTYPES_H=1', '-DHAVE_SYS_TYPES_H=1', '-DHAVE_SYS_STAT_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_a044d6cacbb9949d75f4e6584c92e5d9/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_a044d6cacbb9949d75f4e6584c92e5d9/testbuild/testprog[0m
 
-['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_714ef077e15c391ba731c18c93200464/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
+['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_a044d6cacbb9949d75f4e6584c92e5d9/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
 ------------------------------------------------------------------
 Checking for header stdlib.h
@@ -1042,12 +1042,12 @@ int main(int argc, char **argv) {
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_1f64b46abad116f7018a2af6bb956a05/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_24efbd4edf63b2bf9f3dcefbdfbf3625/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_STDINT_H=1', '-DHAVE_INTTYPES_H=1', '-DHAVE_SYS_TYPES_H=1', '-DHAVE_SYS_STAT_H=1', '-DHAVE_DIRENT_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_1f64b46abad116f7018a2af6bb956a05/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_1f64b46abad116f7018a2af6bb956a05/testbuild/testprog[0m
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_STDINT_H=1', '-DHAVE_INTTYPES_H=1', '-DHAVE_SYS_TYPES_H=1', '-DHAVE_SYS_STAT_H=1', '-DHAVE_DIRENT_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_24efbd4edf63b2bf9f3dcefbdfbf3625/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_24efbd4edf63b2bf9f3dcefbdfbf3625/testbuild/testprog[0m
 
-['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_1f64b46abad116f7018a2af6bb956a05/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
+['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_24efbd4edf63b2bf9f3dcefbdfbf3625/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
 ------------------------------------------------------------------
 Checking for header signal.h
@@ -1060,12 +1060,12 @@ int main(int argc, char **argv) {
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_b9d920eecd41a0233964339041c4bb89/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_c5fb46d772df0ce258b12eda5db40a1e/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_STDINT_H=1', '-DHAVE_INTTYPES_H=1', '-DHAVE_SYS_TYPES_H=1', '-DHAVE_SYS_STAT_H=1', '-DHAVE_DIRENT_H=1', '-DHAVE_STDLIB_H=1', '-DHAVE_GETENV=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_b9d920eecd41a0233964339041c4bb89/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_b9d920eecd41a0233964339041c4bb89/testbuild/testprog[0m
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_STDINT_H=1', '-DHAVE_INTTYPES_H=1', '-DHAVE_SYS_TYPES_H=1', '-DHAVE_SYS_STAT_H=1', '-DHAVE_DIRENT_H=1', '-DHAVE_STDLIB_H=1', '-DHAVE_GETENV=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_c5fb46d772df0ce258b12eda5db40a1e/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_c5fb46d772df0ce258b12eda5db40a1e/testbuild/testprog[0m
 
-['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_b9d920eecd41a0233964339041c4bb89/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
+['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_c5fb46d772df0ce258b12eda5db40a1e/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
 ------------------------------------------------------------------
 Checking for header pthread.h
@@ -1080,12 +1080,12 @@ int main ()
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_6c60bd46d336d4d4ea53d7f03653e812/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_3595b729f2153e7d5cc80a2b4c3a0903/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-pthread', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_STDINT_H=1', '-DHAVE_INTTYPES_H=1', '-DHAVE_SYS_TYPES_H=1', '-DHAVE_SYS_STAT_H=1', '-DHAVE_DIRENT_H=1', '-DHAVE_STDLIB_H=1', '-DHAVE_GETENV=1', '-DHAVE_SIGNAL_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_6c60bd46d336d4d4ea53d7f03653e812/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_6c60bd46d336d4d4ea53d7f03653e812/testbuild/testprog[0m
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-pthread', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_STDINT_H=1', '-DHAVE_INTTYPES_H=1', '-DHAVE_SYS_TYPES_H=1', '-DHAVE_SYS_STAT_H=1', '-DHAVE_DIRENT_H=1', '-DHAVE_STDLIB_H=1', '-DHAVE_GETENV=1', '-DHAVE_SIGNAL_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_3595b729f2153e7d5cc80a2b4c3a0903/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_3595b729f2153e7d5cc80a2b4c3a0903/testbuild/testprog[0m
 
-['/usr/bin/g++', '-pthread', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_6c60bd46d336d4d4ea53d7f03653e812/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
+['/usr/bin/g++', '-pthread', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_3595b729f2153e7d5cc80a2b4c3a0903/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
 ------------------------------------------------------------------
 Checking for header stdint.h
@@ -1098,12 +1098,12 @@ int main(int argc, char **argv) {
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_7278fa3a999bd164284d4443e7ab03e1/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_6fd5d66d2d4e8400c0add9fce8a84340/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_INTTYPES_H=1', '-DHAVE_SYS_TYPES_H=1', '-DHAVE_SYS_STAT_H=1', '-DHAVE_DIRENT_H=1', '-DHAVE_STDLIB_H=1', '-DHAVE_GETENV=1', '-DHAVE_SIGNAL_H=1', '-DHAVE_PTHREAD_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_7278fa3a999bd164284d4443e7ab03e1/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_7278fa3a999bd164284d4443e7ab03e1/testbuild/testprog[0m
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_INTTYPES_H=1', '-DHAVE_SYS_TYPES_H=1', '-DHAVE_SYS_STAT_H=1', '-DHAVE_DIRENT_H=1', '-DHAVE_STDLIB_H=1', '-DHAVE_GETENV=1', '-DHAVE_SIGNAL_H=1', '-DHAVE_PTHREAD_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_6fd5d66d2d4e8400c0add9fce8a84340/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_6fd5d66d2d4e8400c0add9fce8a84340/testbuild/testprog[0m
 
-['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_7278fa3a999bd164284d4443e7ab03e1/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
+['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_6fd5d66d2d4e8400c0add9fce8a84340/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
 ------------------------------------------------------------------
 Checking for header inttypes.h
@@ -1116,12 +1116,12 @@ int main(int argc, char **argv) {
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_93170a5888a3569cdbbee67ad13b6dda/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_0f235dfabd51c81f974e301de73e26dc/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_SYS_TYPES_H=1', '-DHAVE_SYS_STAT_H=1', '-DHAVE_DIRENT_H=1', '-DHAVE_STDLIB_H=1', '-DHAVE_GETENV=1', '-DHAVE_SIGNAL_H=1', '-DHAVE_PTHREAD_H=1', '-DHAVE_STDINT_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_93170a5888a3569cdbbee67ad13b6dda/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_93170a5888a3569cdbbee67ad13b6dda/testbuild/testprog[0m
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_SYS_TYPES_H=1', '-DHAVE_SYS_STAT_H=1', '-DHAVE_DIRENT_H=1', '-DHAVE_STDLIB_H=1', '-DHAVE_GETENV=1', '-DHAVE_SIGNAL_H=1', '-DHAVE_PTHREAD_H=1', '-DHAVE_STDINT_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_0f235dfabd51c81f974e301de73e26dc/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_0f235dfabd51c81f974e301de73e26dc/testbuild/testprog[0m
 
-['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_93170a5888a3569cdbbee67ad13b6dda/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
+['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_0f235dfabd51c81f974e301de73e26dc/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
 ------------------------------------------------------------------
 Checking for header sys/inttypes.h
@@ -1134,9 +1134,9 @@ int main(int argc, char **argv) {
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_ece95bb6a05a8717b367ab5b060cd7e1/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_bc39e38e6948e5aa760b3451a7fd0c83/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_SYS_TYPES_H=1', '-DHAVE_SYS_STAT_H=1', '-DHAVE_DIRENT_H=1', '-DHAVE_STDLIB_H=1', '-DHAVE_GETENV=1', '-DHAVE_SIGNAL_H=1', '-DHAVE_PTHREAD_H=1', '-DHAVE_STDINT_H=1', '-DHAVE_INTTYPES_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_ece95bb6a05a8717b367ab5b060cd7e1/testbuild/test.cpp.1.o']
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_SYS_TYPES_H=1', '-DHAVE_SYS_STAT_H=1', '-DHAVE_DIRENT_H=1', '-DHAVE_STDLIB_H=1', '-DHAVE_GETENV=1', '-DHAVE_SIGNAL_H=1', '-DHAVE_PTHREAD_H=1', '-DHAVE_STDINT_H=1', '-DHAVE_INTTYPES_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_bc39e38e6948e5aa760b3451a7fd0c83/testbuild/test.cpp.1.o']
 err: ../test.cpp:1:26: fatal error: sys/inttypes.h: 그런 파일이나 디렉터리가 없습니다
  #include <sys/inttypes.h>
                           ^
@@ -1149,8 +1149,8 @@ from /home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/src/co
     raise Errors.BuildError(self.producer.error)
 BuildError: Build failed
  -> task in 'testprog' failed (exit status 1): 
-	{task 140354612189904: cxx test.cpp -> test.cpp.1.o}
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_SYS_TYPES_H=1', '-DHAVE_SYS_STAT_H=1', '-DHAVE_DIRENT_H=1', '-DHAVE_STDLIB_H=1', '-DHAVE_GETENV=1', '-DHAVE_SIGNAL_H=1', '-DHAVE_PTHREAD_H=1', '-DHAVE_STDINT_H=1', '-DHAVE_INTTYPES_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_ece95bb6a05a8717b367ab5b060cd7e1/testbuild/test.cpp.1.o']
+	{task 140368301001424: cxx test.cpp -> test.cpp.1.o}
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_SYS_TYPES_H=1', '-DHAVE_SYS_STAT_H=1', '-DHAVE_DIRENT_H=1', '-DHAVE_STDLIB_H=1', '-DHAVE_GETENV=1', '-DHAVE_SIGNAL_H=1', '-DHAVE_PTHREAD_H=1', '-DHAVE_STDINT_H=1', '-DHAVE_INTTYPES_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_bc39e38e6948e5aa760b3451a7fd0c83/testbuild/test.cpp.1.o']
 
 not found
 from /home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/src/core: The configuration failed
@@ -1164,12 +1164,12 @@ int main(int argc, char **argv) {
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_5192a4c7ab3de6cca0f534e2111e3a10/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_7ae5b7a1c5cd1cc3d16125cdb5bb25d9/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-pthread', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_SYS_TYPES_H=1', '-DHAVE_SYS_STAT_H=1', '-DHAVE_DIRENT_H=1', '-DHAVE_STDLIB_H=1', '-DHAVE_GETENV=1', '-DHAVE_SIGNAL_H=1', '-DHAVE_PTHREAD_H=1', '-DHAVE_STDINT_H=1', '-DHAVE_INTTYPES_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_5192a4c7ab3de6cca0f534e2111e3a10/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_5192a4c7ab3de6cca0f534e2111e3a10/testbuild/testprog[0m
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-pthread', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE___UINT128_T=1', '-DINT64X64_USE_128=1', '-DHAVE_SYS_TYPES_H=1', '-DHAVE_SYS_STAT_H=1', '-DHAVE_DIRENT_H=1', '-DHAVE_STDLIB_H=1', '-DHAVE_GETENV=1', '-DHAVE_SIGNAL_H=1', '-DHAVE_PTHREAD_H=1', '-DHAVE_STDINT_H=1', '-DHAVE_INTTYPES_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_7ae5b7a1c5cd1cc3d16125cdb5bb25d9/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_7ae5b7a1c5cd1cc3d16125cdb5bb25d9/testbuild/testprog[0m
 
-['/usr/bin/g++', '-pthread', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_5192a4c7ab3de6cca0f534e2111e3a10/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-lrt']
+['/usr/bin/g++', '-pthread', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_7ae5b7a1c5cd1cc3d16125cdb5bb25d9/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-lrt']
 yes
 ------------------------------------------------------------------
 Checking for header sys/ioctl.h
@@ -1182,12 +1182,12 @@ int main(int argc, char **argv) {
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_9516d9f9c4cb3b039442fb505305488e/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_7e9e8ac6fad8b43a14bb56801fb65672/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_9516d9f9c4cb3b039442fb505305488e/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_9516d9f9c4cb3b039442fb505305488e/testbuild/testprog[0m
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_7e9e8ac6fad8b43a14bb56801fb65672/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_7e9e8ac6fad8b43a14bb56801fb65672/testbuild/testprog[0m
 
-['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_9516d9f9c4cb3b039442fb505305488e/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
+['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_7e9e8ac6fad8b43a14bb56801fb65672/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
 ------------------------------------------------------------------
 Checking for header net/if.h
@@ -1200,12 +1200,12 @@ int main(int argc, char **argv) {
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_b55cafffe0f0fabae3497f0d8c5535bf/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_c5a1d4e1f111cb26c009e22f44fee8b5/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_b55cafffe0f0fabae3497f0d8c5535bf/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_b55cafffe0f0fabae3497f0d8c5535bf/testbuild/testprog[0m
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_c5a1d4e1f111cb26c009e22f44fee8b5/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_c5a1d4e1f111cb26c009e22f44fee8b5/testbuild/testprog[0m
 
-['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_b55cafffe0f0fabae3497f0d8c5535bf/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
+['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_c5a1d4e1f111cb26c009e22f44fee8b5/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
 ------------------------------------------------------------------
 Checking for header net/ethernet.h
@@ -1218,12 +1218,12 @@ int main(int argc, char **argv) {
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_c2f236bd9351da749bba7e37d7e58b94/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_ac5601f525523198d8682021a42a5fb4/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_c2f236bd9351da749bba7e37d7e58b94/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_c2f236bd9351da749bba7e37d7e58b94/testbuild/testprog[0m
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_ac5601f525523198d8682021a42a5fb4/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_ac5601f525523198d8682021a42a5fb4/testbuild/testprog[0m
 
-['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_c2f236bd9351da749bba7e37d7e58b94/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
+['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_ac5601f525523198d8682021a42a5fb4/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
 ------------------------------------------------------------------
 Checking for header linux/if_tun.h
@@ -1236,12 +1236,12 @@ int main(int argc, char **argv) {
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_557feccd727bde62cb80f4c9f6e06631/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_fce25fb5ec8b5c4a4e97caff234b8f26/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '-DHAVE_NET_ETHERNET_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_557feccd727bde62cb80f4c9f6e06631/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_557feccd727bde62cb80f4c9f6e06631/testbuild/testprog[0m
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '-DHAVE_NET_ETHERNET_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_fce25fb5ec8b5c4a4e97caff234b8f26/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_fce25fb5ec8b5c4a4e97caff234b8f26/testbuild/testprog[0m
 
-['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_557feccd727bde62cb80f4c9f6e06631/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
+['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_fce25fb5ec8b5c4a4e97caff234b8f26/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
 ------------------------------------------------------------------
 Checking for header netpacket/packet.h
@@ -1254,12 +1254,12 @@ int main(int argc, char **argv) {
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_be1ef035b9221e60056d6b2672f13852/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_0100700e51db02da7c643a21f262d374/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '-DHAVE_NET_ETHERNET_H=1', '-DHAVE_IF_TUN_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_be1ef035b9221e60056d6b2672f13852/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_be1ef035b9221e60056d6b2672f13852/testbuild/testprog[0m
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '-DHAVE_NET_ETHERNET_H=1', '-DHAVE_IF_TUN_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_0100700e51db02da7c643a21f262d374/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_0100700e51db02da7c643a21f262d374/testbuild/testprog[0m
 
-['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_be1ef035b9221e60056d6b2672f13852/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
+['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_0100700e51db02da7c643a21f262d374/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
 ------------------------------------------------------------------
 Checking for NSC location
@@ -1284,12 +1284,12 @@ int main(int argc, char **argv) {
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_557feccd727bde62cb80f4c9f6e06631/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_fce25fb5ec8b5c4a4e97caff234b8f26/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '-DHAVE_NET_ETHERNET_H=1', '-DHAVE_PACKET_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_557feccd727bde62cb80f4c9f6e06631/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_557feccd727bde62cb80f4c9f6e06631/testbuild/testprog[0m
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '-DHAVE_NET_ETHERNET_H=1', '-DHAVE_PACKET_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_fce25fb5ec8b5c4a4e97caff234b8f26/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_fce25fb5ec8b5c4a4e97caff234b8f26/testbuild/testprog[0m
 
-['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_557feccd727bde62cb80f4c9f6e06631/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
+['/usr/bin/g++', 'test.cpp.1.o', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_fce25fb5ec8b5c4a4e97caff234b8f26/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
 ------------------------------------------------------------------
 Checking for python module 'gtk'
@@ -1333,54 +1333,54 @@ Checking for compilation flag -Wno-error=deprecated-d... support
 ==>
 int main() { return 0; }
 <==
-[1/1] Compiling [32mbuild/.conf_check_743d1d0037552d534376577d3c1b2149/test.cpp[0m
+[1/1] Compiling [32mbuild/.conf_check_f67edcbca94800ed607892b37e06375c/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-Wno-error=deprecated-declarations', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '-DHAVE_NET_ETHERNET_H=1', '-DHAVE_PACKET_H=1', '-DHAVE_IF_TUN_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_743d1d0037552d534376577d3c1b2149/testbuild/test.cpp.1.o']
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-Wno-error=deprecated-declarations', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '-DHAVE_NET_ETHERNET_H=1', '-DHAVE_PACKET_H=1', '-DHAVE_IF_TUN_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_f67edcbca94800ed607892b37e06375c/testbuild/test.cpp.1.o']
 ok
 ------------------------------------------------------------------
 Checking for compilation flag -Wno-error=deprecated-d... support
 ==>
 int main() { return 0; }
 <==
-[1/1] Compiling [32mbuild/.conf_check_94d1a1e1e1d1d9fb3916d1b9f6ccf3d6/test.c[0m
+[1/1] Compiling [32mbuild/.conf_check_27d1ae163c97810bdbe7795d93d08851/test.c[0m
 
-['/usr/bin/gcc', '-Wno-error=deprecated-declarations', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '-DHAVE_NET_ETHERNET_H=1', '-DHAVE_PACKET_H=1', '-DHAVE_IF_TUN_H=1', '../test.c', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_94d1a1e1e1d1d9fb3916d1b9f6ccf3d6/testbuild/test.c.1.o']
+['/usr/bin/gcc', '-Wno-error=deprecated-declarations', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '-DHAVE_NET_ETHERNET_H=1', '-DHAVE_PACKET_H=1', '-DHAVE_IF_TUN_H=1', '../test.c', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_27d1ae163c97810bdbe7795d93d08851/testbuild/test.c.1.o']
 ok
 ------------------------------------------------------------------
 Checking for compilation flag -fstrict-aliasing support
 ==>
 int main() { return 0; }
 <==
-[1/1] Compiling [32mbuild/.conf_check_743d1d0037552d534376577d3c1b2149/test.cpp[0m
+[1/1] Compiling [32mbuild/.conf_check_f67edcbca94800ed607892b37e06375c/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-Wno-error=deprecated-declarations', '-fstrict-aliasing', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '-DHAVE_NET_ETHERNET_H=1', '-DHAVE_PACKET_H=1', '-DHAVE_IF_TUN_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_743d1d0037552d534376577d3c1b2149/testbuild/test.cpp.1.o']
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-Wno-error=deprecated-declarations', '-fstrict-aliasing', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '-DHAVE_NET_ETHERNET_H=1', '-DHAVE_PACKET_H=1', '-DHAVE_IF_TUN_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_f67edcbca94800ed607892b37e06375c/testbuild/test.cpp.1.o']
 ok
 ------------------------------------------------------------------
 Checking for compilation flag -fstrict-aliasing support
 ==>
 int main() { return 0; }
 <==
-[1/1] Compiling [32mbuild/.conf_check_94d1a1e1e1d1d9fb3916d1b9f6ccf3d6/test.c[0m
+[1/1] Compiling [32mbuild/.conf_check_27d1ae163c97810bdbe7795d93d08851/test.c[0m
 
-['/usr/bin/gcc', '-fstrict-aliasing', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '-DHAVE_NET_ETHERNET_H=1', '-DHAVE_PACKET_H=1', '-DHAVE_IF_TUN_H=1', '../test.c', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_94d1a1e1e1d1d9fb3916d1b9f6ccf3d6/testbuild/test.c.1.o']
+['/usr/bin/gcc', '-fstrict-aliasing', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '-DHAVE_NET_ETHERNET_H=1', '-DHAVE_PACKET_H=1', '-DHAVE_IF_TUN_H=1', '../test.c', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_27d1ae163c97810bdbe7795d93d08851/testbuild/test.c.1.o']
 ok
 ------------------------------------------------------------------
 Checking for compilation flag -Wstrict-aliasing support
 ==>
 int main() { return 0; }
 <==
-[1/1] Compiling [32mbuild/.conf_check_743d1d0037552d534376577d3c1b2149/test.cpp[0m
+[1/1] Compiling [32mbuild/.conf_check_f67edcbca94800ed607892b37e06375c/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-Wno-error=deprecated-declarations', '-fstrict-aliasing', '-Wstrict-aliasing', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '-DHAVE_NET_ETHERNET_H=1', '-DHAVE_PACKET_H=1', '-DHAVE_IF_TUN_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_743d1d0037552d534376577d3c1b2149/testbuild/test.cpp.1.o']
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++11', '-Wno-error=deprecated-declarations', '-fstrict-aliasing', '-Wstrict-aliasing', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '-DHAVE_NET_ETHERNET_H=1', '-DHAVE_PACKET_H=1', '-DHAVE_IF_TUN_H=1', '../test.cpp', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_f67edcbca94800ed607892b37e06375c/testbuild/test.cpp.1.o']
 ok
 ------------------------------------------------------------------
 Checking for compilation flag -Wstrict-aliasing support
 ==>
 int main() { return 0; }
 <==
-[1/1] Compiling [32mbuild/.conf_check_94d1a1e1e1d1d9fb3916d1b9f6ccf3d6/test.c[0m
+[1/1] Compiling [32mbuild/.conf_check_27d1ae163c97810bdbe7795d93d08851/test.c[0m
 
-['/usr/bin/gcc', '-Wstrict-aliasing', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '-DHAVE_NET_ETHERNET_H=1', '-DHAVE_PACKET_H=1', '-DHAVE_IF_TUN_H=1', '../test.c', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_94d1a1e1e1d1d9fb3916d1b9f6ccf3d6/testbuild/test.c.1.o']
+['/usr/bin/gcc', '-Wstrict-aliasing', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '-DHAVE_NET_ETHERNET_H=1', '-DHAVE_PACKET_H=1', '-DHAVE_IF_TUN_H=1', '../test.c', '-c', '-o', '/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/.conf_check_27d1ae163c97810bdbe7795d93d08851/testbuild/test.c.1.o']
 ok
 ------------------------------------------------------------------
 Checking for program 'doxygen'

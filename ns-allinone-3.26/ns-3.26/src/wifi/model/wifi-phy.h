@@ -1834,6 +1834,17 @@ private:
   
   Ptr<NetDevice>     m_device;   //!< Pointer to the device
   Ptr<MobilityModel> m_mobility; //!< Pointer to the mobility model
+
+  /*
+   * -----------my add----------------------
+   */
+protected:
+  bool enable_ch_bonding;
+
+public:
+  void EnableChannelBonding(bool enable);
+
+private:
 };
 
 /**

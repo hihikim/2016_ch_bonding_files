@@ -360,6 +360,7 @@ WifiPhy::WifiPhy ()
   NS_LOG_FUNCTION (this);
   m_random = CreateObject<UniformRandomVariable> ();
   m_state = CreateObject<WifiPhyStateHelper> ();
+  enable_ch_bonding = false;
 }
 
 WifiPhy::~WifiPhy ()
@@ -2962,6 +2963,11 @@ WifiPhy::AssignStreams (int64_t stream)
   NS_LOG_FUNCTION (this << stream);
   m_random->SetStream (stream);
   return 1;
+}
+
+void WifiPhy::EnableChannelBonding(bool tf)
+{
+	enable_ch_bonding = tf;
 }
 
 std::ostream& operator<< (std::ostream& os, enum WifiPhy::State state)
