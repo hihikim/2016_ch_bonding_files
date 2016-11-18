@@ -369,14 +369,6 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 	received_channel[ch_num] = true;
 	last_received_packet[ch_num] = Packet;
 
-	if(primary_ch == 40)
-	{
-		std::cout<<"receive width : " <<txVector.GetChannelWidth()<<std::endl;
-		std::cout<<"receive type : "<<hdr.GetTypeString()<<std::endl;
-		std::cout<<"receive add2 : "<<hdr.GetAddr2()<<std::endl;
-		std::cout<<"receive ch_num : "<<ch_num<<std::endl<<std::endl;
-
-	}
 
 	//start timer
 	if(ch_num == primary_ch)
@@ -562,8 +554,10 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 	else
 	{
 		p = Packet;
-		ClearReceiveRecord();
 	}
+
+	if(!hdr.IsRts() && !hdr.IsCts())
+		ClearReceiveRecord();
 	//std::cout<<hdr.GetTypeString()<<std::endl;
 	m_mac->DeaggregateAmpduAndReceive(p, rxSnr,txVector, preamble);
 }
@@ -577,27 +571,16 @@ void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector t
 
 	packet->PeekHeader(hdr);
 
-	if(primary_ch == 40)
-	{
-		std::cout<<"switching? : "<<m_phys[primary_ch]->IsStateSwitching()<<std::endl;
-		std::cout<<"tx? : "<<m_phys[primary_ch]->IsStateTx()<<std::endl;
-		std::cout<<"send hdr type : "<<hdr.GetTypeString()<<std::endl;
-		std::cout<<"send primary channel :"<<primary_ch<<std::endl;
-		std::cout<<"send send width : "<<request_width<<std::endl;
-	}
 	txVector.SetChannelWidth(request_width);
 
 	for(int i=0;i<8;i++)
 	{
 		if(packet_pieces[ch_numbers[i]] != 0)
 		{
-			if(primary_ch == 40)
-				std::cout<<"send channel : "<<ch_numbers[i]<<std::endl;
 			m_phys[ch_numbers[i]]->SendPacket(packet_pieces[ch_numbers[i]], txVector, preamble, mpdutype);
 		}
 	}
 
-	std::cout<<std::endl;
 
 	CleanPacketPieces();
 
@@ -655,21 +638,6 @@ Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)
 
 
 	std::vector<uint16_t> sub_chs = FindSubChannels(request_ch);
-	if(primary_ch == 40)
-	{
-		std::cout<<"requst_ch : "<<request_ch<<std::endl;
-		std::cout<<"sub channel maker :";
-
-		for(std::vector<uint16_t>::iterator i = sub_chs.begin();
-					i != sub_chs.end();
-					++i)
-		{
-			std::cout<<*i<<" ";
-		}
-		std::cout<<std::endl;
-	}
-
-
 
 	int using_channel = request_width / 20;
 

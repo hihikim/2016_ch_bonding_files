@@ -1098,7 +1098,7 @@ MacLow::ReceiveOk (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, Wifi
                 {
                   NS_LOG_DEBUG ("rx blockAckRequest/sendImmediateBlockAck from=" << hdr.GetAddr2 ());
                   m_sendAckEvent = Simulator::Schedule (GetSifs (),
-                                                        &MacLow::SendBlockAckAfterBlockAckRequest, this,
+							&MacLow::SendBlockAckAfterBlockAckRequest, this,
                                                         blockAckReq,
                                                         hdr.GetAddr2 (),
                                                         hdr.GetDuration (),
