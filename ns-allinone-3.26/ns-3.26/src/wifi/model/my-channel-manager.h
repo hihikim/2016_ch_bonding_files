@@ -40,6 +40,7 @@ public:
   virtual ~ChannelBondingManager();
   uint16_t GetPrimaryCh();
   uint32_t GetMaxWidth();
+  uint32_t GetRequestWidth();
   
   void SetChannelOption(uint16_t Primary_Ch,uint32_t Max_Width);
   void MakePhys(const WifiPhyHelper &phy, Ptr<WifiPhy> primary, uint16_t ch_num, uint32_t channel_width, enum WifiPhyStandard standard);

@@ -93,7 +93,7 @@ int main (int argc, char *argv[])
               phy.SetChannel (channel.Create ());
 
               // Set guard interv58374 Mbit/s
-al
+
               phy.Set ("ShortGuardEnabled", BooleanValue (k));
 
               WifiHelper wifi;

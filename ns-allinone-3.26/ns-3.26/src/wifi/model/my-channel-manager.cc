@@ -268,6 +268,12 @@ uint32_t ChannelBondingManager::GetMaxWidth()
 {
 	return max_width;
 }
+
+uint32_t ChannelBondingManager::GetRequestWidth()
+{
+	return request_width;
+}
+
 void ChannelBondingManager::SetPhysCallback()
 {
 
@@ -384,6 +390,7 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 		}
 
 		if(GetNumberOfReceive() == (request_width/20) ){
+			//std::cout<<"ho~\n";
 			ManageReceived(Packet, rxSnr, txVector, preamble);
 		}
 
@@ -430,8 +437,8 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 {
 	bool isampdu = false;                   //marge receive packet and forwardup to mac-low
 	AmpduTag ampdu;
-	WifiMacHeader hdr, etc;
-	AmpduSubframeHeader ampduhdr, etc_ampdu;
+	WifiMacHeader hdr;
+	AmpduSubframeHeader ampduhdr;
 
 
 	if(Packet->PeekPacketTag(ampdu))
@@ -445,10 +452,10 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 		isampdu = false;
 	}
 
-	Ptr<ns3::Packet> p, temp_p;
+	Ptr<ns3::Packet> p;
 
 
-	if(isampdu)
+	/*if(isampdu)
 	{
 		for(int i=0;i<8;i++)
 		{
@@ -478,12 +485,12 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 		p->AddHeader(ampduhdr);
 	}
 
-	else
-	{
-		p = Packet;
-	}
+	else*/
+	//{
+		p = Packet->Copy();
+	//}
 
-	if(!hdr.IsRts() && !hdr.IsCts())
+	if(isampdu || (!hdr.IsRts() && !hdr.IsCts()))
 		ClearReceiveRecord();
 
 	m_mac->DeaggregateAmpduAndReceive(p, rxSnr,txVector, preamble);
@@ -495,11 +502,8 @@ void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector t
 
 	ClearReceiveRecord();
 
-	WifiMacHeader hdr;
 
-	packet->PeekHeader(hdr);
-
-	txVector.SetChannelWidth(request_width);
+	//txVector.SetChannelWidth(request_width);
 
 	for(int i=0;i<8;i++)
 	{
@@ -535,7 +539,7 @@ Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)   //s
 {
 	CleanPacketPieces();
 
-	bool isampdu = false;
+	/*bool isampdu = false;
 	AmpduTag ampdu;
 	WifiMacHeader hdr;
 	AmpduSubframeHeader ampduhdr;
@@ -601,8 +605,10 @@ Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)   //s
 		}
 	}
 
-	else
+	else*/
 	{
+		Ptr<Packet> origin_p = packet->Copy();
+		std::vector<uint16_t> sub_chs = FindSubChannels(request_ch);
 		for(std::vector<uint16_t>::iterator i = sub_chs.begin() ;
 			i != sub_chs.end() ;
 			++i )
@@ -653,7 +659,7 @@ std::vector<uint16_t> ChannelBondingManager::FindSubChannels(uint16_t ch_num)   
 uint16_t ChannelBondingManager::GetChannelWithWidth(uint32_t width)      //find bonding channel number using width
 {
 	uint16_t result = primary_ch;
-	ChannelInfo ch_info;
+	ChannelInfo ch_info = ch_map.at(result);
 
 	if(ch_info.second == 0)
 	{

@@ -1413,39 +1413,57 @@ MacLow::GetSize (Ptr<const Packet> packet, const WifiMacHeader *hdr) const
 WifiTxVector
 MacLow::GetCtsToSelfTxVector (Ptr<const Packet> packet, const WifiMacHeader *hdr) const
 {
-  return m_stationManager->GetCtsToSelfTxVector (hdr, packet);
+  WifiTxVector result = m_stationManager->GetCtsToSelfTxVector (hdr, packet);
+  if(enable_ch_bonding)
+    result.SetChannelWidth(ch_m->GetRequestWidth());
+  return result;
 }
 
 WifiTxVector
 MacLow::GetRtsTxVector (Ptr<const Packet> packet, const WifiMacHeader *hdr) const
 {
   Mac48Address to = hdr->GetAddr1 ();
-  return m_stationManager->GetRtsTxVector (to, hdr, packet);
+  WifiTxVector result = m_stationManager->GetRtsTxVector (to, hdr, packet);
+  if(enable_ch_bonding)
+    result.SetChannelWidth(ch_m->GetRequestWidth());
+  return result;
 }
 
 WifiTxVector
 MacLow::GetDataTxVector (Ptr<const Packet> packet, const WifiMacHeader *hdr) const
 {
   Mac48Address to = hdr->GetAddr1 ();
-  return m_stationManager->GetDataTxVector (to, hdr, packet);
+  WifiTxVector result = m_stationManager->GetDataTxVector (to, hdr, packet);
+  if(enable_ch_bonding)
+    result.SetChannelWidth(ch_m->GetRequestWidth());
+  return result;
 }
 
 WifiTxVector
 MacLow::GetCtsTxVector (Mac48Address to, WifiMode rtsTxMode) const
 {
-  return m_stationManager->GetCtsTxVector (to, rtsTxMode);
+  WifiTxVector result = m_stationManager->GetCtsTxVector (to, rtsTxMode);
+  if(enable_ch_bonding)
+    result.SetChannelWidth(ch_m->GetRequestWidth());
+  return result;
 }
 
 WifiTxVector
 MacLow::GetAckTxVector (Mac48Address to, WifiMode dataTxMode) const
 {
-  return m_stationManager->GetAckTxVector (to, dataTxMode);
+  WifiTxVector result = m_stationManager->GetAckTxVector (to, dataTxMode);
+  if(enable_ch_bonding)
+    result.SetChannelWidth(ch_m->GetRequestWidth());
+  return result;
 }
 
 WifiTxVector
 MacLow::GetBlockAckTxVector (Mac48Address to, WifiMode dataTxMode) const
 {
-  return m_stationManager->GetBlockAckTxVector (to, dataTxMode);
+  WifiTxVector result = m_stationManager->GetBlockAckTxVector (to, dataTxMode);
+  if(enable_ch_bonding)
+    result.SetChannelWidth(ch_m->GetRequestWidth());
+  return result;
 }
 
 WifiTxVector
@@ -1716,10 +1734,10 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
       AmpduTag ampdutag;
       ampdutag.SetAmpdu (true);
       Time delay = Seconds (0);
-      Time remainingAmpduDuration;
+      Time remainingAmpduDuration = m_phy->CalculateTxDuration (packet->GetSize (), txVector, preamble, m_phy->GetFrequency ());
 
 
-      if(!enable_ch_bonding)
+      /*if(!enable_ch_bonding)
 	     remainingAmpduDuration = m_phy->CalculateTxDuration (packet->GetSize (), txVector, preamble, m_phy->GetFrequency ());
 
       else
@@ -1753,7 +1771,7 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
 
 
     	 remainingAmpduDuration = m_phy->CalculateTxDuration (packet_size, txVector, preamble, m_phy->GetFrequency ());
-      }
+      }*/
 
 
       //std::cout<<"first remain : "<<remainingAmpduDuration<<std::endl;
@@ -1793,18 +1811,18 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
                 }
             }
 
-          Time mpduDuration;
+          Time mpduDuration = m_phy->CalculateTxDuration (newPacket->GetSize (), txVector, preamble, m_phy->GetFrequency (), mpdutype, 0);
 
           //newPacket->AddPacketTag (ampdutag);
 
-          if(!enable_ch_bonding)
+          /*if(!enable_ch_bonding)
             mpduDuration = m_phy->CalculateTxDuration (newPacket->GetSize (), txVector, preamble, m_phy->GetFrequency (), mpdutype, 0);
 
 
           else
           {
 			  mpduDuration = m_phy->CalculateTxDuration (ch_m->GetConvertedSize(newPacket), txVector, preamble, m_phy->GetFrequency (), mpdutype, 0);  //calculate tx time for 1 mpdu
-          }
+          }*/
 
           remainingAmpduDuration -= mpduDuration;
 
