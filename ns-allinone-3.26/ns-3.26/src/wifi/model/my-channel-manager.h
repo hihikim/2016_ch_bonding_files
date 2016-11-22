@@ -74,8 +74,9 @@ public:
   void SetPhysCallback();
   void ManageReceived (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
   void SetMyMac(Ptr<MacLow> mac);
-  void NeedRts(bool need);
-  void NeedCts(bool need);
+  void NeedRtsCts(bool need);
+
+  uint32_t GetConvertedSize(Ptr<const Packet> packet);
 
 
 private:
@@ -101,7 +102,7 @@ private:
   std::map<int,bool> received_channel;
 
   EventId clean_timer;
-  bool need_rts, need_cts;
+  bool need_rts_cts;
 
   uint16_t CheckChBonding(uint16_t primary);  //
 
