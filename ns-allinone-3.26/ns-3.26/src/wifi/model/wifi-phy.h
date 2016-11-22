@@ -1838,13 +1838,13 @@ private:
   /*
    * -----------my add----------------------
    */
-protected:
+/*protected:
   bool enable_ch_bonding;
 
 public:
   void EnableChannelBonding(bool enable);
 
-private:
+private:*/
 };
 
 /**

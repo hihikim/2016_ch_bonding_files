@@ -108,7 +108,7 @@ void ChannelBondingManager::MakePhys(const WifiPhyHelper &phy, Ptr<WifiPhy> prim
 		   m_phys[ch_numbers[i]]->ConfigureStandard (standard);
 	   }
 
-	   m_phys[ch_numbers[i]]->EnableChannelBonding(true);
+	   //m_phys[ch_numbers[i]]->EnableChannelBonding(true);
 	   m_phys[ch_numbers[i]]->SetChannelNumber(ch_numbers[i]);
    }
 }
