@@ -1746,8 +1746,10 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
 
            m_aggregateQueue->Enqueue(dequeuedPacket,newHdr);
     	  }
+    	 //packet_size += newHdr.GetSize();
 
-    	  packet_size += newHdr.GetSize();
+    	 if(packet_size > packet->GetSize())
+    		 packet_size = packet->GetSize();
 
 
     	 remainingAmpduDuration = m_phy->CalculateTxDuration (packet_size, txVector, preamble, m_phy->GetFrequency ());
