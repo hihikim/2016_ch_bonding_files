@@ -57,15 +57,15 @@ void ChannelBondingManager::SetMyMac(Ptr<MacLow> mac)
 
 std::map<uint16_t, std::pair<uint16_t,uint32_t> >  ChannelBondingManager::ChannelMapping()
 {
-	 std::map<uint16_t, std::pair<uint16_t,uint32_t> >  result;
+	 std::map<uint16_t, std::pair<uint16_t,uint32_t> >  result;                            //make channel map
 	//20Hz
-	 result[36] = std::make_pair(40, 20);
-	 result[40] = std::make_pair(36, 20);
-	 result[44] = std::make_pair(48, 20);
-	 result[48] = std::make_pair(44, 20);
-	 result[52] = std::make_pair(56, 20);
-	 result[56] = std::make_pair(52, 20);
-	 result[60] = std::make_pair(64, 20);
+	 result[36] = std::make_pair(40, 20);                                                 // 36   40   44   48    52    56    60    64
+	 result[40] = std::make_pair(36, 20);                                                 //  \  /      \   /       \   /       \  /
+	 result[44] = std::make_pair(48, 20);                                                 //   38        46          54          62
+	 result[48] = std::make_pair(44, 20);                                                 //       \   /                 \   /
+	 result[52] = std::make_pair(56, 20);                                                 //        42                     58
+	 result[56] = std::make_pair(52, 20);                                                 //                  \   /
+	 result[60] = std::make_pair(64, 20);                                                 //                    50
 	 result[64] = std::make_pair(60, 20);
 
 	//40Hz
@@ -84,12 +84,12 @@ std::map<uint16_t, std::pair<uint16_t,uint32_t> >  ChannelBondingManager::Channe
 }
 
 void ChannelBondingManager::SetChannelOption(uint16_t primary_ch,uint32_t max_width){
-	this->max_width = max_width;
+	this->max_width = max_width;                        //set max width and primary_ch
 	this->primary_ch = primary_ch;
 }
 
 void ChannelBondingManager::MakePhys(const WifiPhyHelper &phy, Ptr<WifiPhy> primary, uint16_t ch_num, uint32_t channel_width, enum WifiPhyStandard standard){
-   SetChannelOption(ch_num, channel_width);
+   SetChannelOption(ch_num, channel_width);                          //make each phys
 
 
    Ptr<NetDevice> device = primary->GetDevice();
@@ -114,7 +114,7 @@ void ChannelBondingManager::MakePhys(const WifiPhyHelper &phy, Ptr<WifiPhy> prim
 }
 
 void ChannelBondingManager::ResetPhys(){
-	for(int i =0;i<8;++i){
+	for(int i =0;i<8;++i){                                                                    //reset phys
 		m_phys[ch_numbers[i]]->SetReceiveOkCallback (MakeNullCallback<void, Ptr<Packet>, double, WifiTxVector, enum WifiPreamble> ());
 		m_phys[ch_numbers[i]]->SetReceiveErrorCallback (MakeNullCallback<void, Ptr<Packet>, double> ());
 		m_phys[ch_numbers[i]] = 0;
@@ -122,7 +122,7 @@ void ChannelBondingManager::ResetPhys(){
 }
 
 void ChannelBondingManager::ClearReceiveRecord(){
-	for(int i =0;i<8;++i){
+	for(int i =0;i<8;++i){                               //clear received record
 		received_channel[ch_numbers[i]] = false;
 		last_received_packet[ch_numbers[i]] = 0;
 	}
@@ -132,7 +132,7 @@ void ChannelBondingManager::ClearReceiveRecord(){
 
 uint16_t ChannelBondingManager::CheckChBonding(uint16_t primary)
 {
-	if (primary == 0)
+	if (primary == 0)                                      //find suitable bonding channel (idle condition / no consider Rts-Cts width
 		return 0;
 
 	std::pair<uint16_t,uint32_t> ch_info;
@@ -159,7 +159,7 @@ uint16_t ChannelBondingManager::CheckChBonding(uint16_t primary)
 }
 
 bool ChannelBondingManager::CheckAllSubChannelIdle(uint16_t ch_num){
-	std::pair<uint16_t,uint32_t> ch_info;
+	std::pair<uint16_t,uint32_t> ch_info;                     //find all subchannels are idle
 	ch_info = ch_map.at(ch_num);
 
 	uint32_t ch_width = ch_info.second;
@@ -183,7 +183,7 @@ bool ChannelBondingManager::CheckAllSubChannelIdle(uint16_t ch_num){
 	}
 }
 
-uint16_t ChannelBondingManager::GetUsableBondingChannel(uint16_t primary)
+uint16_t ChannelBondingManager::GetUsableBondingChannel(uint16_t primary)                //get bonding channel in rts-cts environment
 {
 	std::pair<uint16_t,uint32_t> ch_info;
 
@@ -219,7 +219,7 @@ uint16_t ChannelBondingManager::GetUsableBondingChannel(uint16_t primary)
 	return usable_ch;
 }
 
-bool ChannelBondingManager::CheckAllSubChannelReceived(uint16_t ch_num)
+bool ChannelBondingManager::CheckAllSubChannelReceived(uint16_t ch_num)                   //check all sub channel receive rts-cts
 {
 	std::pair<uint16_t,uint32_t> ch_info;
 	ch_info = ch_map.at(ch_num);
@@ -327,7 +327,7 @@ void ChannelBondingManager::Receive64Channel (Ptr<Packet> Packet, double rxSnr, 
 
 void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, uint16_t ch_num)
 {
-	bool isampdu = false;
+	bool isampdu = false;                              //manage 1 subchannel receive packet
 	WifiMacHeader hdr;
 	AmpduTag ampdu;
 	AmpduSubframeHeader ampduhdr;
@@ -428,7 +428,7 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 
 void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
 {
-	bool isampdu = false;
+	bool isampdu = false;                   //marge receive packet and forwardup to mac-low
 	AmpduTag ampdu;
 	WifiMacHeader hdr, etc;
 	AmpduSubframeHeader ampduhdr, etc_ampdu;
@@ -490,8 +490,8 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 }
 
 void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble, enum mpduType mpdutype)
-{
-	ConvertPacket(packet);
+{                                               //send packet
+	ConvertPacket(packet);                       //split packet
 
 	ClearReceiveRecord();
 
@@ -525,13 +525,13 @@ void ChannelBondingManager::ReceiveError(ns3::Ptr<ns3::Packet> packet, double rx
 	m_mac->ReceiveError(packet, rxSnr);
 }
 
-void ChannelBondingManager::CheckChannelBeforeSend()
+void ChannelBondingManager::CheckChannelBeforeSend()   //set bonding channel in no rts-cts environment
 {
 	request_ch = CheckChBonding(primary_ch);
 	request_width = ch_map.at(request_ch).second;
 }
 
-Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)
+Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)   //split the packet
 {
 	CleanPacketPieces();
 
@@ -615,7 +615,7 @@ Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)
 	return packet_pieces[primary_ch];
 }
 
-void ChannelBondingManager::CleanPacketPieces()
+void ChannelBondingManager::CleanPacketPieces()           //clear the storage for splited packet
 {
 	for(std::map< uint16_t, Ptr<Packet> >::iterator i = packet_pieces.begin();
 		i != packet_pieces.end();
@@ -625,7 +625,7 @@ void ChannelBondingManager::CleanPacketPieces()
 	}
 }
 
-std::vector<uint16_t> ChannelBondingManager::FindSubChannels(uint16_t ch_num)
+std::vector<uint16_t> ChannelBondingManager::FindSubChannels(uint16_t ch_num)    //find all subchannel composing the bonding channel
 {
 	ChannelInfo ch_info = ch_map.at(ch_num);
 	std::vector<uint16_t> result,temp;
@@ -650,7 +650,7 @@ std::vector<uint16_t> ChannelBondingManager::FindSubChannels(uint16_t ch_num)
 	return result;
 }
 
-uint16_t ChannelBondingManager::GetChannelWithWidth(uint32_t width)
+uint16_t ChannelBondingManager::GetChannelWithWidth(uint32_t width)      //find bonding channel number using width
 {
 	uint16_t result = primary_ch;
 	ChannelInfo ch_info;
@@ -672,11 +672,11 @@ uint16_t ChannelBondingManager::GetChannelWithWidth(uint32_t width)
 	}
 }
 
-void ChannelBondingManager::NeedRtsCts(bool need){
+void ChannelBondingManager::NeedRtsCts(bool need){   //set using rts-cts
 	need_rts_cts = need;
 }
 
-uint8_t ChannelBondingManager::GetNumberOfReceive()
+uint8_t ChannelBondingManager::GetNumberOfReceive()       //find number of received packet in each subchannel
 {
 	uint8_t result = 0;
 
@@ -756,7 +756,7 @@ uint8_t ChannelBondingManager::GetNumberOfReceive()
 	}
 }
 
-uint32_t ChannelBondingManager::GetConvertedSize(Ptr<const Packet> packet)
+uint32_t ChannelBondingManager::GetConvertedSize(Ptr<const Packet> packet)    //get converted packet size
 {
 
 
