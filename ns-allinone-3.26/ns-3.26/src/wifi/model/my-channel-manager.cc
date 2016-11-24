@@ -55,31 +55,170 @@ void ChannelBondingManager::SetMyMac(Ptr<MacLow> mac)
 	m_mac = mac;
 }
 
-std::map<uint16_t, std::pair<uint16_t,uint32_t> >  ChannelBondingManager::ChannelMapping()
+std::map<uint16_t, ChannelInfo >  ChannelBondingManager::ChannelMapping()
 {
-	 std::map<uint16_t, std::pair<uint16_t,uint32_t> >  result;                            //make channel map
-	//20Hz
-	 result[36] = std::make_pair(40, 20);                                                 // 36   40   44   48    52    56    60    64
-	 result[40] = std::make_pair(36, 20);                                                 //  \  /      \   /       \   /       \  /
-	 result[44] = std::make_pair(48, 20);                                                 //   38        46          54          62
-	 result[48] = std::make_pair(44, 20);                                                 //       \   /                 \   /
-	 result[52] = std::make_pair(56, 20);                                                 //        42                     58
-	 result[56] = std::make_pair(52, 20);                                                 //                  \   /
-	 result[60] = std::make_pair(64, 20);                                                 //                    50
-	 result[64] = std::make_pair(60, 20);
+	 std::map<uint16_t, ChannelInfo >  result;                            //make channel map
+	 ChannelInfo ch_info;
+
+	 /*
+	  *                              5.17-5.33 GHz
+	  *
+	  *             160                        50
+	  *                                    /        \
+	  *             80                   42         58
+	  *                                /   \      /    \
+	  *             40                38   46    54    62
+	  *                              / \   / \   / \   / \
+	  *             20              36 40 44 48 52 56 60 64
+	  */
+     //20Hz
+	 ch_info.Width = 20;
+
+	 ch_info.Parent = 38;
+	 ch_info.Secondary_Ch = 40; ch_info.L_CHD = 36; ch_info.R_CHD = 36; result[36] = ch_info;
+	 ch_info.Secondary_Ch = 36; ch_info.L_CHD = 40; ch_info.R_CHD = 40; result[40] = ch_info;
+
+	 ch_info.Parent = 46;
+	 ch_info.Secondary_Ch = 48; ch_info.L_CHD = 44; ch_info.R_CHD = 44; result[44] = ch_info;
+	 ch_info.Secondary_Ch = 44; ch_info.L_CHD = 48; ch_info.R_CHD = 48; result[48] = ch_info;
+
+	 ch_info.Parent = 54;
+	 ch_info.Secondary_Ch = 56; ch_info.L_CHD = 52; ch_info.R_CHD = 52; result[52] = ch_info;
+	 ch_info.Secondary_Ch = 52; ch_info.L_CHD = 56; ch_info.R_CHD = 56; result[56] = ch_info;
+
+	 ch_info.Parent = 62;
+	 ch_info.Secondary_Ch = 64; ch_info.L_CHD = 60; ch_info.R_CHD = 60; result[60] = ch_info;
+	 ch_info.Secondary_Ch = 60; ch_info.L_CHD = 64; ch_info.R_CHD = 64; result[64] = ch_info;
 
 	//40Hz
-	 result[38] = std::make_pair(46, 40);
-	 result[46] = std::make_pair(38, 40);
-	 result[54] = std::make_pair(62, 40);
-	 result[62] = std::make_pair(54, 40);
+	 ch_info.Width = 40;
+
+	 ch_info.Parent = 42;
+	 ch_info.Secondary_Ch = 46; ch_info.L_CHD = 36; ch_info.R_CHD = 40; result[38] = ch_info;
+	 ch_info.Secondary_Ch = 38; ch_info.L_CHD = 44; ch_info.R_CHD = 48; result[46] = ch_info;
+
+	 ch_info.Parent = 58;
+	 ch_info.Secondary_Ch = 62; ch_info.L_CHD = 52; ch_info.R_CHD = 56; result[54] = ch_info;
+	 ch_info.Secondary_Ch = 54; ch_info.L_CHD = 60; ch_info.R_CHD = 64; result[62] = ch_info;
 
 	//80Hz
-	 result[42] = std::make_pair(58, 80);
-	 result[58] = std::make_pair(42, 80);
+	 ch_info.Width = 80;
+
+	 ch_info.Parent = 50;
+	 ch_info.Secondary_Ch = 58; ch_info.L_CHD = 38; ch_info.R_CHD = 46; result[42] = ch_info;
+	 ch_info.Secondary_Ch = 42; ch_info.L_CHD = 54; ch_info.R_CHD = 62; result[58] = ch_info;
 
 	//160Hz
-	 result[50] = std::make_pair(50, 160);
+	 ch_info.Width = 160;
+
+	 ch_info.Parent = 50;
+	 ch_info.Secondary_Ch = 50; ch_info.L_CHD = 42; ch_info.R_CHD = 58; result[50] = ch_info;
+
+	 /*
+	  *                 5.49-5.725GHz
+	  *             160                         114
+	  *                                    /            \
+	  *             80                   106            122             138
+	  *                                /     \         /    \         /      \
+	  *             40                102    110      118   126     134      142
+	  *                              /  \   /  \     /  \   /  \    /  \     /  \
+	  *             20             100 104 108 112 116 120 124 128 132 136 140 144
+	  */
+	 //20Hz
+	 ch_info.Width = 20;
+
+	 ch_info.Parent = 102;
+	 ch_info.Secondary_Ch = 104; ch_info.L_CHD = 100; ch_info.R_CHD = 100; result[100] = ch_info;
+	 ch_info.Secondary_Ch = 100; ch_info.L_CHD = 104; ch_info.R_CHD = 104; result[104] = ch_info;
+
+	 ch_info.Parent = 110;
+	 ch_info.Secondary_Ch = 112; ch_info.L_CHD = 108; ch_info.R_CHD = 108; result[108] = ch_info;
+	 ch_info.Secondary_Ch = 108; ch_info.L_CHD = 112; ch_info.R_CHD = 112; result[112] = ch_info;
+
+	 ch_info.Parent = 118;
+	 ch_info.Secondary_Ch = 120; ch_info.L_CHD = 116; ch_info.R_CHD = 116; result[116] = ch_info;
+	 ch_info.Secondary_Ch = 116; ch_info.L_CHD = 120; ch_info.R_CHD = 120; result[120] = ch_info;
+
+	 ch_info.Parent = 126;
+	 ch_info.Secondary_Ch = 128; ch_info.L_CHD = 124; ch_info.R_CHD = 124; result[124] = ch_info;
+	 ch_info.Secondary_Ch = 124; ch_info.L_CHD = 128; ch_info.R_CHD = 128; result[128] = ch_info;
+
+	 ch_info.Parent = 134;
+	 ch_info.Secondary_Ch = 136; ch_info.L_CHD = 132; ch_info.R_CHD = 132; result[132] = ch_info;
+	 ch_info.Secondary_Ch = 132; ch_info.L_CHD = 136; ch_info.R_CHD = 136; result[136] = ch_info;
+
+	 ch_info.Parent = 142;
+	 ch_info.Secondary_Ch = 144; ch_info.L_CHD = 140; ch_info.R_CHD = 140; result[140] = ch_info;
+	 ch_info.Secondary_Ch = 140; ch_info.L_CHD = 144; ch_info.R_CHD = 144; result[144] = ch_info;
+
+	//40Hz
+	 ch_info.Width = 40;
+
+	 ch_info.Parent = 106;
+	 ch_info.Secondary_Ch = 110; ch_info.L_CHD = 100; ch_info.R_CHD = 104; result[102] = ch_info;
+	 ch_info.Secondary_Ch = 102; ch_info.L_CHD = 108; ch_info.R_CHD = 112; result[110] = ch_info;
+
+	 ch_info.Parent = 122;
+	 ch_info.Secondary_Ch = 126; ch_info.L_CHD = 116; ch_info.R_CHD = 120; result[118] = ch_info;
+	 ch_info.Secondary_Ch = 118; ch_info.L_CHD = 124; ch_info.R_CHD = 128; result[126] = ch_info;
+
+	 ch_info.Parent = 138;
+	 ch_info.Secondary_Ch = 142; ch_info.L_CHD = 132; ch_info.R_CHD = 136; result[134] = ch_info;
+	 ch_info.Secondary_Ch = 134; ch_info.L_CHD = 140; ch_info.R_CHD = 144; result[142] = ch_info;
+
+	//80Hz
+	 ch_info.Width = 80;
+
+	 ch_info.Parent = 114;
+	 ch_info.Secondary_Ch = 122; ch_info.L_CHD = 102; ch_info.R_CHD = 110; result[106] = ch_info;
+	 ch_info.Secondary_Ch = 106; ch_info.L_CHD = 118; ch_info.R_CHD = 126; result[122] = ch_info;
+
+	 ch_info.Parent = 138;
+	 ch_info.Secondary_Ch = 138; ch_info.L_CHD = 134; ch_info.R_CHD = 142; result[138] = ch_info;
+
+	//160Hz
+	 ch_info.Width = 160;
+
+	 ch_info.Parent = 114;
+	 ch_info.Secondary_Ch = 114; ch_info.L_CHD = 106; ch_info.R_CHD = 122; result[114] = ch_info;
+
+	 /*
+	  *                            5.745-5.825GHz
+	  *             80                   155
+	  *                                /     \
+	  *             40                151    159
+	  *                              /  \    /  \
+	  *             20             149 153 157 161 165
+	  */
+	 //20Hz
+	 ch_info.Width = 20;
+
+	 ch_info.Parent = 151;
+	 ch_info.Secondary_Ch = 153; ch_info.L_CHD = 149; ch_info.R_CHD = 149; result[149] = ch_info;
+	 ch_info.Secondary_Ch = 149; ch_info.L_CHD = 153; ch_info.R_CHD = 153; result[153] = ch_info;
+
+	 ch_info.Parent = 159;
+	 ch_info.Secondary_Ch = 161; ch_info.L_CHD = 157; ch_info.R_CHD = 157; result[157] = ch_info;
+	 ch_info.Secondary_Ch = 157; ch_info.L_CHD = 161; ch_info.R_CHD = 161; result[161] = ch_info;
+
+	 ch_info.Parent = 165;
+	 ch_info.Secondary_Ch = 165; ch_info.L_CHD = 165; ch_info.R_CHD = 165; result[165] = ch_info;
+
+	//40Hz
+	 ch_info.Width = 40;
+
+	 ch_info.Parent = 155;
+	 ch_info.Secondary_Ch = 159; ch_info.L_CHD = 149; ch_info.R_CHD = 153; result[151] = ch_info;
+	 ch_info.Secondary_Ch = 151; ch_info.L_CHD = 157; ch_info.R_CHD = 161; result[159] = ch_info;
+
+	//80Hz
+	 ch_info.Width = 80;
+
+	 ch_info.Parent = 155;
+	 ch_info.Secondary_Ch = 155; ch_info.L_CHD = 151; ch_info.R_CHD = 159; result[155] = ch_info;
+
+
+
 	 return result;
 }
 
@@ -135,7 +274,7 @@ uint16_t ChannelBondingManager::CheckChBonding(uint16_t primary)
 	if (primary == 0)                                      //find suitable bonding channel (idle condition / no consider Rts-Cts width
 		return 0;
 
-	std::pair<uint16_t,uint32_t> ch_info;
+	ChannelInfo ch_info;
 
 	uint32_t usable_ch = primary;
 
@@ -143,12 +282,12 @@ uint16_t ChannelBondingManager::CheckChBonding(uint16_t primary)
 	{
 		ch_info = ch_map.at(usable_ch);
 
-		if( ch_info.second == max_width)
+		if( ch_info.Width == max_width || ch_info.Parent == usable_ch)
 			break;
 
-		else if( CheckAllSubChannelIdle( ch_info.first ))
+		else if( CheckAllSubChannelIdle( ch_info.Secondary_Ch ))
 		{
-			usable_ch = (usable_ch + ch_info.first) / 2;
+			usable_ch = ch_info.Parent;
 		}
 
 		else
@@ -159,11 +298,10 @@ uint16_t ChannelBondingManager::CheckChBonding(uint16_t primary)
 }
 
 bool ChannelBondingManager::CheckAllSubChannelIdle(uint16_t ch_num){
-	std::pair<uint16_t,uint32_t> ch_info;                     //find all subchannels are idle
+	ChannelInfo ch_info;                     //find all subchannels are idle
 	ch_info = ch_map.at(ch_num);
 
-	uint32_t ch_width = ch_info.second;
-	uint16_t side_num = ch_width / 20;
+	uint32_t ch_width = ch_info.Width;
 
 	if(ch_width == 20){
 		if(m_phys[ch_num]->IsStateIdle ())
@@ -175,7 +313,7 @@ bool ChannelBondingManager::CheckAllSubChannelIdle(uint16_t ch_num){
 
 	else
 	{
-		if(CheckAllSubChannelIdle(ch_num - side_num) && CheckAllSubChannelIdle (ch_num + side_num) )
+		if(CheckAllSubChannelIdle(ch_info.L_CHD) && CheckAllSubChannelIdle (ch_info.R_CHD) )
 			return true;
 
 		else
@@ -185,7 +323,7 @@ bool ChannelBondingManager::CheckAllSubChannelIdle(uint16_t ch_num){
 
 uint16_t ChannelBondingManager::GetUsableBondingChannel(uint16_t primary)                //get bonding channel in rts-cts environment
 {
-	std::pair<uint16_t,uint32_t> ch_info;
+	ChannelInfo ch_info;
 
 	ch_info = ch_map.at(primary);
 
@@ -204,12 +342,12 @@ uint16_t ChannelBondingManager::GetUsableBondingChannel(uint16_t primary)       
 	while(true)
 	{
 		ch_info = ch_map.at(usable_ch);
-		if( ch_info.second >= max_width)
+		if( ch_info.Width >= max_width || ch_info.Parent == usable_ch)
 			break;
 
-		else if( CheckAllSubChannelReceived( ch_info.first ))
+		else if( CheckAllSubChannelReceived( ch_info.Secondary_Ch ))
 		{
-			usable_ch = (usable_ch + ch_info.first) / 2;
+			usable_ch = ch_info.Parent;
 		}
 
 		else
@@ -221,11 +359,9 @@ uint16_t ChannelBondingManager::GetUsableBondingChannel(uint16_t primary)       
 
 bool ChannelBondingManager::CheckAllSubChannelReceived(uint16_t ch_num)                   //check all sub channel receive rts-cts
 {
-	std::pair<uint16_t,uint32_t> ch_info;
+	ChannelInfo ch_info;
 	ch_info = ch_map.at(ch_num);
-
-	uint32_t ch_width = ch_info.second;
-	uint16_t side_num = ch_width / 20;
+	uint32_t ch_width = ch_info.Width;
 
 	if(ch_width == 20){
 		if(received_channel[ch_num])
@@ -252,7 +388,7 @@ bool ChannelBondingManager::CheckAllSubChannelReceived(uint16_t ch_num)         
 
 	else
 	{
-		if(CheckAllSubChannelReceived(ch_num - side_num) && CheckAllSubChannelReceived (ch_num + side_num) )
+		if(CheckAllSubChannelReceived(ch_info.L_CHD) && CheckAllSubChannelReceived (ch_info.R_CHD) )
 			return true;
 
 		else
@@ -413,7 +549,7 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 				request_width = 0;
 
 			else
-				request_width = ch_map.at(request_ch).second;
+				request_width = ch_map.at(request_ch).Width;
 
 
 			if (primary_ch == ch_num)  //received primary
@@ -532,7 +668,7 @@ void ChannelBondingManager::ReceiveError(ns3::Ptr<ns3::Packet> packet, double rx
 void ChannelBondingManager::CheckChannelBeforeSend()   //set bonding channel in no rts-cts environment
 {
 	request_ch = CheckChBonding(primary_ch);
-	request_width = ch_map.at(request_ch).second;
+	request_width = ch_map.at(request_ch).Width;
 }
 
 Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)   //split the packet
@@ -636,19 +772,18 @@ std::vector<uint16_t> ChannelBondingManager::FindSubChannels(uint16_t ch_num)   
 	ChannelInfo ch_info = ch_map.at(ch_num);
 	std::vector<uint16_t> result,temp;
 
-	if(ch_info.second == 20)
+	if(ch_info.Width == 20)
 	{
 		result.push_back(ch_num);
 	}
 
 	else
 	{
-		uint16_t side_num = ch_info.second / 20;
-		temp = FindSubChannels(ch_num - side_num);
+		temp = FindSubChannels(ch_info.L_CHD);
 		result.reserve(result.size() + temp.size());
 		result.insert(result.end(),temp.begin(),temp.end());
 
-		temp = FindSubChannels(ch_num + side_num);
+		temp = FindSubChannels(ch_info.R_CHD);
 		result.reserve(result.size() + temp.size());
 		result.insert(result.end(),temp.begin(),temp.end());
 	}
@@ -659,22 +794,22 @@ std::vector<uint16_t> ChannelBondingManager::FindSubChannels(uint16_t ch_num)   
 uint16_t ChannelBondingManager::GetChannelWithWidth(uint32_t width)      //find bonding channel number using width
 {
 	uint16_t result = primary_ch;
-	ChannelInfo ch_info = ch_map.at(result);
+	ChannelInfo ch_info;
+	//std::map<uint16_t, ChannelInfo>::iterator ch_i;
+	//ChannelInfo ch_info = *ch_i;
 
-	if(ch_info.second == 0)
-	{
-		//error
-		return 0;
-	}
 	while(true)
 	{
 		ch_info = ch_map.at(result);
 
-		if(ch_info.second == width)
+		if(ch_info.Width == width)
 			return result;
 
+		else if(ch_info.Parent == result)  //searched top
+			return 0;
+
 		else
-			result = (result + ch_info.first)/2;
+			result = ch_info.Parent;
 	}
 }
 

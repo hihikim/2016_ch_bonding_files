@@ -28,7 +28,15 @@
 namespace ns3 {
 class MacLow;
 
-typedef std::pair<uint16_t, uint32_t> ChannelInfo;
+//typedef std::pair<uint16_t, uint32_t> ChannelInfo;
+
+typedef struct
+{
+	uint16_t Secondary_Ch;  //secondary channel
+	uint32_t Width;
+	uint16_t L_CHD, R_CHD;  //children channels
+	uint16_t Parent;     //parrent nodes
+}ChannelInfo;
 
 class ChannelBondingManager : public Object
 {
