@@ -272,15 +272,26 @@ void ChannelBondingManager::ClearReceiveRecord(){
 uint16_t ChannelBondingManager::CheckChBonding(uint16_t primary)
 {
 	if (primary == 0)                                      //find suitable bonding channel (idle condition / no consider Rts-Cts width
-		return 0;
+		NS_FATAL_ERROR("Wrong Channel Number");
 
 	ChannelInfo ch_info;
+	std::map<uint16_t, ChannelInfo>::const_iterator ch_i;
 
 	uint32_t usable_ch = primary;
 
 	while(true)
 	{
-		ch_info = ch_map.at(usable_ch);
+		ch_i = ch_map.find(usable_ch);
+
+		if(ch_i == ch_map.end())
+		{
+			std::ostringstream oss;
+			oss << usable_ch<<" is Wrong Channel Number";
+			NS_FATAL_ERROR(oss.str());
+		}
+
+		ch_info = ch_i->second;
+
 
 		if( ch_info.Width == max_width || ch_info.Parent == usable_ch)
 			break;
@@ -299,7 +310,16 @@ uint16_t ChannelBondingManager::CheckChBonding(uint16_t primary)
 
 bool ChannelBondingManager::CheckAllSubChannelIdle(uint16_t ch_num){
 	ChannelInfo ch_info;                     //find all subchannels are idle
-	ch_info = ch_map.at(ch_num);
+	std::map<uint16_t, ChannelInfo>::const_iterator ch_i = ch_map.find(ch_num);
+
+	if(ch_i == ch_map.end())
+	{
+		std::ostringstream oss;
+		oss << ch_num<<" is Wrong Channel Number";
+		NS_FATAL_ERROR(oss.str());
+	}
+
+	ch_info = ch_i->second;
 
 	uint32_t ch_width = ch_info.Width;
 
@@ -324,8 +344,16 @@ bool ChannelBondingManager::CheckAllSubChannelIdle(uint16_t ch_num){
 uint16_t ChannelBondingManager::GetUsableBondingChannel(uint16_t primary)                //get bonding channel in rts-cts environment
 {
 	ChannelInfo ch_info;
+	std::map<uint16_t, ChannelInfo>::const_iterator ch_i = ch_map.find(primary);
 
-	ch_info = ch_map.at(primary);
+	std::ostringstream oss;
+	if(ch_i == ch_map.end())
+	{
+		oss << primary<<" is Wrong Channel Number";
+		NS_FATAL_ERROR(oss.str());
+	}
+
+	ch_info = ch_i->second;
 
 
 	uint16_t usable_ch = primary;
@@ -341,7 +369,17 @@ uint16_t ChannelBondingManager::GetUsableBondingChannel(uint16_t primary)       
 
 	while(true)
 	{
-		ch_info = ch_map.at(usable_ch);
+		//ch_info = ch_map.at(usable_ch);
+		ch_i = ch_map.find(usable_ch);
+
+		if(ch_i == ch_map.end())
+		{
+			oss.clear();
+			oss << usable_ch<<" is Wrong Channel Number";
+			NS_FATAL_ERROR(oss.str());
+		}
+
+
 		if( ch_info.Width >= max_width || ch_info.Parent == usable_ch)
 			break;
 
@@ -360,7 +398,17 @@ uint16_t ChannelBondingManager::GetUsableBondingChannel(uint16_t primary)       
 bool ChannelBondingManager::CheckAllSubChannelReceived(uint16_t ch_num)                   //check all sub channel receive rts-cts
 {
 	ChannelInfo ch_info;
-	ch_info = ch_map.at(ch_num);
+	std::map<uint16_t, ChannelInfo>::const_iterator ch_i = ch_map.find(ch_num);
+
+	if(ch_i == ch_map.end())
+	{
+		std::ostringstream oss;
+		oss << ch_num<<" is Wrong Channel Number";
+		NS_FATAL_ERROR(oss.str());
+	}
+
+	ch_info = ch_i->second;
+
 	uint32_t ch_width = ch_info.Width;
 
 	if(ch_width == 20){
@@ -516,53 +564,56 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 												);
 	}
 
-	if(isampdu)
+	if(hdr.GetAddr1() == m_mac->GetAddress())
 	{
-		//need_rts_cts = false;
-		if(!need_rts_cts)
+		if(isampdu)
 		{
-			request_width = txVector.GetChannelWidth();
-			request_ch = GetChannelWithWidth(request_width);
-		}
 
-		if(GetNumberOfReceive() == (request_width/20) ){
-			//std::cout<<"ho~\n";
-			ManageReceived(Packet, rxSnr, txVector, preamble);
-		}
-
-	}
-
-	else
-	{
-       if(hdr.IsRts() || hdr.IsCts() )
-		{
-			if(primary_ch == ch_num ||
-				hdr.GetAddr1() == m_mac->GetAddress()
-				)
+			//need_rts_cts = false;
+			if(!need_rts_cts &&
+				ch_num == primary_ch)
 			{
-				NeedRtsCts(true);
+				request_width = txVector.GetChannelWidth();
+				request_ch = GetChannelWithWidth(request_width);
 			}
 
-			request_ch = GetUsableBondingChannel(primary_ch);
+			uint32_t recevied_num = GetNumberOfReceive();
 
-			if(request_ch == 0)
-				request_width = 0;
-
-			else
-				request_width = ch_map.at(request_ch).Width;
-
-
-			if (primary_ch == ch_num)  //received primary
-			{
+			if(recevied_num != 0 &&
+				recevied_num == (request_width/20) ){
+				//std::cout<<"ho~\n";
 				ManageReceived(Packet, rxSnr, txVector, preamble);
 			}
 		}
 
 		else
 		{
-			if(ch_num == primary_ch){
+		   if(hdr.IsRts() || hdr.IsCts() )
+			{
+				if(primary_ch == ch_num)
+				{
+					NeedRtsCts(true);
+				}
+
+				request_ch = GetUsableBondingChannel(primary_ch);
+
+				if(request_ch == 0)
+					request_width = 0;
+
+				else
+					request_width = ch_map.find(request_ch)->second.Width;
+			}
+
+		   if(ch_num == primary_ch){
 				ManageReceived(Packet, rxSnr, txVector, preamble);
 			}
+		}
+	}
+
+	else
+	{
+		if(ch_num == primary_ch){
+			ManageReceived(Packet, rxSnr, txVector, preamble);
 		}
 	}
 }
@@ -668,7 +719,7 @@ void ChannelBondingManager::ReceiveError(ns3::Ptr<ns3::Packet> packet, double rx
 void ChannelBondingManager::CheckChannelBeforeSend()   //set bonding channel in no rts-cts environment
 {
 	request_ch = CheckChBonding(primary_ch);
-	request_width = ch_map.at(request_ch).Width;
+	request_width = ch_map.find(request_ch)->second.Width;
 }
 
 Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)   //split the packet
@@ -743,6 +794,13 @@ Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)   //s
 
 	else*/
 	{
+		/*std::cout<<"------------------channel num : "<<primary_ch<<"---------------------------\n";
+		std::cout<<"rts/cts : "<<(need_rts_cts ? "true" : "false")<<std::endl;
+		std::cout<<"width : "<<request_width<<std::endl;
+		std::cout<<"max width : "<<request_width<<std::endl;*/
+		WifiMacHeader hdr;
+		packet->PeekHeader(hdr);
+		//std::cout<<hdr.GetTypeString()<<std::endl;
 		Ptr<Packet> origin_p = packet->Copy();
 		std::vector<uint16_t> sub_chs = FindSubChannels(request_ch);
 		for(std::vector<uint16_t>::iterator i = sub_chs.begin() ;
@@ -769,7 +827,16 @@ void ChannelBondingManager::CleanPacketPieces()           //clear the storage fo
 
 std::vector<uint16_t> ChannelBondingManager::FindSubChannels(uint16_t ch_num)    //find all subchannel composing the bonding channel
 {
-	ChannelInfo ch_info = ch_map.at(ch_num);
+	std::map<uint16_t, ChannelInfo>::const_iterator ch_i = ch_map.find(ch_num);
+
+	if(ch_i == ch_map.end())
+	{
+		std::ostringstream oss;
+		oss<<ch_num<<" is wrong channel number";
+		NS_FATAL_ERROR(oss.str());
+	}
+
+	ChannelInfo ch_info = ch_i->second;
 	std::vector<uint16_t> result,temp;
 
 	if(ch_info.Width == 20)
@@ -800,7 +867,7 @@ uint16_t ChannelBondingManager::GetChannelWithWidth(uint32_t width)      //find 
 
 	while(true)
 	{
-		ch_info = ch_map.at(result);
+		ch_info = ch_map.find(result)->second;
 
 		if(ch_info.Width == width)
 			return result;
