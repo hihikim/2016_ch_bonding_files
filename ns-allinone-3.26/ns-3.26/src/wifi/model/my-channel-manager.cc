@@ -27,11 +27,8 @@ ChannelBondingManager::ChannelBondingManager()
 	request_width = 160;
 
 	alloc_last_primary_hdr = false;
-
-	received_channel[36] = false; received_channel[40] = false; received_channel[44] = false; received_channel[48] = false;
-	received_channel[52] = false; received_channel[56] = false; received_channel[60] = false; received_channel[64] = false;
-
 }
+
 ChannelBondingManager::~ChannelBondingManager()
 {
 	NS_LOG_FUNCTION (this);
@@ -188,7 +185,7 @@ std::map<uint16_t, ChannelInfo >  ChannelBondingManager::ChannelMapping()
 	  *                                /     \
 	  *             40                151    159
 	  *                              /  \    /  \
-	  *             20             149 153 157 161 165
+	  *             20             149  153 157  161   165
 	  */
 	 //20Hz
 	 ch_info.Width = 20;
@@ -225,6 +222,21 @@ std::map<uint16_t, ChannelInfo >  ChannelBondingManager::ChannelMapping()
 void ChannelBondingManager::SetChannelOption(uint16_t primary_ch,uint32_t max_width){
 	this->max_width = max_width;                        //set max width and primary_ch
 	this->primary_ch = primary_ch;
+
+	std::map<uint16_t, ChannelInfo>::const_iterator ch_i = ch_map.find(primary_ch);
+	if(ch_i == ch_map.end() || ch_i->second.Width > 20)
+	{
+		std::ostringstream oss;
+		oss<<primary_ch<<" is wrong prime number";
+		NS_FATAL_ERROR(oss.str());
+	}
+
+	SetUpChannelNumbers();
+
+	for(std::vector<uint16_t>::iterator i = ch_numbers.begin();i != ch_numbers.end(); ++i)
+	{
+		received_channel[*i] = false;
+	}
 }
 
 void ChannelBondingManager::MakePhys(const WifiPhyHelper &phy, Ptr<WifiPhy> primary, uint16_t ch_num, uint32_t channel_width, enum WifiPhyStandard standard){
@@ -235,37 +247,45 @@ void ChannelBondingManager::MakePhys(const WifiPhyHelper &phy, Ptr<WifiPhy> prim
    Ptr<Node> node = device->GetNode();
 
 
-   for(int i =0;i<8;++i){
-	   if(ch_numbers[i] == ch_num)
+   for(std::vector<uint16_t>::iterator i = ch_numbers.begin();
+       i != ch_numbers.end()
+       ;++i)
+   {
+	   if(*i == ch_num)
 	   {
-		   m_phys[ch_num] = primary;
+		   m_phys[*i] = primary;
 	   }
 
 	   else
 	   {
-		   m_phys[ch_numbers[i]] = phy.Create (node, device);
-		   m_phys[ch_numbers[i]]->ConfigureStandard (standard);
+		   m_phys[*i] = phy.Create (node, device);
+		   m_phys[*i]->ConfigureStandard (standard);
 	   }
 
 	   //m_phys[ch_numbers[i]]->EnableChannelBonding(true);
-	   m_phys[ch_numbers[i]]->SetChannelNumber(ch_numbers[i]);
+	   m_phys[*i]->SetChannelNumber(*i);
    }
 }
 
 void ChannelBondingManager::ResetPhys(){
-	for(int i =0;i<8;++i){                                                                    //reset phys
-		m_phys[ch_numbers[i]]->SetReceiveOkCallback (MakeNullCallback<void, Ptr<Packet>, double, WifiTxVector, enum WifiPreamble> ());
-		m_phys[ch_numbers[i]]->SetReceiveErrorCallback (MakeNullCallback<void, Ptr<Packet>, double> ());
-		m_phys[ch_numbers[i]] = 0;
+	for(std::vector<uint16_t>::iterator i = ch_numbers.begin();
+	   i != ch_numbers.end()
+	   ;++i)
+	{                                                                    //reset phys
+		m_phys[*i]->SetReceiveOkCallback (MakeNullCallback<void, Ptr<Packet>, double, WifiTxVector, enum WifiPreamble> ());
+		m_phys[*i]->SetReceiveErrorCallback (MakeNullCallback<void, Ptr<Packet>, double> ());
+		m_phys[*i] = 0;
 	}
 }
 
 void ChannelBondingManager::ClearReceiveRecord(){
-	for(int i =0;i<8;++i){                               //clear received record
-		received_channel[ch_numbers[i]] = false;
-		last_received_packet[ch_numbers[i]] = 0;
+	for(std::vector<uint16_t>::iterator i = ch_numbers.begin();
+	   i != ch_numbers.end()
+	   ;++i)
+	{                               //clear received record
+		received_channel[*i] = false;
+		last_received_packet[*i] = 0;
 	}
-
 }
 
 
@@ -460,59 +480,93 @@ uint32_t ChannelBondingManager::GetRequestWidth()
 
 void ChannelBondingManager::SetPhysCallback()
 {
+	void (ns3::ChannelBondingManager::*func) (Ptr<Packet>, double, WifiTxVector, WifiPreamble);
 
-	for(int i =0;i<8;++i){
-		m_phys[ch_numbers[i]]->SetReceiveErrorCallback (MakeCallback (&ChannelBondingManager::ReceiveError, this));
+	int num = 0;
+	for(std::vector<uint16_t>::iterator i = ch_numbers.begin(); i != ch_numbers.end() ; ++i)
+	{
+		++num;
+		switch(num)
+		{
+		case 1:
+			func = &ns3::ChannelBondingManager::Receive1Channel;
+			break;
+
+		case 2:
+			func = &ns3::ChannelBondingManager::Receive2Channel;
+			break;
+
+		case 3:
+			func = &ns3::ChannelBondingManager::Receive3Channel;
+			break;
+
+		case 4:
+			func = &ns3::ChannelBondingManager::Receive4Channel;
+			break;
+
+		case 5:
+			func = &ns3::ChannelBondingManager::Receive5Channel;
+			break;
+
+		case 6:
+			func = &ns3::ChannelBondingManager::Receive6Channel;
+			break;
+
+		case 7:
+			func = &ns3::ChannelBondingManager::Receive7Channel;
+			break;
+
+		case 8:
+			func = &ns3::ChannelBondingManager::Receive8Channel;
+			break;
+
+		default:
+			NS_FATAL_ERROR("Wrong subchannels");
+		}
+
+		m_phys[*i]->SetReceiveErrorCallback (MakeCallback (&ChannelBondingManager::ReceiveError, this));
+		m_phys[*i]->SetReceiveOkCallback(MakeCallback (func, this));
 	}
-
-	m_phys[ch_numbers[0]]->SetReceiveOkCallback (MakeCallback (&ChannelBondingManager::Receive36Channel, this));
-	m_phys[ch_numbers[1]]->SetReceiveOkCallback (MakeCallback (&ChannelBondingManager::Receive40Channel, this));
-	m_phys[ch_numbers[2]]->SetReceiveOkCallback (MakeCallback (&ChannelBondingManager::Receive44Channel, this));
-	m_phys[ch_numbers[3]]->SetReceiveOkCallback (MakeCallback (&ChannelBondingManager::Receive48Channel, this));
-	m_phys[ch_numbers[4]]->SetReceiveOkCallback (MakeCallback (&ChannelBondingManager::Receive52Channel, this));
-	m_phys[ch_numbers[5]]->SetReceiveOkCallback (MakeCallback (&ChannelBondingManager::Receive56Channel, this));
-	m_phys[ch_numbers[6]]->SetReceiveOkCallback (MakeCallback (&ChannelBondingManager::Receive60Channel, this));
-	m_phys[ch_numbers[7]]->SetReceiveOkCallback (MakeCallback (&ChannelBondingManager::Receive64Channel, this));
 }
 
-void ChannelBondingManager::Receive36Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
+void ChannelBondingManager::Receive1Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
 {
-	ReceiveSubChannel(Packet,rxSnr,txVector,preamble,36);
+	ReceiveSubChannel(Packet,rxSnr,txVector,preamble, ch_numbers[0]);
 }
 
-void ChannelBondingManager::Receive40Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
+void ChannelBondingManager::Receive2Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
 {
-	ReceiveSubChannel(Packet,rxSnr,txVector,preamble,40);
+	ReceiveSubChannel(Packet,rxSnr,txVector,preamble, ch_numbers[1]);
 }
 
-void ChannelBondingManager::Receive44Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
+void ChannelBondingManager::Receive3Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
 {
-	ReceiveSubChannel(Packet,rxSnr,txVector,preamble,44);
+	ReceiveSubChannel(Packet,rxSnr,txVector,preamble, ch_numbers[2]);
 }
 
-void ChannelBondingManager::Receive48Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
+void ChannelBondingManager::Receive4Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
 {
-	ReceiveSubChannel(Packet,rxSnr,txVector,preamble,48);
+	ReceiveSubChannel(Packet,rxSnr,txVector,preamble, ch_numbers[3]);
 }
 
-void ChannelBondingManager::Receive52Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
+void ChannelBondingManager::Receive5Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
 {
-	ReceiveSubChannel(Packet,rxSnr,txVector,preamble,52);
+	ReceiveSubChannel(Packet,rxSnr,txVector,preamble, ch_numbers[4]);
 }
 
-void ChannelBondingManager::Receive56Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
+void ChannelBondingManager::Receive6Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
 {
-	ReceiveSubChannel(Packet,rxSnr,txVector,preamble,56);
+	ReceiveSubChannel(Packet,rxSnr,txVector,preamble, ch_numbers[5]);
 }
 
-void ChannelBondingManager::Receive60Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
+void ChannelBondingManager::Receive7Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
 {
-	ReceiveSubChannel(Packet,rxSnr,txVector,preamble,60);
+	ReceiveSubChannel(Packet,rxSnr,txVector,preamble, ch_numbers[6]);
 }
 
-void ChannelBondingManager::Receive64Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
+void ChannelBondingManager::Receive8Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
 {
-	ReceiveSubChannel(Packet,rxSnr,txVector,preamble,64);
+	ReceiveSubChannel(Packet,rxSnr,txVector,preamble, ch_numbers[7]);
 }
 
 void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, uint16_t ch_num)
@@ -692,11 +746,13 @@ void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector t
 
 	//txVector.SetChannelWidth(request_width);
 
-	for(int i=0;i<8;i++)
+	for(std::vector<uint16_t>::iterator i = ch_numbers.begin();
+	   i != ch_numbers.end()
+	   ;++i)
 	{
-		if(packet_pieces[ch_numbers[i]] != 0)
+		if(packet_pieces[*i] != 0)
 		{
-			m_phys[ch_numbers[i]]->SendPacket(packet_pieces[ch_numbers[i]], txVector, preamble, mpdutype);
+			m_phys[*i]->SendPacket(packet_pieces[*i], txVector, preamble, mpdutype);
 		}
 	}
 
@@ -919,11 +975,13 @@ uint8_t ChannelBondingManager::GetNumberOfReceive()       //find number of recei
 		primary_sender_addr = hdr.GetAddr2();
 		primary_hdr_type = hdr.GetType();
 
-		for(int i=0;i<8;i++)
+		for(std::vector<uint16_t>::iterator i = ch_numbers.begin();
+		   i != ch_numbers.end()
+		   ;++i)
 		{
-			if(received_channel[ch_numbers[i]])
+			if(received_channel[*i])
 			{
-				p = last_received_packet[ch_numbers[i]]->Copy();
+				p = last_received_packet[*i]->Copy();
 				if(p->PeekPacketTag(ampdu))
 				{
 					p->RemoveHeader(ampduhdr);
@@ -949,14 +1007,14 @@ uint8_t ChannelBondingManager::GetNumberOfReceive()       //find number of recei
 
 					else
 					{
-						received_channel[ch_numbers[i]] = false;
-						last_received_packet[ch_numbers[i]] = 0;
+						received_channel[*i] = false;
+						last_received_packet[*i] = 0;
 					}
 				}
 				else
 				{
-					received_channel[ch_numbers[i]] = false;
-					last_received_packet[ch_numbers[i]] = 0;
+					received_channel[*i] = false;
+					last_received_packet[*i] = 0;
 				}
 			}
 		}
@@ -1003,5 +1061,33 @@ uint32_t ChannelBondingManager::GetConvertedSize(Ptr<const Packet> packet)    //
 
 }
 
+void ChannelBondingManager::SetUpChannelNumbers()                    //find maximum subchannels
+{
+	std::map<uint16_t, ChannelInfo>::const_iterator ch_i = ch_map.find(primary_ch);
+	ChannelInfo ch_info;
+	if(ch_i == ch_map.end())
+	{
+		std::ostringstream oss;
+		oss<<primary_ch<<" is wrong primary channel number";
+		NS_FATAL_ERROR(oss.str());
+	}
+	ch_info = ch_i->second;
+
+	uint16_t maximum_ch = primary_ch;
+
+	while(true)
+	{
+		if(maximum_ch == ch_info.Parent)
+			break;
+
+		maximum_ch = ch_info.Parent;
+		ch_info = ch_map.find(maximum_ch)->second;
+	}
+
+	if(ch_info.Width < max_width)
+		max_width = ch_info.Width;
+
+	ch_numbers = FindSubChannels(maximum_ch);
+}
 
 }
