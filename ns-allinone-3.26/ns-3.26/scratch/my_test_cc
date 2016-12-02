@@ -1,0 +1,217 @@
+#include "my_test.h"
+
+
+
+using namespace ns3;
+
+NS_LOG_COMPONENT_DEFINE ("my-wifi-test");
+
+
+
+
+int main (int argc, char *argv[])
+{
+
+	Parser parser;
+	string test_number = 0;
+
+	CommandLine cmd;
+	cmd.AddValue("test_number" , "insert number of input file",test_number);
+
+	ostringstream oss;
+
+	/*
+	 * parse ap input
+	 */
+	oss<<"./input/ap/"<<test_number;
+	parser.SetupInputFile(oss.str(),true);
+	oss.clear();
+	parser.Parse();
+	parser.CloseFile();
+
+	/*
+	 * parse sta input
+	 */
+	oss<<"./input/sta/"<<test_number;
+	parser.SetupInputFile(oss.str(),false);
+	oss.clear();
+	parser.Parse();
+	parser.CloseFile();
+
+	/*for()
+	{
+
+	}*/
+
+	return 0;
+}
+
+Parser::Parser()
+{
+	input_file = NULL;
+	is_ap = false;
+}
+
+Parser::~Parser()
+{
+	if(input_file->is_open())
+		input_file->close();
+
+	if(input_file != NULL)
+	{
+		delete input_file;
+		input_file = NULL;
+	}
+}
+
+InApInfo Parser::GetApInfo(uint32_t index)
+{
+	return ap_info[index];
+}
+
+InStaInfo Parser::GetStaInfo(uint32_t index)
+{
+	return sta_info[index];
+}
+
+void Parser::SetupInputFile(string path, bool ap_sta)
+{
+	input_file = new ifstream(path,ios::in);
+	is_ap = ap_sta;
+}
+
+void Parser::Parse()
+{
+	string str;
+	istringstream iss;
+	char line[CHAR_MAX_LENGTH];
+	unsigned int temp;
+	for(;!input_file->eof();)
+	{
+		input_file->getline(line,CHAR_MAX_LENGTH);
+
+		/*
+		 * convert to string
+		 */
+		str.clear();
+		str += line;
+
+		/*
+		 * remove comment
+		 */
+		temp = str.find('#');
+		if(temp < str.size())
+		{
+			str.resize(temp);
+		}
+
+		while(str.at(0) == ' ')
+			str.erase(str.begin());
+
+		unsigned int index;
+		if(is_ap)
+		{
+			InApInfo input_info;
+
+			for(int i =0;i<5;++i)
+			{
+				temp = str.find(' ');
+				iss.clear();
+				iss << str.substr(0, temp);
+				str = str.substr(temp+1);
+
+				while(str.at(0) == ' ')
+					str.erase(str.begin());
+
+
+				switch(i)
+				{
+				case 0:
+					index<<iss;
+					break;
+				case 1:
+					input_info.x<<iss;
+					break;
+				case 2:
+					input_info.y<<iss;
+					break;
+				case 3:
+					input_info.channel<<iss;
+					break;
+				default:
+					input_info.width<<iss;
+				}
+			}
+			ap_info[index] = input_info;
+		}
+		else
+		{
+			InStaInfo input_info;
+			for(int i =0;i<4;++i)
+			{
+				temp = str.find(' ');
+				iss.clear();
+				iss << str.substr(0, temp);
+				str = str.substr(temp+1);
+				while(str.at(0) == ' ')
+					str.erase(str.begin());
+
+
+				switch(i)
+				{
+				case 0:
+					index<<iss;
+					break;
+				case 1:
+					input_info.x<<iss;
+					break;
+				case 2:
+					input_info.y<<iss;
+					break;
+				default:
+					input_info.traffic_demand<<iss;
+				}
+			}
+			sta_info[index] = input_info;
+		}
+	}
+}
+
+void Parser::CloseFile()
+{
+	if(input_file->is_open())
+		input_file->close();
+
+	if(input_file != NULL)
+	{
+		delete input_file;
+		input_file = NULL;
+	}
+}
+
+void Parser::Clean()
+{
+	CloseFile();
+
+	ap_info.clear();
+	sta_info.clear();
+}
+
+map<unsigned int, InApInfo>::iterator Parser::GetApBegin()
+{
+	return ap_info.begin();
+}
+map<unsigned int, InStaInfo>::iterator Parser::GetStaBegin()
+{
+	return sta_info.begin();
+}
+
+map<unsigned int, InApInfo>::iterator Parser::GetApEnd()
+{
+	return ap_info.end();
+}
+map<unsigned int, InStaInfo>::iterator Parser::GetStaEnd()
+{
+	return sta_info.end();
+}
+

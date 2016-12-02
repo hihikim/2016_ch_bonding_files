@@ -61,9 +61,9 @@ int main (int argc, char *argv[])
   cmd.Parse (argc,argv);
 
   std::cout << "MCS value" << "\t\t" << "Channel width" << "\t\t" << "short GI" << "\t\t" << "Throughput" << '\n';
-  for (int i = 0; i <= 9; i++) //MCS
+  for (int i = 0; i <= 0; i++) //MCS
     {
-      for (int j = 20; j <= 160; ) //channel width
+      for (int j = 40; j <= 40; ) //channel width
         {
           if (i == 9 && j == 20)
             {

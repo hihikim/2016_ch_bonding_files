@@ -63,7 +63,7 @@ int main (int argc, char *argv[])
   std::cout << "MCS value" << "\t\t" << "Channel width" << "\t\t" << "short GI" << "\t\t" << "Throughput" << '\n';
   for (int i = 0; i <= 9; i++) //MCS
     {
-      for (int j = 40; j <= 160; ) //channel width
+      for (int j = 20; j <= 160; ) //channel width
         {
           if (i == 9 && j == 20)
             {
@@ -88,6 +88,11 @@ int main (int argc, char *argv[])
               NodeContainer wifiApNode;
               wifiApNode.Create (1);
 
+              NodeContainer wifiStaNode2;
+              wifiStaNode2.Create (1);
+              NodeContainer wifiApNode2;
+              wifiApNode2.Create (1);
+
               YansWifiChannelHelper channel = YansWifiChannelHelper::Default ();
               YansWifiPhyHelper phy = YansWifiPhyHelper::Default ();
               phy.SetChannel (channel.Create ());
@@ -110,22 +115,35 @@ int main (int argc, char *argv[])
               mac.SetType ("ns3::StaWifiMac",
                            "Ssid", SsidValue (ssid));
 
-              NetDeviceContainer staDevice;
+              NetDeviceContainer staDevice, staDevice2;
               staDevice = wifi.Install (phy, mac, wifiStaNode);
 
               mac.SetType ("ns3::ApWifiMac",
                            "Ssid", SsidValue (ssid));
 
-              NetDeviceContainer apDevice;
+              NetDeviceContainer apDevice, apDevice2;
               apDevice = wifi.Install (phy, mac, wifiApNode);
 
+              // 2번째 ap-sta만들기
+
+              ssid = Ssid ("ns3-80211ac2");
+
+              mac.SetType ("ns3::StaWifiMac",
+                           "Ssid", SsidValue (ssid));
+              staDevice2 = wifi.Install (phy, mac, wifiStaNode2);
+
+
+              mac.SetType ("ns3::ApWifiMac",
+                           "Ssid", SsidValue (ssid));              
+              apDevice2 = wifi.Install (phy, mac, wifiApNode2);
+
               // Set channel width
-              //Config::Set ("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/ChannelWidth", UintegerValue (j));
+              //Config::Set ("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/ChannelWidth", UintegerValue (j));   //전부 다걸림
 	      Ptr<RegularWifiMac> m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(apDevice.Get(0))->GetMac());
 
               Ptr<MacLow> m_low = m_mac->GetLow();
               m_low->EnableChannelBonding();
-              m_low->SetChannelManager(phy, 149, j, WIFI_PHY_STANDARD_80211ac);
+              m_low->SetChannelManager(phy, 36, j, WIFI_PHY_STANDARD_80211ac);
 
               
               m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(staDevice.Get(0))->GetMac());
@@ -133,7 +151,25 @@ int main (int argc, char *argv[])
               m_low = m_mac->GetLow();
 
               m_low->EnableChannelBonding();
-              m_low->SetChannelManager(phy, 149, j, WIFI_PHY_STANDARD_80211ac);
+              m_low->SetChannelManager(phy, 36, j, WIFI_PHY_STANDARD_80211ac);
+
+
+
+
+              m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(apDevice2.Get(0))->GetMac());
+
+              m_low = m_mac->GetLow();
+              m_low->EnableChannelBonding();
+              m_low->SetChannelManager(phy, 40, j, WIFI_PHY_STANDARD_80211ac);
+
+              
+              m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(staDevice2.Get(0))->GetMac());
+
+              m_low = m_mac->GetLow();
+
+              m_low->EnableChannelBonding();
+              m_low->SetChannelManager(phy, 40, j, WIFI_PHY_STANDARD_80211ac);
+              
               
 
 
@@ -143,29 +179,43 @@ int main (int argc, char *argv[])
 
               positionAlloc->Add (Vector (0.0, 0.0, 0.0));
               positionAlloc->Add (Vector (distance, 0.0, 0.0));
+              positionAlloc->Add (Vector (distance * 2, 0.0, 0.0));  //위치 추가
+              positionAlloc->Add (Vector (distance * 3, 0.0, 0.0));
               mobility.SetPositionAllocator (positionAlloc);
 
               mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
 
               mobility.Install (wifiApNode);
               mobility.Install (wifiStaNode);
+ 
+              //추가
+              mobility.Install (wifiApNode2);
+              mobility.Install (wifiStaNode2);
 
               /* Internet stack*/
               InternetStackHelper stack;
               stack.Install (wifiApNode);
               stack.Install (wifiStaNode);
 
+              //추가
+              stack.Install (wifiApNode2);
+              stack.Install (wifiStaNode2);
+
               Ipv4AddressHelper address;
 
               address.SetBase ("192.168.1.0", "255.255.255.0");
-              Ipv4InterfaceContainer staNodeInterface;
-              Ipv4InterfaceContainer apNodeInterface;
+              Ipv4InterfaceContainer staNodeInterface, staNodeInterface2;   //2로 선언했는데 배열이나 vector도 가능함
+              Ipv4InterfaceContainer apNodeInterface, apNodeInterface2;
 
               staNodeInterface = address.Assign (staDevice);
               apNodeInterface = address.Assign (apDevice);
 
+              staNodeInterface2 = address.Assign (staDevice2);
+              apNodeInterface2 = address.Assign (apDevice2);
+
               /* Setting applications */
               ApplicationContainer serverApp, sinkApp;
+              ApplicationContainer serverApp2, sinkApp2;
               if (udp)
                 {
                   //UDP flow
@@ -182,6 +232,25 @@ int main (int argc, char *argv[])
                   ApplicationContainer clientApp = myClient.Install (wifiApNode.Get (0));
                   clientApp.Start (Seconds (1.0));
                   clientApp.Stop (Seconds (simulationTime + 1));
+
+
+                  /*
+                   *--------------추가-----------------
+                  */
+
+                  UdpServerHelper myServer2 (9);
+                  serverApp2 = myServer2.Install (wifiStaNode2.Get (0));
+                  serverApp2.Start (Seconds (0.0));
+                  serverApp2.Stop (Seconds (simulationTime + 1));
+
+                  UdpClientHelper myClient2 (staNodeInterface2.GetAddress (0), 9);
+                  myClient2.SetAttribute ("MaxPackets", UintegerValue (4294967295u));
+                  myClient2.SetAttribute ("Interval", TimeValue (Time ("0.00001"))); //packets/s
+                  myClient2.SetAttribute ("PacketSize", UintegerValue (payloadSize));
+
+                  ApplicationContainer clientApp2 = myClient2.Install (wifiApNode2.Get (0));
+                  clientApp2.Start (Seconds (1.0));
+                  clientApp2.Stop (Seconds (simulationTime + 1));
                 }
               else
                 {
@@ -206,6 +275,30 @@ int main (int argc, char *argv[])
                   apps.Add (onoff.Install (wifiApNode.Get (0)));
                   apps.Start (Seconds (1.0));
                   apps.Stop (Seconds (simulationTime + 1));
+
+                  /*
+                   *------------------------추가------------------------------
+                  */
+                  uint16_t port2 = 50000;
+                  Address apLocalAddress2 (InetSocketAddress (Ipv4Address::GetAny (), port2));
+                  PacketSinkHelper packetSinkHelper2 ("ns3::TcpSocketFactory", apLocalAddress2);
+                  sinkApp2 = packetSinkHelper2.Install (wifiStaNode2.Get (0));
+
+                  sinkApp2.Start (Seconds (0.0));
+                  sinkApp2.Stop (Seconds (simulationTime + 1));
+
+                  OnOffHelper onoff2 ("ns3::TcpSocketFactory",Ipv4Address::GetAny ());
+                  onoff2.SetAttribute ("OnTime",  StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
+                  onoff2.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
+                  onoff2.SetAttribute ("PacketSize", UintegerValue (payloadSize));
+                  onoff2.SetAttribute ("DataRate", DataRateValue (1000000000)); //bit/s
+                  ApplicationContainer apps2;
+
+                  AddressValue remoteAddress2 (InetSocketAddress (staNodeInterface2.GetAddress (0), port2));
+                  onoff2.SetAttribute ("Remote", remoteAddress2);
+                  apps2.Add (onoff.Install (wifiApNode2.Get (0)));
+                  apps2.Start (Seconds (1.0));
+                  apps2.Stop (Seconds (simulationTime + 1));
                 }
 
               /*OlsrHelper olsr;
@@ -223,19 +316,27 @@ int main (int argc, char *argv[])
               Simulator::Destroy ();
 
               double throughput = 0;
+              double throughput2 = 0;
               if (udp)
                 {
                   //UDP
                   uint32_t totalPacketsThrough = DynamicCast<UdpServer> (serverApp.Get (0))->GetReceived ();
                   throughput = totalPacketsThrough * payloadSize * 8 / (simulationTime * 1000000.0); //Mbit/s
+                  uint32_t totalPacketsThrough2 = DynamicCast<UdpServer> (serverApp2.Get (0))->GetReceived ();
+                  throughput2 = totalPacketsThrough2 * payloadSize * 8 / (simulationTime * 1000000.0); //Mbit/s
                 }
               else
                 {
                   //TCP
                   uint32_t totalPacketsThrough = DynamicCast<PacketSink> (sinkApp.Get (0))->GetTotalRx ();
                   throughput = totalPacketsThrough * 8 / (simulationTime * 1000000.0); //Mbit/s
+
+                  uint32_t totalPacketsThrough2 = DynamicCast<PacketSink> (sinkApp2.Get (0))->GetTotalRx ();
+                  throughput2 = totalPacketsThrough2 * 8 / (simulationTime * 1000000.0); //Mbit/s
+
                 }
               std::cout << i << "\t\t\t" << j << " MHz\t\t\t" << k << "\t\t\t" << throughput << " Mbit/s" << std::endl;
+              std::cout << i << "\t\t\t" << j << " MHz\t\t\t" << k << "\t\t\t" << throughput2 << " Mbit/s" << std::endl;
             }
           j *= 2;
         }
