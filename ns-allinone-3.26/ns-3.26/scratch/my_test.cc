@@ -13,10 +13,11 @@ int main (int argc, char *argv[])
 {
 
 	Parser parser;
-	string test_number = 0;
+	unsigned int test_number = 0;
 
 	CommandLine cmd;
-	cmd.AddValue("test_number" , "insert number of input file",test_number);
+	cmd.AddValue("test_number" , "insert number of input file", test_number);
+	cmd.Parse(argc,argv);
 
 	uint32_t payloadSize = 1472;
 	ostringstream oss;
@@ -24,23 +25,22 @@ int main (int argc, char *argv[])
 	/*
 	 * parse ap input
 	 */
-	oss<<"./input/ap/"<<test_number;
+	oss<<AP_INPUT_PATH<<test_number;
 	parser.SetupInputFile(oss.str(),true);
-	oss.clear();
+	oss.str("");oss.clear();
 	parser.Parse();
 	parser.CloseFile();
 
 	/*
 	 * parse sta input
 	 */
-	oss<<"./input/sta/"<<test_number;
+	oss<<STA_INPUT_PATH<<test_number;
 	parser.SetupInputFile(oss.str(),false);
-	oss.clear();
+	oss.str("");oss.clear();
 	parser.Parse();
 	parser.CloseFile();
 
 	double shortest_sq_dist, sq_dist;
-	shortest_sq_dist = numeric_limits<double>::max();
 	unsigned int shortest_ap;
 
 
@@ -50,6 +50,7 @@ int main (int argc, char *argv[])
 		i != parser.GetStaEnd();
 		++i)
 	{
+		shortest_sq_dist = numeric_limits<double>::max();
 		InStaInfo sta_info = i->second;
 		for(map<unsigned int,InApInfo>::iterator j = parser.GetApBegin();
 			j != parser.GetApEnd();
@@ -67,6 +68,8 @@ int main (int argc, char *argv[])
 		}
 		shortest_stas_of_ap[shortest_ap].push_back(i->first);
 	}
+
+
 	map<unsigned int, NodeContainer> ap_nodes;
 	map<unsigned int, NodeContainer> sta_nodes;
 
@@ -84,7 +87,8 @@ int main (int argc, char *argv[])
 	wifi.SetStandard (WIFI_PHY_STANDARD_80211ac);
 	WifiMacHelper mac;
 
-	oss.clear();
+
+	oss.str("");oss.clear();
 	oss << "VhtMcs" << MCS_NUMBER;
 	wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager","DataMode", StringValue (oss.str ()),
 								"ControlMode", StringValue (oss.str ()),
@@ -166,7 +170,7 @@ int main (int argc, char *argv[])
 
 		for(vector <unsigned int>::iterator j = i->second.begin();
 			j != i->second.end();
-			j++)
+			++j)
 		{
 			mobility.Install (sta_nodes[*j]);
 			stack.Install (sta_nodes[*j]);
@@ -187,13 +191,15 @@ int main (int argc, char *argv[])
 			myClient.SetAttribute ("Interval", TimeValue (Time ("0.00001"))); //packets/s
 			myClient.SetAttribute ("PacketSize", UintegerValue (payloadSize));
 
-			clientApp[i->first].push_back( myClient.Install(ap_nodes[i->first]	) );
+			clientApp[i->first].push_back( myClient.Install(ap_nodes[i->first]) );
 
-			end_iter = clientApp[i->first].rend();
+			//cout<<i->first<<endl;
+
+			end_iter = clientApp[i->first].rbegin();
 			end_iter->Start( Seconds(CLIENT_START_TIME));
 			end_iter->Stop( Seconds (SIMULATION_TIME + 1.0) );
 
-			++port_num;
+			//++port_num;
 		}
 	}
 
@@ -203,12 +209,12 @@ int main (int argc, char *argv[])
 	Simulator::Run ();
 	Simulator::Destroy ();
 
-	for(map < unsigned int, vector <ApplicationContainer> >::iterator i;
+	for(map < unsigned int, vector <ApplicationContainer> >::iterator i = serverApp.begin();
 		i != serverApp.end();
 		++i)
 	{
 		double throughput = 0;
-		uint32_t totalPacketsThrough = DynamicCast<UdpServer> (i->second[0].Get (0))->GetReceived ();
+		uint32_t totalPacketsThrough = DynamicCast<UdpServer> ((i->second)[0].Get (0))->GetReceived ();
 		throughput = totalPacketsThrough * payloadSize * 8 / (SIMULATION_TIME * 1000000.0); //Mbit/s
 		cout<<"sta index : "<<i->first<<" throughput : "<<throughput<<endl;
 	}
@@ -218,20 +224,13 @@ int main (int argc, char *argv[])
 
 Parser::Parser()
 {
-	input_file = NULL;
 	is_ap = false;
 }
 
 Parser::~Parser()
 {
-	if(input_file->is_open())
-		input_file->close();
-
-	if(input_file != NULL)
-	{
-		delete input_file;
-		input_file = NULL;
-	}
+	if(input_file.is_open())
+		input_file.close();
 }
 
 InApInfo Parser::GetApInfo(uint32_t index)
@@ -246,7 +245,7 @@ InStaInfo Parser::GetStaInfo(uint32_t index)
 
 void Parser::SetupInputFile(string path, bool ap_sta)
 {
-	input_file = new ifstream(path,ios::in);
+	input_file.open(path.c_str(),ios::in);
 	is_ap = ap_sta;
 }
 
@@ -256,16 +255,15 @@ void Parser::Parse()
 	istringstream iss;
 	char line[CHAR_MAX_LENGTH];
 	unsigned int temp;
-	for(;!input_file->eof();)
+	for(;!input_file.eof();)
 	{
-		input_file->getline(line,CHAR_MAX_LENGTH);
+		input_file.getline(line,CHAR_MAX_LENGTH);
 
 		/*
 		 * convert to string
 		 */
-		str.clear();
+		str = "";
 		str += line;
-
 		/*
 		 * remove comment
 		 */
@@ -275,8 +273,9 @@ void Parser::Parse()
 			str.resize(temp);
 		}
 
-		while(str.at(0) == ' ')
-			str.erase(str.begin());
+		while(!str.empty() && str.at(0) == ' ')
+			str = str.substr(1);
+
 
 		unsigned int index;
 		if(is_ap)
@@ -285,13 +284,13 @@ void Parser::Parse()
 
 			for(int i =0;i<5;++i)
 			{
-				temp = str.find(' ');
-				iss.clear();
+				temp = str.find(',');
+				iss.str("");iss.clear();
 				iss.str(str.substr(0, temp));
 				str = str.substr(temp+1);
 
-				while(str.at(0) == ' ')
-					str.erase(str.begin());
+				while(!str.empty() && str.at(0) == ' ')
+					str = str.substr(1);
 
 
 				switch(i)
@@ -319,12 +318,12 @@ void Parser::Parse()
 			InStaInfo input_info;
 			for(int i =0;i<4;++i)
 			{
-				temp = str.find(' ');
-				iss.clear();
+				temp = str.find(',');
+				iss.str("");iss.clear();
 				iss.str(str.substr(0, temp));
 				str = str.substr(temp+1);
-				while(str.at(0) == ' ')
-					str.erase(str.begin());
+				while(!str.empty() && str.at(0) == ' ')
+					str = str.substr(1);
 
 
 				switch(i)
@@ -349,14 +348,8 @@ void Parser::Parse()
 
 void Parser::CloseFile()
 {
-	if(input_file->is_open())
-		input_file->close();
-
-	if(input_file != NULL)
-	{
-		delete input_file;
-		input_file = NULL;
-	}
+	if(input_file.is_open())
+		input_file.close();
 }
 
 void Parser::Clean()

@@ -9,6 +9,8 @@
 #define SERVER_START_TIME 0.0
 #define CLIENT_START_TIME 1.0
 #define SIMULATION_TIME 1.0
+#define AP_INPUT_PATH "./input/ap/"
+#define STA_INPUT_PATH "./input/sta/"
 
 
 
@@ -75,7 +77,7 @@ public:
 	map<unsigned int, InStaInfo>::iterator GetStaEnd();
 
 private:
-	ifstream* input_file;
+	ifstream input_file;
 	map<unsigned int, InApInfo> ap_info;
 	map<unsigned int, InStaInfo> sta_info;
 	bool is_ap;
