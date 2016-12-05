@@ -1,6 +1,16 @@
 #ifndef MY_TEST__H
 #define MY_TEST__H
+
 #define CHAR_MAX_LENGTH 1024
+#define ENABLE_SHORT_GD false
+#define MCS_NUMBER 0
+#define IP_BASE "192.168.0.0"
+#define SUBNET_MASK "255.255.0.0"
+#define SERVER_START_TIME 0.0
+#define CLIENT_START_TIME 1.0
+#define SIMULATION_TIME 1.0
+
+
 
 #include "ns3/core-module.h"
 #include "ns3/network-module.h"
@@ -86,6 +96,13 @@ private:
 	map<uint32_t,OutStaInfo> sta_info;
 	map<uint32_t,OutApInfo> ap_info;
 };
+
+uint16_t actual_ch[] = {36, 40, 44, 48,
+							52, 56, 60, 64,
+							100, 104, 108, 112,
+							116, 120, 124, 128,
+							132, 136, 140, 144,
+							149, 153, 157, 161, 165};
 
 
 #endif

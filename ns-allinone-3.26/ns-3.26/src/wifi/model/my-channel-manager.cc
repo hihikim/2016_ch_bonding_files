@@ -27,6 +27,7 @@ ChannelBondingManager::ChannelBondingManager()
 	request_width = 160;
 
 	alloc_last_primary_hdr = false;
+	is_sta = false;
 }
 
 ChannelBondingManager::~ChannelBondingManager()
@@ -237,6 +238,11 @@ void ChannelBondingManager::SetChannelOption(uint16_t primary_ch,uint32_t max_wi
 	{
 		received_channel[*i] = false;
 	}
+}
+
+void ChannelBondingManager::SetStation(bool tf)
+{
+	is_sta = tf;
 }
 
 void ChannelBondingManager::MakePhys(const WifiPhyHelper &phy, Ptr<WifiPhy> primary, uint16_t ch_num, uint32_t channel_width, enum WifiPhyStandard standard){
@@ -631,10 +637,10 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 				request_ch = GetChannelWithWidth(request_width);
 			}
 
-			uint32_t recevied_num = GetNumberOfReceive();
+			uint32_t received_num = GetNumberOfReceive();
 
-			if(recevied_num != 0 &&
-				recevied_num == (request_width/20) ){
+			if(received_num != 0 &&
+				received_num == (request_width/20) ){
 				//std::cout<<"ho~\n";
 				ManageReceived(Packet, rxSnr, txVector, preamble);
 			}
@@ -684,9 +690,12 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 
 	if(Packet->PeekPacketTag(ampdu))
 	{
-		Packet->PeekHeader(ampduhdr);
+		Packet->RemoveHeader(ampduhdr);
+		Packet->PeekHeader(hdr);
+		Packet->AddHeader(ampduhdr);
 		isampdu = true;
 	}
+
 	else
 	{
 		Packet->PeekHeader(hdr);
@@ -695,41 +704,15 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 
 	Ptr<ns3::Packet> p;
 
+	p = Packet->Copy();
 
-	/*if(isampdu)
+	/*if(hdr.IsBeacon())
 	{
-		for(int i=0;i<8;i++)
+		if(is_sta)
 		{
-			if(received_channel[ch_numbers[i]])
-			{
-				temp_p = last_received_packet[ch_numbers[i]]->Copy();
-
-				if(ch_numbers[i] == primary_ch)
-				{
-					temp_p->RemoveHeader(ampduhdr);
-					temp_p->RemoveHeader(hdr);
-				}
-				else
-				{
-					temp_p->RemoveHeader(etc_ampdu);
-					temp_p->RemoveHeader(etc);
-				}
-
-				if(p == 0)
-					p = temp_p;
-
-				else
-					p->AddAtEnd(temp_p);
-			}
+			max_width = txVector.GetChannelWidth();
 		}
-		p->AddHeader(hdr);
-		p->AddHeader(ampduhdr);
-	}
-
-	else*/
-	//{
-		p = Packet->Copy();
-	//}
+	}*/
 
 	if(isampdu || (!hdr.IsRts() && !hdr.IsCts()))
 		ClearReceiveRecord();
