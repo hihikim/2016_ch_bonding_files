@@ -1,5 +1,5 @@
 #include "my_test.h"
-
+#include "ns3/random-variable-stream.h"
 
 
 using namespace ns3;
@@ -20,6 +20,8 @@ int main (int argc, char *argv[])
 	cmd.Parse(argc,argv);
 
 	uint32_t payloadSize = 1472;
+	//uint32_t payloadSize = 1448;
+	//Config::SetDefault ("ns3::TcpSocket::SegmentSize", UintegerValue (payloadSize));
 	ostringstream oss;
 
 	/*
@@ -43,8 +45,17 @@ int main (int argc, char *argv[])
 	double shortest_sq_dist, sq_dist;
 	unsigned int shortest_ap;
 
+	Ptr<UniformRandomVariable> x = CreateObject<UniformRandomVariable> ();
+	//
 
 	map<unsigned int, vector <unsigned int> > shortest_stas_of_ap; //shortest_stas_of_ap[a] = list of STAs which is allocated with AP a
+
+	for(map<unsigned int,InApInfo>::iterator i = parser.GetApBegin();
+		i != parser.GetApEnd();
+		++i)
+	{
+		shortest_stas_of_ap[i->first].reserve(1);
+	}
 
 	for(map<unsigned int,InStaInfo>::iterator i = parser.GetStaBegin();
 		i != parser.GetStaEnd();
@@ -66,7 +77,22 @@ int main (int argc, char *argv[])
 				shortest_ap = j->first;
 			}
 		}
+		cout<<"sta "<<i->first<<" : shortest ap "<<shortest_ap<<" distance "<<sqrt(shortest_sq_dist)<<endl;
 		shortest_stas_of_ap[shortest_ap].push_back(i->first);
+	}
+
+
+
+	for(map<unsigned int,vector <unsigned int>>::iterator i = shortest_stas_of_ap.begin();
+		i != shortest_stas_of_ap.end();
+		++i)
+	{
+		cout<<"AP "<<i->first<<":";
+		for(vector <unsigned int>::iterator j = i->second.begin(); j != i->second.end();j++)
+		{
+			cout<<"STA "<<*j<<" | ";
+		}
+		cout<<endl;
 	}
 
 
@@ -116,12 +142,12 @@ int main (int argc, char *argv[])
 
 		ap_devs[i->first] = wifi.Install(phy, mac, ap_nodes[i->first]);
 
-		m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(ap_devs[i->first].Get(0))->GetMac());
-		Ptr<MacLow> m_low = m_mac->GetLow();
-		m_low->EnableChannelBonding();
+		//m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(ap_devs[i->first].Get(0))->GetMac());
+		//Ptr<MacLow> m_low = m_mac->GetLow();
+		//m_low->EnableChannelBonding();
 
 		InApInfo ap_info = parser.GetApInfo(i->first);
-		m_low->SetChannelManager(phy, actual_ch[ap_info.channel], ap_info.width, WIFI_PHY_STANDARD_80211ac);
+		//m_low->SetChannelManager(phy, actual_ch[ap_info.channel], ap_info.width, WIFI_PHY_STANDARD_80211ac);
 
 		positionAlloc->Add(Vector(ap_info.x, ap_info.y, 0) );
 		for(vector <unsigned int>::iterator j = i->second.begin();
@@ -136,11 +162,11 @@ int main (int argc, char *argv[])
 
 			sta_devs[*j] = wifi.Install(phy, mac, sta_nodes[*j]);
 
-			m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(sta_devs[*j].Get(0))->GetMac());
-			m_low = m_mac->GetLow();
-			m_low->EnableChannelBonding();
+			//m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(sta_devs[*j].Get(0))->GetMac());
+			//m_low = m_mac->GetLow();
+			//m_low->EnableChannelBonding();
 
-			m_low->SetChannelManager(phy, actual_ch[ap_info.channel], ap_info.width, WIFI_PHY_STANDARD_80211ac);
+			//m_low->SetChannelManager(phy, actual_ch[ap_info.channel], ap_info.width, WIFI_PHY_STANDARD_80211ac);
 
 			InStaInfo sta_info = parser.GetStaInfo(*j);
 
@@ -156,7 +182,9 @@ int main (int argc, char *argv[])
 	Ipv4AddressHelper address;
 	address.SetBase (IP_BASE, SUBNET_MASK);
 
-	map < unsigned int, vector <ApplicationContainer> > serverApp , sinkApp, clientApp;
+	map < unsigned int, vector <ApplicationContainer> > serverApp, clientApp;
+	map < unsigned int, vector <ApplicationContainer> > echoserverApp, echoclientApp;
+	//map < unsigned int, vector <ApplicationContainer> > App, sinkApp;
 
 	for(map<unsigned int, vector <unsigned int>>::iterator i = shortest_stas_of_ap.begin();
 		i != shortest_stas_of_ap.end();
@@ -166,46 +194,91 @@ int main (int argc, char *argv[])
 		stack.Install (ap_nodes[i->first]);
 		Ipv4InterfaceContainer apNodeInterface = address.Assign(ap_devs[i->first]);
 
-		unsigned int port_num = 1024;
+		cout<<"ap "<<i->first<<" : address ("<<apNodeInterface.GetAddress(0)<<") | ";
+		unsigned int port_num = 5000;
+		unsigned int echo_port = 9;
 
 		for(vector <unsigned int>::iterator j = i->second.begin();
 			j != i->second.end();
 			++j)
 		{
+			double diff = x->GetValue(0,1);
+			InStaInfo stainfo = parser.GetStaInfo(*j);
 			mobility.Install (sta_nodes[*j]);
 			stack.Install (sta_nodes[*j]);
 
 			Ipv4InterfaceContainer staNodeInterface = address.Assign(sta_devs[*j]);
+			cout<<"sta "<<*j<<" : address ("<<staNodeInterface.GetAddress(0)<<") | ";
 
 			UdpServerHelper myServer (port_num);
-			serverApp[*j].push_back( myServer.Install(sta_nodes[*j]) ) ;   //downlink ap -> stas
 
-			vector<ApplicationContainer>::reverse_iterator end_iter;  //for find end
+			ApplicationContainer back;  //for find end
 
-			end_iter = serverApp[*j].rbegin();
-			end_iter->Start (Seconds(SERVER_START_TIME));
-			end_iter->Stop (Seconds(SIMULATION_TIME + 1.0));
+			back =  myServer.Install(sta_nodes[*j]);
+			back.Start (Seconds(SERVER_START_TIME));
+			back.Stop (Seconds(CLIENT_START_TIME + SIMULATION_TIME + diff));
+
+			serverApp[*j].push_back(back) ;   //downlink ap -> stas
+
 
 			UdpClientHelper myClient (staNodeInterface.GetAddress (0), port_num);
 			myClient.SetAttribute ("MaxPackets", UintegerValue (4294967295u));
-			myClient.SetAttribute ("Interval", TimeValue (Time ("0.00001"))); //packets/s
+			//myClient.SetAttribute ("Interval", TimeValue (Time ("0.00001"))); //packets/s
+
+			double interval = (double) payloadSize * 8.0 / (stainfo.traffic_demand * MEGA);
+
+			//cout<<interval<<endl;
+			oss.str("");oss.clear();
+			oss<<interval;
+			myClient.SetAttribute("Interval", TimeValue (Time ( oss.str())));
+
+
 			myClient.SetAttribute ("PacketSize", UintegerValue (payloadSize));
-
-			clientApp[i->first].push_back( myClient.Install(ap_nodes[i->first]) );
-
 			//cout<<i->first<<endl;
 
-			end_iter = clientApp[i->first].rbegin();
-			end_iter->Start( Seconds(CLIENT_START_TIME));
-			end_iter->Stop( Seconds (SIMULATION_TIME + 1.0) );
+			back = myClient.Install(ap_nodes[i->first]);
 
-			//++port_num;
+			back.Start( Seconds(CLIENT_START_TIME + diff));
+			back.Stop( Seconds (CLIENT_START_TIME + SIMULATION_TIME + diff) );
+			clientApp[i->first].push_back(back);
+
+
+			UdpEchoServerHelper echoServer (echo_port);
+			UdpEchoClientHelper echoClient (staNodeInterface.GetAddress(0), echo_port);
+			echoClient.SetAttribute ("MaxPackets", UintegerValue (1));
+			echoClient.SetAttribute ("Interval", TimeValue (Seconds (1.0)));
+			echoClient.SetAttribute ("PacketSize", UintegerValue (1024));
+
+
+			back = echoServer.Install (sta_nodes[*j]) ;
+			back.Start(Seconds(0.0));
+			back.Stop(Seconds(2.0));
+
+			echoserverApp[*j].push_back(back);
+
+			back = echoClient.Install (ap_nodes[i->first]);
+			back.Start(Seconds(diff));
+			back.Stop(Seconds(2.0));
+
+			echoclientApp[i->first].push_back(back);
+
+			++port_num;
+			++echo_port;
 		}
+		cout<<endl;
 	}
 
-	Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
+	//Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
+	OlsrHelper olsr;
 
-	Simulator::Stop (Seconds (SIMULATION_TIME + 1));
+	Ipv4StaticRoutingHelper staticRouting;
+
+	Ipv4ListRoutingHelper list;
+	list.Add(staticRouting, 0);
+	list.Add(olsr,10);
+	stack.SetRoutingHelper(list);
+
+	Simulator::Stop (Seconds (SIMULATION_TIME + 5.0));
 	Simulator::Run ();
 	Simulator::Destroy ();
 

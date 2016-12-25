@@ -6,12 +6,14 @@
 #define MCS_NUMBER 0
 #define IP_BASE "192.168.0.0"
 #define SUBNET_MASK "255.255.0.0"
-#define SERVER_START_TIME 0.0
-#define CLIENT_START_TIME 1.0
+#define SERVER_START_TIME 2.0
+#define CLIENT_START_TIME 3.0
 #define SIMULATION_TIME 1.0
 #define AP_INPUT_PATH "./input/ap/"
 #define STA_INPUT_PATH "./input/sta/"
-
+//#define DEFF_UNIT 0.0000001
+#define DEFF_UNIT 0
+#define MEGA 1000000
 
 
 #include "ns3/core-module.h"
@@ -21,6 +23,7 @@
 #include "ns3/mobility-module.h"
 #include "ns3/ipv4-global-routing-helper.h"
 #include "ns3/internet-module.h"
+#include "ns3/olsr-helper.h"
 
 #include <iostream>
 #include <fstream>
@@ -40,7 +43,7 @@ struct InStaInfo   //input information of station
 {
 	double x;  //position x
 	double y;  //position y
-	uint16_t traffic_demand; //traffic demand
+	double traffic_demand; //traffic demand
 };
 
 struct OutApInfo    //output information of ap
