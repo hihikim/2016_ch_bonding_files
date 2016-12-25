@@ -142,12 +142,12 @@ int main (int argc, char *argv[])
 
 		ap_devs[i->first] = wifi.Install(phy, mac, ap_nodes[i->first]);
 
-		//m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(ap_devs[i->first].Get(0))->GetMac());
-		//Ptr<MacLow> m_low = m_mac->GetLow();
-		//m_low->EnableChannelBonding();
+		m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(ap_devs[i->first].Get(0))->GetMac());
+		Ptr<MacLow> m_low = m_mac->GetLow();
+		m_low->EnableChannelBonding();
 
 		InApInfo ap_info = parser.GetApInfo(i->first);
-		//m_low->SetChannelManager(phy, actual_ch[ap_info.channel], ap_info.width, WIFI_PHY_STANDARD_80211ac);
+		m_low->SetChannelManager(phy, actual_ch[ap_info.channel], ap_info.width, WIFI_PHY_STANDARD_80211ac);
 
 		positionAlloc->Add(Vector(ap_info.x, ap_info.y, 0) );
 		for(vector <unsigned int>::iterator j = i->second.begin();
@@ -162,11 +162,11 @@ int main (int argc, char *argv[])
 
 			sta_devs[*j] = wifi.Install(phy, mac, sta_nodes[*j]);
 
-			//m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(sta_devs[*j].Get(0))->GetMac());
-			//m_low = m_mac->GetLow();
-			//m_low->EnableChannelBonding();
+			m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(sta_devs[*j].Get(0))->GetMac());
+			m_low = m_mac->GetLow();
+			m_low->EnableChannelBonding();
 
-			//m_low->SetChannelManager(phy, actual_ch[ap_info.channel], ap_info.width, WIFI_PHY_STANDARD_80211ac);
+			m_low->SetChannelManager(phy, actual_ch[ap_info.channel], ap_info.width, WIFI_PHY_STANDARD_80211ac);
 
 			InStaInfo sta_info = parser.GetStaInfo(*j);
 
