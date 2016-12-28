@@ -1410,6 +1410,7 @@ private:
    */
   bool enable_ch_bonding;
   Ptr<ChannelBondingManager> ch_m;
+  Ptr<Packet> stored_packet;
 
 };
 

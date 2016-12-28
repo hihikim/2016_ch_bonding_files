@@ -23,6 +23,7 @@ int main (int argc, char *argv[])
 	//uint32_t payloadSize = 1448;
 	//Config::SetDefault ("ns3::TcpSocket::SegmentSize", UintegerValue (payloadSize));
 	ostringstream oss;
+	oss.setf(ios::fixed,ios::floatfield);
 
 	/*
 	 * parse ap input
@@ -105,8 +106,11 @@ int main (int argc, char *argv[])
 
 	YansWifiChannelHelper channel = YansWifiChannelHelper::Default ();
 	YansWifiPhyHelper phy = YansWifiPhyHelper::Default ();
-	phy.SetChannel (channel.Create ());
 
+	//channel.AddPropagationLoss("ns3::FixedRssLossModel", "Rss", DoubleValue(100.0));
+	//channel.AddPropagationLoss("ns3::RangePropagationLossModel", "MaxRange", DoubleValue(250.0));
+
+	phy.SetChannel (channel.Create ());
 	phy.Set ("ShortGuardEnabled", BooleanValue (ENABLE_SHORT_GD));
 
 	WifiHelper wifi;
@@ -116,9 +120,12 @@ int main (int argc, char *argv[])
 
 	oss.str("");oss.clear();
 	oss << "VhtMcs" << MCS_NUMBER;
-	wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager","DataMode", StringValue (oss.str ()),
+	/*wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager","DataMode", StringValue (oss.str ()),
 								"ControlMode", StringValue (oss.str ()),
-								"RtsCtsThreshold", UintegerValue(100));
+								"RtsCtsThreshold", UintegerValue(100));*/
+
+	wifi.SetRemoteStationManager ("ns3::MinstrelHtWifiManager", "RtsCtsThreshold", UintegerValue(100));
+
 
 	Ssid ssid = Ssid ("ns3-80211ac");
 
@@ -215,8 +222,8 @@ int main (int argc, char *argv[])
 			ApplicationContainer back;  //for find end
 
 			back =  myServer.Install(sta_nodes[*j]);
-			back.Start (Seconds(SERVER_START_TIME));
-			back.Stop (Seconds(CLIENT_START_TIME + SIMULATION_TIME + diff));
+			back.Start (Seconds(ARP_TIME + SERVER_START_TIME));
+			back.Stop (Seconds(ARP_TIME + CLIENT_START_TIME + SIMULATION_TIME ));
 
 			serverApp[*j].push_back(back) ;   //downlink ap -> stas
 
@@ -238,29 +245,31 @@ int main (int argc, char *argv[])
 
 			back = myClient.Install(ap_nodes[i->first]);
 
-			back.Start( Seconds(CLIENT_START_TIME + diff));
-			back.Stop( Seconds (CLIENT_START_TIME + SIMULATION_TIME + diff) );
+			back.Start( Seconds(ARP_TIME + CLIENT_START_TIME));
+			back.Stop( Seconds (ARP_TIME + CLIENT_START_TIME + SIMULATION_TIME) );
 			clientApp[i->first].push_back(back);
 
 
 			UdpEchoServerHelper echoServer (echo_port);
 			UdpEchoClientHelper echoClient (staNodeInterface.GetAddress(0), echo_port);
 			echoClient.SetAttribute ("MaxPackets", UintegerValue (1));
-			echoClient.SetAttribute ("Interval", TimeValue (Seconds (1.0)));
+			echoClient.SetAttribute ("Interval", TimeValue (Seconds (0.001)));
 			echoClient.SetAttribute ("PacketSize", UintegerValue (1024));
 
 
 			back = echoServer.Install (sta_nodes[*j]) ;
 			back.Start(Seconds(0.0));
-			back.Stop(Seconds(2.0));
+			back.Stop(Seconds(ARP_TIME));
 
 			echoserverApp[*j].push_back(back);
 
 			back = echoClient.Install (ap_nodes[i->first]);
-			back.Start(Seconds(diff));
-			back.Stop(Seconds(2.0));
+			back.Start(Seconds(diff + 1.0));
+			//back.Start(Seconds(1.0));
+			back.Stop(Seconds(ARP_TIME));
 
 			echoclientApp[i->first].push_back(back);
+
 
 			++port_num;
 			++echo_port;
@@ -268,17 +277,17 @@ int main (int argc, char *argv[])
 		cout<<endl;
 	}
 
-	//Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
-	OlsrHelper olsr;
+	Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
+	/*OlsrHelper olsr;
 
 	Ipv4StaticRoutingHelper staticRouting;
 
 	Ipv4ListRoutingHelper list;
 	list.Add(staticRouting, 0);
 	list.Add(olsr,10);
-	stack.SetRoutingHelper(list);
+	stack.SetRoutingHelper(list);*/
 
-	Simulator::Stop (Seconds (SIMULATION_TIME + 5.0));
+	Simulator::Stop (Seconds (ARP_TIME + CLIENT_START_TIME + SIMULATION_TIME));
 	Simulator::Run ();
 	Simulator::Destroy ();
 
@@ -340,7 +349,13 @@ void Parser::Parse()
 		/*
 		 * remove comment
 		 */
+		while(!str.empty() && str.at(0) == ' ')
+			str = str.substr(1);
 		temp = str.find('#');
+
+		if (temp == 0)
+			continue;
+
 		if(temp < str.size())
 		{
 			str.resize(temp);
@@ -384,7 +399,8 @@ void Parser::Parse()
 					iss>>input_info.width;
 				}
 			}
-			ap_info[index] = input_info;
+			if(input_info.width != 0)
+				ap_info[index] = input_info;
 		}
 		else
 		{

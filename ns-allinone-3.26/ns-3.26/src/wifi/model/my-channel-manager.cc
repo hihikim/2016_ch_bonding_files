@@ -648,7 +648,7 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 
 		else
 		{
-		   if(hdr.IsRts() || hdr.IsCts() )
+		   /*if(hdr.IsRts() || hdr.IsCts() )
 			{
 				if(primary_ch == ch_num)
 				{
@@ -658,10 +658,28 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 				request_ch = GetUsableBondingChannel(primary_ch);
 
 				if(request_ch == 0)
+				{
 					request_width = 0;
+				}
 
 				else
 					request_width = ch_map.find(request_ch)->second.Width;
+			}*/
+
+			if(hdr.IsRts() || hdr.IsCts())
+			{
+				if(primary_ch == ch_num)
+				{
+					NeedRtsCts(true);
+				}
+
+				uint16_t usable_bonding_ch = GetUsableBondingChannel(primary_ch);
+
+				if(usable_bonding_ch != 0)
+				{
+					request_ch = usable_bonding_ch;
+					request_width = ch_map.find(request_ch)->second.Width;
+				}
 			}
 
 		   if(ch_num == primary_ch){
@@ -765,91 +783,17 @@ Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)   //s
 {
 	CleanPacketPieces();
 
-	/*bool isampdu = false;
-	AmpduTag ampdu;
 	WifiMacHeader hdr;
-	AmpduSubframeHeader ampduhdr;
+	packet->PeekHeader(hdr);
+	//std::cout<<hdr.GetTypeString()<<std::endl;
 	Ptr<Packet> origin_p = packet->Copy();
-
-	if(origin_p->PeekPacketTag(ampdu))
-	{
-		isampdu = true;
-		origin_p->RemoveHeader(ampduhdr);
-		origin_p->RemoveHeader(hdr);
-	}
-
-	else
-	{
-		isampdu = false;
-		origin_p->PeekHeader(hdr);
-	}
-
-
-	if(request_ch == 0){  //이상
-		if(!need_rts_cts)
-			CheckChannelBeforeSend();
-		else
-			return packet->Copy();
-	}
-
-
 	std::vector<uint16_t> sub_chs = FindSubChannels(request_ch);
-
-	int using_channel = request_width / 20;
-
-	if(isampdu)
+	for(std::vector<uint16_t>::iterator i = sub_chs.begin() ;
+		i != sub_chs.end() ;
+		++i )
 	{
-		Ptr<Packet> p;
-
-		int size_p = origin_p->GetSize();
-
-		int point = 0;
-		int unit = size_p / using_channel;
-
-
-		for(std::vector<uint16_t>::iterator i = sub_chs.begin() ;
-			i != sub_chs.end() ;
-			++i )
-		{
-
-			if((size_p - point)%using_channel ==0 )
-			{
-				p = origin_p->CreateFragment(point, unit);
-				point += unit;
-				--using_channel;
-			}
-
-			else
-			{
-				p = origin_p->CreateFragment(point,unit+1);
-				point += (1+unit);
-				--using_channel;
-			}
-			p->AddHeader(hdr);
-			p->AddHeader(ampduhdr);
-			packet_pieces[*i] = p;
-		}
+		packet_pieces[*i] = origin_p;
 	}
-
-	else*/
-	{
-		/*std::cout<<"------------------channel num : "<<primary_ch<<"---------------------------\n";
-		std::cout<<"rts/cts : "<<(need_rts_cts ? "true" : "false")<<std::endl;
-		std::cout<<"width : "<<request_width<<std::endl;
-		std::cout<<"max width : "<<request_width<<std::endl;*/
-		WifiMacHeader hdr;
-		packet->PeekHeader(hdr);
-		//std::cout<<hdr.GetTypeString()<<std::endl;
-		Ptr<Packet> origin_p = packet->Copy();
-		std::vector<uint16_t> sub_chs = FindSubChannels(request_ch);
-		for(std::vector<uint16_t>::iterator i = sub_chs.begin() ;
-			i != sub_chs.end() ;
-			++i )
-		{
-			packet_pieces[*i] = origin_p;
-		}
-	}
-
 
 	return packet_pieces[primary_ch];
 }

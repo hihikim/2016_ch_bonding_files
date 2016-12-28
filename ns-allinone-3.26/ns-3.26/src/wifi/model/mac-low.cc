@@ -805,11 +805,20 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
           //VHT single MPDUs are followed by normal ACKs
           m_txParams.EnableAck ();
        }
+      /*
+       * my edit begin
+       */
+      m_currentPacket = stored_packet->Copy();
+      /*
+       * my edit end
+       */
+
     }
   else
     {
       //Perform MPDU aggregation if possible
       m_ampdu = IsAmpdu (m_currentPacket, m_currentHdr);
+      stored_packet = m_currentPacket->Copy();
       if (m_ampdu)
         {
           AmpduTag ampdu;
@@ -1736,45 +1745,13 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
       Time delay = Seconds (0);
       Time remainingAmpduDuration = m_phy->CalculateTxDuration (packet->GetSize (), txVector, preamble, m_phy->GetFrequency ());
 
-
-      /*if(!enable_ch_bonding)
-	     remainingAmpduDuration = m_phy->CalculateTxDuration (packet->GetSize (), txVector, preamble, m_phy->GetFrequency ());
-
-      else
-      {
-    	  uint32_t packet_size = 0;                                               //   calculate total ampdu time in channel bonding
-
-    	  for(uint32_t i = 0;i<queueSize;++i)
-    	  {
-           dequeuedPacket = m_aggregateQueue->Dequeue (&newHdr);
-           newPacket = dequeuedPacket->Copy ();
-           newHdr.SetDuration (hdr->GetDuration ());
-           newPacket->AddHeader (newHdr);
-           newPacket->AddTrailer (fcs);
-
-           if (i == queueSize - 1)
-             {
-              last = true;
-              mpdutype = LAST_MPDU_IN_AGGREGATE;
-              }
-
-           listenerIt->second->GetMpduAggregator ()->AddHeaderAndPad (newPacket, last, vhtSingleMpdu);
-
-           packet_size += ch_m->GetConvertedSize(newPacket);
-
-           m_aggregateQueue->Enqueue(dequeuedPacket,newHdr);
-    	  }
-    	 //packet_size += newHdr.GetSize();
-
-    	 if(packet_size > packet->GetSize())
-    		 packet_size = packet->GetSize();
-
-
-    	 remainingAmpduDuration = m_phy->CalculateTxDuration (packet_size, txVector, preamble, m_phy->GetFrequency ());
-      }*/
-
-
-      //std::cout<<"first remain : "<<remainingAmpduDuration<<std::endl;
+      /*
+       * my add begin
+       */
+      NS_LOG_DEBUG ("remainingAmpduDuration "<<remainingAmpduDuration.GetNanoSeconds()<<"ns");
+      /*
+       * my add end
+       */
 
 
       if (queueSize > 1 || vhtSingleMpdu)
@@ -1813,18 +1790,14 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
 
           Time mpduDuration = m_phy->CalculateTxDuration (newPacket->GetSize (), txVector, preamble, m_phy->GetFrequency (), mpdutype, 0);
 
-          //newPacket->AddPacketTag (ampdutag);
-
-          /*if(!enable_ch_bonding)
-            mpduDuration = m_phy->CalculateTxDuration (newPacket->GetSize (), txVector, preamble, m_phy->GetFrequency (), mpdutype, 0);
-
-
-          else
-          {
-			  mpduDuration = m_phy->CalculateTxDuration (ch_m->GetConvertedSize(newPacket), txVector, preamble, m_phy->GetFrequency (), mpdutype, 0);  //calculate tx time for 1 mpdu
-          }*/
-
           remainingAmpduDuration -= mpduDuration;
+           /*
+           * my add begin
+            */
+          NS_LOG_DEBUG ("Size : "<<newPacket->GetSize ()<< " mpduDuration "<< mpduDuration.GetNanoSeconds() <<"ns | remainingAmpduDuration "<<remainingAmpduDuration.GetNanoSeconds()<<"ns");
+          /*
+           *  my add end
+           */
 
           ampdutag.SetRemainingNbOfMpdus (queueSize - 1);
           if (queueSize > 1)
