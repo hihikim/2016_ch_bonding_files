@@ -107,6 +107,7 @@ int main (int argc, char *argv[])
 	YansWifiChannelHelper channel = YansWifiChannelHelper::Default ();
 	YansWifiPhyHelper phy = YansWifiPhyHelper::Default ();
 
+	//channel.AddPropagationLoss("ns3::FriisPropagationLossModel" );
 	//channel.AddPropagationLoss("ns3::FixedRssLossModel", "Rss", DoubleValue(100.0));
 	//channel.AddPropagationLoss("ns3::RangePropagationLossModel", "MaxRange", DoubleValue(250.0));
 
