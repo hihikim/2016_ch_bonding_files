@@ -38,6 +38,14 @@ typedef struct
 	uint16_t Parent;     //parrent nodes
 }ChannelInfo;
 
+typedef struct
+{
+	Time ErrorTime;
+	std::vector< Ptr<Packet> > ErrorPacket;
+	double rxSnr;
+}error_packet_info;
+
+
 class ChannelBondingManager : public Object
 {
 public:
@@ -58,18 +66,7 @@ public:
 
   void ResetPhys();
 
-  void Receive1Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
-  void Receive2Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
-  void Receive3Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
-  void Receive4Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
-  void Receive5Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
-  void Receive6Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
-  void Receive7Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
-  void Receive8Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
-  void ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, uint16_t ch_num);
 
-  void ReceiveOk (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, bool ampduSubframe);
-  void ReceiveError (Ptr<Packet> packet, double rxSnr);
 
   void SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble, enum mpduType mpdutype);
   void SendPacket(Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble);
@@ -98,6 +95,7 @@ private:
 
   uint16_t primary_ch;
   std::vector<uint16_t> ch_numbers;
+  error_packet_info error_packets;
 
   Ptr<MacLow> m_mac;
   std::map< uint16_t, Ptr<Packet> > last_received_packet;
@@ -132,6 +130,21 @@ private:
 
   void SetUpChannelNumbers();
 
+  int CheckError(Ptr<Packet> Packet);
+
+  void Receive1Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
+  void Receive2Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
+  void Receive3Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
+  void Receive4Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
+  void Receive5Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
+  void Receive6Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
+  void Receive7Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
+  void Receive8Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
+  void ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, uint16_t ch_num);
+
+  void ReceiveOk (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, bool ampduSubframe);
+  void ReceiveError (Ptr<Packet> packet, double rxSnr);
+  void ReceivePrimaryError (Ptr<Packet> packet, double rxSnr);
 
 
   const std::map < uint16_t, ChannelInfo > ch_map;

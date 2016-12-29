@@ -28,6 +28,8 @@ ChannelBondingManager::ChannelBondingManager()
 
 	alloc_last_primary_hdr = false;
 	is_sta = false;
+
+	error_packets.ErrorTime= Time("0.0");
 }
 
 ChannelBondingManager::~ChannelBondingManager()
@@ -530,7 +532,15 @@ void ChannelBondingManager::SetPhysCallback()
 			NS_FATAL_ERROR("Wrong subchannels");
 		}
 
-		m_phys[*i]->SetReceiveErrorCallback (MakeCallback (&ChannelBondingManager::ReceiveError, this));
+		if(*i == primary_ch)
+		{
+			m_phys[*i]->SetReceiveErrorCallback (MakeCallback (&ChannelBondingManager::ReceivePrimaryError, this));
+		}
+		else
+		{
+			m_phys[*i]->SetReceiveErrorCallback (MakeCallback (&ChannelBondingManager::ReceiveError, this));
+		}
+
 		m_phys[*i]->SetReceiveOkCallback(MakeCallback (func, this));
 	}
 }
@@ -577,42 +587,7 @@ void ChannelBondingManager::Receive8Channel (Ptr<Packet> Packet, double rxSnr, W
 
 void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, uint16_t ch_num)
 {
-	bool isampdu = false;                              //manage 1 subchannel receive packet
-	WifiMacHeader hdr;
-	AmpduTag ampdu;
-	AmpduSubframeHeader ampduhdr;
-
-	if(Packet->PeekPacketTag(ampdu))
-	{
-		isampdu = true;
-		Packet->RemoveHeader(ampduhdr);
-		Packet->PeekHeader(hdr);
-		Packet->AddHeader(ampduhdr);
-		alloc_last_primary_hdr = false;
-
-		if(ch_num == primary_ch){
-			alloc_last_primary_hdr = true;
-
-			last_primary_hdr = hdr;
-		}
-	}
-
-	else
-	{
-		isampdu = false;
-		Packet->PeekHeader(hdr);
-
-		if(ch_num == primary_ch){
-			alloc_last_primary_hdr = true;
-
-			last_primary_hdr = hdr;
-		}
-	}
-
-	received_channel[ch_num] = true;
-	last_received_packet[ch_num] = Packet;
-
-
+	int error_index = -1;
 	//start timer
 	if(ch_num == primary_ch)
 	{
@@ -622,76 +597,121 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 		clean_timer = Simulator::Schedule(m_mac->GetSifs(),
 												&ChannelBondingManager::ClearReceiveRecord, this
 												);
+
+		error_index = CheckError(Packet);
 	}
 
-	if(hdr.GetAddr1() == m_mac->GetAddress())
+	if(error_index > -1)
 	{
-		if(isampdu)
+		m_mac->ReceiveError(error_packets.ErrorPacket[error_index],error_packets.rxSnr);
+	}
+
+	else
+	{
+		bool isampdu = false;                              //manage 1 subchannel receive packet
+		WifiMacHeader hdr;
+		AmpduTag ampdu;
+		AmpduSubframeHeader ampduhdr;
+
+		if(Packet->PeekPacketTag(ampdu))
 		{
+			isampdu = true;
+			Packet->RemoveHeader(ampduhdr);
+			Packet->PeekHeader(hdr);
+			Packet->AddHeader(ampduhdr);
+			alloc_last_primary_hdr = false;
 
-			//need_rts_cts = false;
-			if(!need_rts_cts &&
-				ch_num == primary_ch)
-			{
-				request_width = txVector.GetChannelWidth();
-				request_ch = GetChannelWithWidth(request_width);
-			}
+			if(ch_num == primary_ch){
+				alloc_last_primary_hdr = true;
 
-			uint32_t received_num = GetNumberOfReceive();
-
-			if(received_num != 0 &&
-				received_num == (request_width/20) ){
-				//std::cout<<"ho~\n";
-				ManageReceived(Packet, rxSnr, txVector, preamble);
+				last_primary_hdr = hdr;
 			}
 		}
 
 		else
 		{
-		   /*if(hdr.IsRts() || hdr.IsCts() )
-			{
-				if(primary_ch == ch_num)
-				{
-					NeedRtsCts(true);
-				}
+			isampdu = false;
+			Packet->PeekHeader(hdr);
 
-				request_ch = GetUsableBondingChannel(primary_ch);
+			if(ch_num == primary_ch){
+				alloc_last_primary_hdr = true;
 
-				if(request_ch == 0)
-				{
-					request_width = 0;
-				}
-
-				else
-					request_width = ch_map.find(request_ch)->second.Width;
-			}*/
-
-			if(hdr.IsRts() || hdr.IsCts())
-			{
-				if(primary_ch == ch_num)
-				{
-					NeedRtsCts(true);
-				}
-
-				uint16_t usable_bonding_ch = GetUsableBondingChannel(primary_ch);
-
-				if(usable_bonding_ch != 0)
-				{
-					request_ch = usable_bonding_ch;
-					request_width = ch_map.find(request_ch)->second.Width;
-				}
-			}
-
-		   if(ch_num == primary_ch){
-				ManageReceived(Packet, rxSnr, txVector, preamble);
+				last_primary_hdr = hdr;
 			}
 		}
-	}
 
-	else
-	{
-		if(ch_num == primary_ch){
-			ManageReceived(Packet, rxSnr, txVector, preamble);
+		received_channel[ch_num] = true;
+		last_received_packet[ch_num] = Packet;
+
+		if(hdr.GetAddr1() == m_mac->GetAddress())
+		{
+			if(isampdu)
+			{
+
+				//need_rts_cts = false;
+				if(!need_rts_cts &&
+					ch_num == primary_ch)
+				{
+					request_width = txVector.GetChannelWidth();
+					request_ch = GetChannelWithWidth(request_width);
+				}
+
+				uint32_t received_num = GetNumberOfReceive();
+
+				if(received_num != 0 &&
+					received_num == (request_width/20) ){
+					//std::cout<<"ho~\n";
+					ManageReceived(Packet, rxSnr, txVector, preamble);
+				}
+			}
+
+			else
+			{
+			   /*if(hdr.IsRts() || hdr.IsCts() )
+				{
+					if(primary_ch == ch_num)
+					{
+						NeedRtsCts(true);
+					}
+
+					request_ch = GetUsableBondingChannel(primary_ch);
+
+					if(request_ch == 0)
+					{
+						request_width = 0;
+					}
+
+					else
+						request_width = ch_map.find(request_ch)->second.Width;
+				}*/
+
+				if(hdr.IsRts() || hdr.IsCts())
+				{
+					if(primary_ch == ch_num)
+					{
+						NeedRtsCts(true);
+					}
+
+					uint16_t usable_bonding_ch = GetUsableBondingChannel(primary_ch);
+
+					if(usable_bonding_ch != 0)
+					{
+						request_ch = usable_bonding_ch;
+						request_width = ch_map.find(request_ch)->second.Width;
+					}
+				}
+
+			   if(ch_num == primary_ch){
+					ManageReceived(Packet, rxSnr, txVector, preamble);
+				}
+			}
+		}
+
+		else
+		{
+			if(ch_num == primary_ch){
+				ManageReceived(Packet, rxSnr, txVector, preamble);
+			}
 		}
 	}
 }
@@ -769,6 +789,18 @@ void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector t
 
 
 void ChannelBondingManager::ReceiveError(ns3::Ptr<ns3::Packet> packet, double rxSnr)
+{
+	if(error_packets.ErrorTime != Simulator::Now())
+	{
+		error_packets.ErrorPacket.clear();
+		error_packets.ErrorTime = Simulator::Now();
+	}
+
+	error_packets.rxSnr = rxSnr;
+	error_packets.ErrorPacket.push_back(packet->Copy());
+}
+
+void ChannelBondingManager::ReceivePrimaryError(ns3::Ptr<ns3::Packet> packet, double rxSnr)
 {
 	m_mac->ReceiveError(packet, rxSnr);
 }
@@ -1017,4 +1049,79 @@ void ChannelBondingManager::SetUpChannelNumbers()                    //find maxi
 	ch_numbers = FindSubChannels(maximum_ch);
 }
 
+int ChannelBondingManager::CheckError(Ptr< Packet> Packet)
+{
+	int error_index = -1;
+	Ptr<ns3::Packet> p = Packet->Copy();
+	Ptr<ns3::Packet> error_packet;
+
+
+	if(error_packets.ErrorTime == Simulator::Now() &&
+	   error_packets.ErrorPacket.size() > 0)
+	{
+
+
+		AmpduTag ampdu;
+		WifiMacHeader hdr;
+		AmpduSubframeHeader ampduhdr;
+		bool primary_mpdu_tf, mpdu_tf;
+		Mac48Address primary_sender_addr;
+		WifiMacType primary_hdr_type;
+
+		if(p->PeekPacketTag(ampdu))
+		{
+			p->RemoveHeader(ampduhdr);
+			p->RemoveHeader(hdr);
+			primary_mpdu_tf = true;
+		}
+
+		else
+		{
+			p->RemoveHeader(hdr);
+			primary_mpdu_tf = false;
+		}
+
+		p = 0;
+		primary_sender_addr = hdr.GetAddr2();
+		primary_hdr_type = hdr.GetType();
+
+		int num = 0;
+		for(std::vector< Ptr<ns3::Packet> >::iterator i = error_packets.ErrorPacket.begin();
+			i != error_packets.ErrorPacket.end();
+			++i)
+		{
+			p = (*i)->Copy();
+
+			if(p->PeekPacketTag(ampdu))
+			{
+				p->RemoveHeader(ampduhdr);
+				p->RemoveHeader(hdr);
+				mpdu_tf = true;
+			}
+
+			else
+			{
+				p->RemoveHeader(hdr);
+				mpdu_tf = false;
+			}
+
+			p = 0;
+
+			if(primary_mpdu_tf == mpdu_tf)
+			{
+				if(primary_sender_addr == hdr.GetAddr2() &&
+					primary_hdr_type == hdr.GetType())
+				{
+					error_index = num;
+					break;
+				}
+			}
+			++num;
+		}
+	}
+
+	return error_index;
 }
+
+}
+

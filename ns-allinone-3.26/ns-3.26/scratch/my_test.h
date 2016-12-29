@@ -6,10 +6,10 @@
 #define MCS_NUMBER 0
 #define IP_BASE "192.168.0.0"
 #define SUBNET_MASK "255.255.0.0"
-#define ARP_TIME 10.0
+#define ARP_TIME 1.0
 #define SERVER_START_TIME 0.0
 #define CLIENT_START_TIME 1.0
-#define SIMULATION_TIME 1.0
+#define SIMULATION_TIME 10.0
 #define AP_INPUT_PATH "./input/ap/"
 #define STA_INPUT_PATH "./input/sta/"
 #define DEFF_UNIT 0

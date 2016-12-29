@@ -11,7 +11,6 @@ NS_LOG_COMPONENT_DEFINE ("my-wifi-test");
 
 int main (int argc, char *argv[])
 {
-
 	Parser parser;
 	unsigned int test_number = 0;
 
@@ -128,9 +127,8 @@ int main (int argc, char *argv[])
 	wifi.SetRemoteStationManager ("ns3::MinstrelHtWifiManager", "RtsCtsThreshold", UintegerValue(100));
 
 
-	Ssid ssid = Ssid ("ns3-80211ac");
-
-
+	//Ssid ssid = Ssid ("ns3-80211ac");
+	Ssid ssid;
 
 	Ptr<RegularWifiMac> m_mac;
 
@@ -142,17 +140,25 @@ int main (int argc, char *argv[])
 		i != shortest_stas_of_ap.end();
 		++i)
 	{
+		oss.str("");oss.clear();
+
+		oss<<"ns3-80211ac-"<<i->first;
+		ssid = oss.str();
 		ap_nodes[i->first] = NodeContainer();
 		ap_nodes[i->first].Create(1);  //create 1 node
 
 		mac.SetType ("ns3::ApWifiMac",
-					   "Ssid", SsidValue (ssid));
+					   "Ssid", SsidValue (ssid),
+					   "EnableBeaconJitter", BooleanValue(true)
+					   );
 
 		ap_devs[i->first] = wifi.Install(phy, mac, ap_nodes[i->first]);
+
 
 		m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(ap_devs[i->first].Get(0))->GetMac());
 		Ptr<MacLow> m_low = m_mac->GetLow();
 		m_low->EnableChannelBonding();
+
 
 		InApInfo ap_info = parser.GetApInfo(i->first);
 		m_low->SetChannelManager(phy, actual_ch[ap_info.channel], ap_info.width, WIFI_PHY_STANDARD_80211ac);
@@ -170,11 +176,13 @@ int main (int argc, char *argv[])
 
 			sta_devs[*j] = wifi.Install(phy, mac, sta_nodes[*j]);
 
+
 			m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(sta_devs[*j].Get(0))->GetMac());
 			m_low = m_mac->GetLow();
 			m_low->EnableChannelBonding();
 
 			m_low->SetChannelManager(phy, actual_ch[ap_info.channel], ap_info.width, WIFI_PHY_STANDARD_80211ac);
+
 
 			InStaInfo sta_info = parser.GetStaInfo(*j);
 
