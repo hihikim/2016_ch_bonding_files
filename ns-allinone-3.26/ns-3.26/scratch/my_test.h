@@ -67,6 +67,7 @@ struct InStaInfo   //input information of station
 
 struct OutApInfo    //output information of ap
 {
+	double now_through_packets;
 	double avg_throughput; //average throughput
 	double min_throughput;
 	double max_throughput;
@@ -75,6 +76,7 @@ struct OutApInfo    //output information of ap
 
 struct OutStaInfo   //output information of station
 {
+	double now_through_packets;
 	double avg_throughput;
 	double min_throughput;
 	double max_throughput;
@@ -129,57 +131,35 @@ public:
 	PeriodApThroughput();
 	~PeriodApThroughput();
 	OutApInfo GetThroughput(uint32_t through_packets);
-	void TxBegin(uint16_t ch_num);
-	void TxEnd(uint16_t ch_num);
-	void RxBegin(uint16_t ch_num);
-	void RxEnd(uint16_t ch_num);
+
+	void StateChange1(Time Start, Time duration, WifiPhy::State state);
+	void StateChange2(Time Start, Time duration, WifiPhy::State state);
+	void StateChange3(Time Start, Time duration, WifiPhy::State state);
+	void StateChange4(Time Start, Time duration, WifiPhy::State state);
+	void StateChange5(Time Start, Time duration, WifiPhy::State state);
+	void StateChange6(Time Start, Time duration, WifiPhy::State state);
+	void StateChange7(Time Start, Time duration, WifiPhy::State state);
+	void StateChange8(Time Start, Time duration, WifiPhy::State state);
+
 	void AddCh(uint16_t ch_num);
 
-	void TxBegin1(ns3::Ptr<const ns3::Packet> packet);
-	void TxBegin2(ns3::Ptr<const ns3::Packet> packet);
-	void TxBegin3(ns3::Ptr<const ns3::Packet> packet);
-	void TxBegin4(ns3::Ptr<const ns3::Packet> packet);
-	void TxBegin5(ns3::Ptr<const ns3::Packet> packet);
-	void TxBegin6(ns3::Ptr<const ns3::Packet> packet);
-	void TxBegin7(ns3::Ptr<const ns3::Packet> packet);
-	void TxBegin8(ns3::Ptr<const ns3::Packet> packet);
+	void ResetIdle();
 
-	void RxBegin1(ns3::Ptr<const ns3::Packet> packet);
-	void RxBegin2(ns3::Ptr<const ns3::Packet> packet);
-	void RxBegin3(ns3::Ptr<const ns3::Packet> packet);
-	void RxBegin4(ns3::Ptr<const ns3::Packet> packet);
-	void RxBegin5(ns3::Ptr<const ns3::Packet> packet);
-	void RxBegin6(ns3::Ptr<const ns3::Packet> packet);
-	void RxBegin7(ns3::Ptr<const ns3::Packet> packet);
-	void RxBegin8(ns3::Ptr<const ns3::Packet> packet);
 
-	void TxEnd1(ns3::Ptr<const ns3::Packet> packet);
-	void TxEnd2(ns3::Ptr<const ns3::Packet> packet);
-	void TxEnd3(ns3::Ptr<const ns3::Packet> packet);
-	void TxEnd4(ns3::Ptr<const ns3::Packet> packet);
-	void TxEnd5(ns3::Ptr<const ns3::Packet> packet);
-	void TxEnd6(ns3::Ptr<const ns3::Packet> packet);
-	void TxEnd7(ns3::Ptr<const ns3::Packet> packet);
-	void TxEnd8(ns3::Ptr<const ns3::Packet> packet);
 
-	void RxEnd1(ns3::Ptr<const ns3::Packet> packet);
-	void RxEnd2(ns3::Ptr<const ns3::Packet> packet);
-	void RxEnd3(ns3::Ptr<const ns3::Packet> packet);
-	void RxEnd4(ns3::Ptr<const ns3::Packet> packet);
-	void RxEnd5(ns3::Ptr<const ns3::Packet> packet);
-	void RxEnd6(ns3::Ptr<const ns3::Packet> packet);
-	void RxEnd7(ns3::Ptr<const ns3::Packet> packet);
-	void RxEnd8(ns3::Ptr<const ns3::Packet> packet);
 
 private:
 	uint32_t ex_through_packets;
 	vector<uint16_t> ch_numbers;
-	map<uint16_t, ns3::Time> busy_time, latest_tx_begin, latest_rx_begin;
+	//map<uint16_t, ns3::Time> busy_time, latest_tx_begin, latest_rx_begin;
+	map<uint16_t, ns3::Time> idle_time;
 	ns3::Time last_print_time;
 	uint32_t min_through_packets;
 	uint32_t max_through_packets;
 	uint32_t now_through_packets;
 	uint32_t total_through_packets;
+
+	void IdleTimeOccur(uint16_t ch_num,Time duration);
 };
 
 class PeriodStaThroughput

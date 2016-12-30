@@ -316,6 +316,14 @@ int main (int argc, char *argv[])
 		Simulator::Schedule(Seconds (ARP_TIME + CLIENT_START_TIME + PRINT_PERIOD), &PrintThroughputInPeriod, ap_thr, sta_thr, og, serverApp, shortest_stas_of_ap);
 	}
 
+	for(map<unsigned int, PeriodApThroughput* >::iterator i = ap_thr.begin() ;
+		i != ap_thr.end();
+		++i)
+	{
+		Simulator::Schedule(Seconds (ARP_TIME + CLIENT_START_TIME), &PeriodApThroughput::ResetIdle,i->second);
+		i->second->ResetIdle();
+	}
+
 
 
 	Simulator::Stop (Seconds (ARP_TIME + CLIENT_START_TIME + SIMULATION_TIME));
@@ -533,11 +541,12 @@ void OutputGenerator::Print()
 		++i)
 	{
 		ap_output_file<<"index : "<<i->first<<endl;
+		ap_output_file<<"throughput : "<<i->second.now_through_packets<<endl;
 		ap_output_file<<"average throughput : "<<i->second.avg_throughput<<endl;
 		ap_output_file<<"minimum throughput : "<<i->second.min_throughput<<endl;
 		ap_output_file<<"maximum throughput : "<<i->second.max_throughput<<endl;
 
-		ap_output_file<<"% of the transmission time over idle time :"<<endl;
+		ap_output_file<<"% of the idle time over transmission time :"<<endl;
 
 		for(map<unsigned int, double>::iterator j = i->second.idle_ratio.begin();
 			j != i->second.idle_ratio.end();
@@ -551,6 +560,7 @@ void OutputGenerator::Print()
 	for(map<unsigned int, OutStaInfo>::iterator i = sta_info.begin(); i != sta_info.end(); ++i)
 	{
 		sta_output_file<<"index : "<<i->first<<endl;
+		sta_output_file<<"throughput : "<<i->second.now_through_packets<<endl;
 		sta_output_file<<"average throughput : "<<i->second.avg_throughput<<endl;
 		sta_output_file<<"minimum throughput : "<<i->second.min_throughput<<endl;
 		sta_output_file<<"maximum throughput : "<<i->second.max_throughput<<endl;
@@ -558,8 +568,8 @@ void OutputGenerator::Print()
 		sta_output_file<<endl;
 	}
 
-	ap_output_file<<"----------------------------------------";
-	sta_output_file<<"----------------------------------------";
+	ap_output_file<<"----------------------------------------"<<endl;
+	sta_output_file<<"----------------------------------------"<<endl;
 }
 
 void OutputGenerator::SetupOutPutFile(unsigned int test_number)
@@ -585,10 +595,8 @@ void OutputGenerator::RecordStaData(unsigned int index, OutStaInfo outinfo)
 void LinkTrace(map<uint16_t, Ptr<WifiPhy> > sub_phys,PeriodApThroughput* ap_thr)
 {
 	int num=0;
-	void (PeriodApThroughput::*tx_begin) (ns3::Ptr<const ns3::Packet>);
-	void (PeriodApThroughput::*tx_end) (ns3::Ptr<const ns3::Packet>);
-	void (PeriodApThroughput::*rx_begin) (ns3::Ptr<const ns3::Packet>);
-	void (PeriodApThroughput::*rx_end) (ns3::Ptr<const ns3::Packet>);
+	void (PeriodApThroughput::*func)(Time, Time, WifiPhy::State);
+
 	for(map<uint16_t, Ptr<WifiPhy> >::iterator sub_phy = sub_phys.begin();
 		sub_phy != sub_phys.end();
 		++sub_phy)
@@ -597,72 +605,44 @@ void LinkTrace(map<uint16_t, Ptr<WifiPhy> > sub_phys,PeriodApThroughput* ap_thr)
 		switch(num)
 		{
 		case 1:
-			tx_begin = &PeriodApThroughput::TxBegin1;
-			rx_begin = &PeriodApThroughput::RxBegin1;
-			tx_end = &PeriodApThroughput::TxEnd1;
-			rx_end = &PeriodApThroughput::RxEnd1;
+			func = &PeriodApThroughput::StateChange1;
 			break;
 
 		case 2:
-			tx_begin = &PeriodApThroughput::TxBegin2;
-			rx_begin = &PeriodApThroughput::RxBegin2;
-			tx_end = &PeriodApThroughput::TxEnd2;
-			rx_end = &PeriodApThroughput::RxEnd2;
+			func = &PeriodApThroughput::StateChange2;
 			break;
 
 		case 3:
-			tx_begin = &PeriodApThroughput::TxBegin3;
-			rx_begin = &PeriodApThroughput::RxBegin3;
-			tx_end = &PeriodApThroughput::TxEnd3;
-			rx_end = &PeriodApThroughput::RxEnd3;
+			func = &PeriodApThroughput::StateChange3;
 			break;
 
 		case 4:
-			tx_begin = &PeriodApThroughput::TxBegin4;
-			rx_begin = &PeriodApThroughput::RxBegin4;
-			tx_end = &PeriodApThroughput::TxEnd4;
-			rx_end = &PeriodApThroughput::RxEnd4;
+			func = &PeriodApThroughput::StateChange4;
 			break;
 
 		case 5:
-			tx_begin = &PeriodApThroughput::TxBegin5;
-			rx_begin = &PeriodApThroughput::RxBegin5;
-			tx_end = &PeriodApThroughput::TxEnd5;
-			rx_end = &PeriodApThroughput::RxEnd5;
+			func = &PeriodApThroughput::StateChange5;
 			break;
 
 		case 6:
-			tx_begin = &PeriodApThroughput::TxBegin6;
-			rx_begin = &PeriodApThroughput::RxBegin6;
-			tx_end = &PeriodApThroughput::TxEnd6;
-			rx_end = &PeriodApThroughput::RxEnd6;
+			func = &PeriodApThroughput::StateChange6;
 			break;
 
 		case 7:
-			tx_begin = &PeriodApThroughput::TxBegin7;
-			rx_begin = &PeriodApThroughput::RxBegin7;
-			tx_end = &PeriodApThroughput::TxEnd7;
-			rx_end = &PeriodApThroughput::RxEnd7;
+			func = &PeriodApThroughput::StateChange7;
 			break;
 
 		default:
-			tx_begin = &PeriodApThroughput::TxBegin8;
-			rx_begin = &PeriodApThroughput::RxBegin8;
-			tx_end = &PeriodApThroughput::TxEnd8;
-			rx_end = &PeriodApThroughput::RxEnd8;
+			func = &PeriodApThroughput::StateChange8;
 		}
 
 		ap_thr->AddCh(sub_phy->first);
 
-		/*
+
 		PointerValue testing;
 
 		sub_phy->second->GetAttribute("State", testing);
-		testing.GetObject()->TraceConnectWithoutContext("State",MakeCallback());*/
-		sub_phy->second->TraceConnectWithoutContext("PhyTxBegin", MakeCallback(tx_begin, ap_thr) );
-		sub_phy->second->TraceConnectWithoutContext("PhyRxBegin", MakeCallback(rx_begin, ap_thr) );
-		sub_phy->second->TraceConnectWithoutContext("PhyTxEnd", MakeCallback(tx_end, ap_thr) );
-		sub_phy->second->TraceConnectWithoutContext("PhyRxEnd", MakeCallback(rx_end, ap_thr) );
+		testing.GetObject()->TraceConnectWithoutContext("State",MakeCallback(func, ap_thr));
 	}
 }
 
@@ -734,178 +714,101 @@ OutApInfo PeriodApThroughput::GetThroughput(uint32_t through_packets)
 	if(now_through_packets > max_through_packets)
 		max_through_packets = now_through_packets;
 
+	result.now_through_packets = now_through_packets * PAYLOADSIZE * 8 / (MEGA * period.GetSeconds());
 	result.avg_throughput = total_through_packets * PAYLOADSIZE * 8 / (MEGA * (now - Seconds(ARP_TIME + CLIENT_START_TIME)).GetSeconds()); //Mbit/s
 	result.min_throughput = min_through_packets * PAYLOADSIZE * 8 / (MEGA * period.GetSeconds());
 	result.max_throughput = max_through_packets * PAYLOADSIZE * 8 / (MEGA * period.GetSeconds());
 
 	//cout<<"period : "<<period.GetNanoSeconds()<<endl;
-	for(map<uint16_t, ns3::Time>::iterator i = busy_time.begin();
-		i != busy_time.end();
+	for(map<uint16_t, ns3::Time>::iterator i = idle_time.begin();
+		i != idle_time.end();
 		++i)
 	{
 		//cout<<"ch "<<i->first<<" : time : "<<i->second.GetNanoSeconds()<<endl;
-		result.idle_ratio[i->first] = (1.0 - ( (double) i->second.GetNanoSeconds() / (double) period.GetNanoSeconds() ) ) * 100.0;
+		result.idle_ratio[i->first] = ( (double) i->second.GetNanoSeconds() / (double) period.GetNanoSeconds() )  * 100.0;
 		i->second = Time("0.0");
 	}
 
 	return result;
 }
-void PeriodApThroughput::TxBegin(uint16_t ch_num)
+
+void PeriodApThroughput::StateChange1(Time Start, Time duration, WifiPhy::State state)
 {
-	latest_tx_begin[ch_num] = Simulator::Now();
-	cout<<"ch "<<ch_num<<" tx begin : "<<latest_tx_begin[ch_num]<<endl;
+	if(state == WifiPhy::State::IDLE)
+	{
+		IdleTimeOccur(ch_numbers[0], duration);
+	}
 }
-void PeriodApThroughput::TxEnd(uint16_t ch_num)
+void PeriodApThroughput::StateChange2(Time Start, Time duration, WifiPhy::State state)
 {
-	busy_time[ch_num] += (Simulator::Now() - latest_tx_begin[ch_num]);
-	cout<<"ch "<<ch_num<<" tx end : "<<Simulator::Now()<<" add time : "<<Simulator::Now() - latest_tx_begin[ch_num]<<endl;
+	if(state == WifiPhy::State::IDLE)
+		{
+			IdleTimeOccur(ch_numbers[1], duration);
+		}
 }
-void PeriodApThroughput::RxBegin(uint16_t ch_num)
+void PeriodApThroughput::StateChange3(Time Start, Time duration, WifiPhy::State state)
 {
-	latest_rx_begin[ch_num] = Simulator::Now();
-	cout<<"ch "<<ch_num<<" rx begin : "<<latest_rx_begin[ch_num]<<endl;
+	if(state == WifiPhy::State::IDLE)
+		{
+			IdleTimeOccur(ch_numbers[2], duration);
+		}
 }
-void PeriodApThroughput::RxEnd(uint16_t ch_num)
+void PeriodApThroughput::StateChange4(Time Start, Time duration, WifiPhy::State state)
 {
-	busy_time[ch_num] += (Simulator::Now() - latest_rx_begin[ch_num]);
-	cout<<"ch "<<ch_num<<" rx end : "<<Simulator::Now()<<" add time : "<<Simulator::Now() - latest_rx_begin[ch_num]<<endl;
+	if(state == WifiPhy::State::IDLE)
+		{
+			IdleTimeOccur(ch_numbers[3], duration);
+		}
 }
+void PeriodApThroughput::StateChange5(Time Start, Time duration, WifiPhy::State state)
+{
+	if(state == WifiPhy::State::IDLE)
+		{
+			IdleTimeOccur(ch_numbers[4], duration);
+		}
+}
+void PeriodApThroughput::StateChange6(Time Start, Time duration, WifiPhy::State state)
+{
+	if(state == WifiPhy::State::IDLE)
+		{
+			IdleTimeOccur(ch_numbers[5], duration);
+		}
+}
+void PeriodApThroughput::StateChange7(Time Start, Time duration, WifiPhy::State state)
+{
+	if(state == WifiPhy::State::IDLE)
+		{
+			IdleTimeOccur(ch_numbers[6], duration);
+		}
+}
+void PeriodApThroughput::StateChange8(Time Start, Time duration, WifiPhy::State state)
+{
+	if(state == WifiPhy::State::IDLE)
+		{
+			IdleTimeOccur(ch_numbers[7], duration);
+		}
+}
+
 void PeriodApThroughput::AddCh(uint16_t ch_num)
 {
 	ch_numbers.push_back(ch_num);
-	busy_time[ch_num] = Time("0.0"); latest_tx_begin[ch_num] = Time("0.0"); latest_rx_begin[ch_num] = Time("0.0");
+	idle_time[ch_num] = Time("0.0");
 }
 
-void PeriodApThroughput::TxBegin1(ns3::Ptr<const ns3::Packet> packet)
+void PeriodApThroughput::ResetIdle()
 {
-	TxBegin(ch_numbers[0]);
-}
-void PeriodApThroughput::TxBegin2(ns3::Ptr<const ns3::Packet> packet)
-{
-	TxBegin(ch_numbers[1]);
-}
-void PeriodApThroughput::TxBegin3(ns3::Ptr<const ns3::Packet> packet)
-{
-	TxBegin(ch_numbers[2]);
-}
-void PeriodApThroughput::TxBegin4(ns3::Ptr<const ns3::Packet> packet)
-{
-	TxBegin(ch_numbers[3]);
-}
-void PeriodApThroughput::TxBegin5(ns3::Ptr<const ns3::Packet> packet)
-{
-	TxBegin(ch_numbers[4]);
-}
-void PeriodApThroughput::TxBegin6(ns3::Ptr<const ns3::Packet> packet)
-{
-	TxBegin(ch_numbers[5]);
-}
-void PeriodApThroughput::TxBegin7(ns3::Ptr<const ns3::Packet> packet)
-{
-	TxBegin(ch_numbers[6]);
-}
-void PeriodApThroughput::TxBegin8(ns3::Ptr<const ns3::Packet> packet)
-{
-	TxBegin(ch_numbers[7]);
+	last_print_time = Simulator::Now();
+	for(map<uint16_t, ns3::Time>::iterator i = idle_time.begin();
+		i != idle_time.end();
+		++i)
+	{
+		i->second = Time("0.0");
+	}
 }
 
-void PeriodApThroughput::RxBegin1(ns3::Ptr<const ns3::Packet> packet)
+void PeriodApThroughput::IdleTimeOccur(uint16_t ch_num,Time duration)
 {
-	RxBegin(ch_numbers[0]);
-}
-void PeriodApThroughput::RxBegin2(ns3::Ptr<const ns3::Packet> packet)
-{
-	RxBegin(ch_numbers[1]);
-}
-void PeriodApThroughput::RxBegin3(ns3::Ptr<const ns3::Packet> packet)
-{
-	RxBegin(ch_numbers[2]);
-}
-void PeriodApThroughput::RxBegin4(ns3::Ptr<const ns3::Packet> packet)
-{
-	RxBegin(ch_numbers[3]);
-}
-void PeriodApThroughput::RxBegin5(ns3::Ptr<const ns3::Packet> packet)
-{
-	RxBegin(ch_numbers[4]);
-}
-void PeriodApThroughput::RxBegin6(ns3::Ptr<const ns3::Packet> packet)
-{
-	RxBegin(ch_numbers[5]);
-}
-void PeriodApThroughput::RxBegin7(ns3::Ptr<const ns3::Packet> packet)
-{
-	RxBegin(ch_numbers[6]);
-}
-void PeriodApThroughput::RxBegin8(ns3::Ptr<const ns3::Packet> packet)
-{
-	RxBegin(ch_numbers[7]);
-}
-
-void PeriodApThroughput::TxEnd1(ns3::Ptr<const ns3::Packet> packet)
-{
-	TxEnd(ch_numbers[0]);
-}
-void PeriodApThroughput::TxEnd2(ns3::Ptr<const ns3::Packet> packet)
-{
-	TxEnd(ch_numbers[1]);
-}
-void PeriodApThroughput::TxEnd3(ns3::Ptr<const ns3::Packet> packet)
-{
-	TxEnd(ch_numbers[2]);
-}
-void PeriodApThroughput::TxEnd4(ns3::Ptr<const ns3::Packet> packet)
-{
-	TxEnd(ch_numbers[3]);
-}
-void PeriodApThroughput::TxEnd5(ns3::Ptr<const ns3::Packet> packet)
-{
-	TxEnd(ch_numbers[4]);
-}
-void PeriodApThroughput::TxEnd6(ns3::Ptr<const ns3::Packet> packet)
-{
-	TxEnd(ch_numbers[5]);
-}
-void PeriodApThroughput::TxEnd7(ns3::Ptr<const ns3::Packet> packet)
-{
-	TxEnd(ch_numbers[6]);
-}
-void PeriodApThroughput::TxEnd8(ns3::Ptr<const ns3::Packet> packet)
-{
-	TxEnd(ch_numbers[7]);
-}
-
-void PeriodApThroughput::RxEnd1(ns3::Ptr<const ns3::Packet> packet)
-{
-	RxEnd(ch_numbers[0]);
-}
-void PeriodApThroughput::RxEnd2(ns3::Ptr<const ns3::Packet> packet)
-{
-	RxEnd(ch_numbers[1]);
-}
-void PeriodApThroughput::RxEnd3(ns3::Ptr<const ns3::Packet> packet)
-{
-	RxEnd(ch_numbers[2]);
-}
-void PeriodApThroughput::RxEnd4(ns3::Ptr<const ns3::Packet> packet)
-{
-	RxEnd(ch_numbers[3]);
-}
-void PeriodApThroughput::RxEnd5(ns3::Ptr<const ns3::Packet> packet)
-{
-	RxEnd(ch_numbers[4]);
-}
-void PeriodApThroughput::RxEnd6(ns3::Ptr<const ns3::Packet> packet)
-{
-	RxEnd(ch_numbers[5]);
-}
-void PeriodApThroughput::RxEnd7(ns3::Ptr<const ns3::Packet> packet)
-{
-	RxEnd(ch_numbers[6]);
-}
-void PeriodApThroughput::RxEnd8(ns3::Ptr<const ns3::Packet> packet)
-{
-	RxEnd(ch_numbers[7]);
+	idle_time[ch_num] += duration;
 }
 
 PeriodStaThroughput::PeriodStaThroughput(double demand)
@@ -943,6 +846,7 @@ OutStaInfo PeriodStaThroughput::GetThroughput(uint32_t through_packets)
 	if(now_through_packets > max_through_packets)
 		max_through_packets = now_through_packets;
 
+	result.now_through_packets = now_through_packets * PAYLOADSIZE * 8 / (MEGA * period.GetSeconds());
 	result.avg_throughput = total_through_packets * PAYLOADSIZE * 8 / (MEGA * (now - Seconds(ARP_TIME + CLIENT_START_TIME)).GetSeconds()); //Mbit/s
 	result.min_throughput = min_through_packets * PAYLOADSIZE * 8 / (MEGA * period.GetSeconds());
 	result.max_throughput = max_through_packets * PAYLOADSIZE * 8 / (MEGA * period.GetSeconds());
