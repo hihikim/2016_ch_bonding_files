@@ -540,6 +540,15 @@ void MacLow::SetChannelManager(const WifiPhyHelper &phy,uint32_t ch_num, uint32_
 	ch_m->SetPhysCallback();
 	SetupPhyMacLowListener (m_phy);
 }
+Ptr<ChannelBondingManager>
+MacLow::GetChannelManager()
+{
+	if(enable_ch_bonding)
+		return ch_m;
+
+	else
+		return 0;
+}
 
 Ptr<WifiPhy>
 MacLow::GetPhy (void) const

@@ -2,7 +2,6 @@
 #include "ns3/random-variable-stream.h"
 
 
-using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE ("my-wifi-test");
 
@@ -12,6 +11,7 @@ NS_LOG_COMPONENT_DEFINE ("my-wifi-test");
 int main (int argc, char *argv[])
 {
 	Parser parser;
+	OutputGenerator* og = new OutputGenerator();
 	unsigned int test_number = 0;
 
 	CommandLine cmd;
@@ -33,6 +33,7 @@ int main (int argc, char *argv[])
 	parser.Parse();
 	parser.CloseFile();
 
+	og->SetupOutPutFile(test_number);
 	/*
 	 * parse sta input
 	 */
@@ -102,6 +103,9 @@ int main (int argc, char *argv[])
 	map<unsigned int, NetDeviceContainer> ap_devs;
 	map<unsigned int, NetDeviceContainer> sta_devs;
 
+	map<unsigned int, PeriodApThroughput* > ap_thr;
+	map<unsigned int, PeriodStaThroughput* > sta_thr;
+
 
 	YansWifiChannelHelper channel = YansWifiChannelHelper::Default ();
 	YansWifiPhyHelper phy = YansWifiPhyHelper::Default ();
@@ -163,6 +167,10 @@ int main (int argc, char *argv[])
 		InApInfo ap_info = parser.GetApInfo(i->first);
 		m_low->SetChannelManager(phy, actual_ch[ap_info.channel], ap_info.width, WIFI_PHY_STANDARD_80211ac);
 
+		ap_thr[i->first] = new PeriodApThroughput();
+
+		LinkTrace(m_low->GetChannelManager()->GetPhys(), ap_thr[i->first]);
+
 		positionAlloc->Add(Vector(ap_info.x, ap_info.y, 0) );
 		for(vector <unsigned int>::iterator j = i->second.begin();
 			j != i->second.end();
@@ -187,6 +195,8 @@ int main (int argc, char *argv[])
 			InStaInfo sta_info = parser.GetStaInfo(*j);
 
 			positionAlloc->Add(Vector (sta_info.x, sta_info.y, 0));
+
+			sta_thr[*j] = new PeriodStaThroughput(sta_info.traffic_demand);
 		}
 	}
 
@@ -296,10 +306,24 @@ int main (int argc, char *argv[])
 	list.Add(olsr,10);
 	stack.SetRoutingHelper(list);*/
 
+
+	if(SIMULATION_TIME < PRINT_PERIOD)
+	{
+
+	}
+	else
+	{
+		Simulator::Schedule(Seconds (ARP_TIME + CLIENT_START_TIME + PRINT_PERIOD), &PrintThroughputInPeriod, ap_thr, sta_thr, og, serverApp, shortest_stas_of_ap);
+	}
+
+
+
 	Simulator::Stop (Seconds (ARP_TIME + CLIENT_START_TIME + SIMULATION_TIME));
 	Simulator::Run ();
 	Simulator::Destroy ();
 
+	PrintThroughputInPeriod(ap_thr, sta_thr, og, serverApp, shortest_stas_of_ap);
+	/*
 	for(map < unsigned int, vector <ApplicationContainer> >::iterator i = serverApp.begin();
 		i != serverApp.end();
 		++i)
@@ -308,7 +332,9 @@ int main (int argc, char *argv[])
 		uint32_t totalPacketsThrough = DynamicCast<UdpServer> ((i->second)[0].Get (0))->GetReceived ();
 		throughput = totalPacketsThrough * payloadSize * 8 / (SIMULATION_TIME * 1000000.0); //Mbit/s
 		cout<<"sta index : "<<i->first<<" throughput : "<<throughput<<endl;
-	}
+	}*/
+
+	og->CloseFile();
 
 	return 0;
 }
@@ -475,4 +501,456 @@ map<unsigned int, InStaInfo>::iterator Parser::GetStaEnd()
 {
 	return sta_info.end();
 }
+
+OutputGenerator::OutputGenerator()
+{
+}
+
+OutputGenerator::~OutputGenerator()
+{
+}
+
+void OutputGenerator::CloseFile()
+{
+	if(ap_output_file.is_open())
+		ap_output_file.close();
+
+	if(sta_output_file.is_open())
+		sta_output_file.close();
+}
+
+void OutputGenerator::Print()
+{
+	Time now = Simulator::Now();
+	if(now == Time("0.0"))
+		now = Seconds (ARP_TIME + CLIENT_START_TIME + SIMULATION_TIME);
+
+	ap_output_file<<"Time : "<<now.GetSeconds()<<endl;
+	sta_output_file<<"Time : "<<now.GetSeconds()<<endl;
+
+	for(map<unsigned int, OutApInfo>::iterator i = ap_info.begin();
+		i != ap_info.end();
+		++i)
+	{
+		ap_output_file<<"index : "<<i->first<<endl;
+		ap_output_file<<"average throughput : "<<i->second.avg_throughput<<endl;
+		ap_output_file<<"minimum throughput : "<<i->second.min_throughput<<endl;
+		ap_output_file<<"maximum throughput : "<<i->second.max_throughput<<endl;
+
+		ap_output_file<<"% of the transmission time over idle time :"<<endl;
+
+		for(map<unsigned int, double>::iterator j = i->second.idle_ratio.begin();
+			j != i->second.idle_ratio.end();
+			++j)
+		{
+			 ap_output_file<<"Channel "<<j->first<<" : "<<j->second<<endl;
+		}
+		ap_output_file<<endl;
+	}
+
+	for(map<unsigned int, OutStaInfo>::iterator i = sta_info.begin(); i != sta_info.end(); ++i)
+	{
+		sta_output_file<<"index : "<<i->first<<endl;
+		sta_output_file<<"average throughput : "<<i->second.avg_throughput<<endl;
+		sta_output_file<<"minimum throughput : "<<i->second.min_throughput<<endl;
+		sta_output_file<<"maximum throughput : "<<i->second.max_throughput<<endl;
+		sta_output_file<<"throughput/demand(%) : "<<i->second.served_demand_ratio<<endl;
+		sta_output_file<<endl;
+	}
+
+	ap_output_file<<"----------------------------------------";
+	sta_output_file<<"----------------------------------------";
+}
+
+void OutputGenerator::SetupOutPutFile(unsigned int test_number)
+{
+	ostringstream oss;
+	oss<<"./output/ap/"<<test_number;
+	ap_output_file.open(oss.str().c_str());
+	oss.str("");oss.clear();
+	oss<<"./output/sta/"<<test_number;
+	sta_output_file.open(oss.str().c_str());
+}
+
+void OutputGenerator::RecordApData(unsigned int index, OutApInfo outinfo)
+{
+	ap_info[index] = outinfo;
+}
+
+void OutputGenerator::RecordStaData(unsigned int index, OutStaInfo outinfo)
+{
+	sta_info[index] = outinfo;
+}
+
+void LinkTrace(map<uint16_t, Ptr<WifiPhy> > sub_phys,PeriodApThroughput* ap_thr)
+{
+	int num=0;
+	void (PeriodApThroughput::*tx_begin) (ns3::Ptr<const ns3::Packet>);
+	void (PeriodApThroughput::*tx_end) (ns3::Ptr<const ns3::Packet>);
+	void (PeriodApThroughput::*rx_begin) (ns3::Ptr<const ns3::Packet>);
+	void (PeriodApThroughput::*rx_end) (ns3::Ptr<const ns3::Packet>);
+	for(map<uint16_t, Ptr<WifiPhy> >::iterator sub_phy = sub_phys.begin();
+		sub_phy != sub_phys.end();
+		++sub_phy)
+	{
+		++num;
+		switch(num)
+		{
+		case 1:
+			tx_begin = &PeriodApThroughput::TxBegin1;
+			rx_begin = &PeriodApThroughput::RxBegin1;
+			tx_end = &PeriodApThroughput::TxEnd1;
+			rx_end = &PeriodApThroughput::RxEnd1;
+			break;
+
+		case 2:
+			tx_begin = &PeriodApThroughput::TxBegin2;
+			rx_begin = &PeriodApThroughput::RxBegin2;
+			tx_end = &PeriodApThroughput::TxEnd2;
+			rx_end = &PeriodApThroughput::RxEnd2;
+			break;
+
+		case 3:
+			tx_begin = &PeriodApThroughput::TxBegin3;
+			rx_begin = &PeriodApThroughput::RxBegin3;
+			tx_end = &PeriodApThroughput::TxEnd3;
+			rx_end = &PeriodApThroughput::RxEnd3;
+			break;
+
+		case 4:
+			tx_begin = &PeriodApThroughput::TxBegin4;
+			rx_begin = &PeriodApThroughput::RxBegin4;
+			tx_end = &PeriodApThroughput::TxEnd4;
+			rx_end = &PeriodApThroughput::RxEnd4;
+			break;
+
+		case 5:
+			tx_begin = &PeriodApThroughput::TxBegin5;
+			rx_begin = &PeriodApThroughput::RxBegin5;
+			tx_end = &PeriodApThroughput::TxEnd5;
+			rx_end = &PeriodApThroughput::RxEnd5;
+			break;
+
+		case 6:
+			tx_begin = &PeriodApThroughput::TxBegin6;
+			rx_begin = &PeriodApThroughput::RxBegin6;
+			tx_end = &PeriodApThroughput::TxEnd6;
+			rx_end = &PeriodApThroughput::RxEnd6;
+			break;
+
+		case 7:
+			tx_begin = &PeriodApThroughput::TxBegin7;
+			rx_begin = &PeriodApThroughput::RxBegin7;
+			tx_end = &PeriodApThroughput::TxEnd7;
+			rx_end = &PeriodApThroughput::RxEnd7;
+			break;
+
+		default:
+			tx_begin = &PeriodApThroughput::TxBegin8;
+			rx_begin = &PeriodApThroughput::RxBegin8;
+			tx_end = &PeriodApThroughput::TxEnd8;
+			rx_end = &PeriodApThroughput::RxEnd8;
+		}
+
+		ap_thr->AddCh(sub_phy->first);
+
+		/*
+		PointerValue testing;
+
+		sub_phy->second->GetAttribute("State", testing);
+		testing.GetObject()->TraceConnectWithoutContext("State",MakeCallback());*/
+		sub_phy->second->TraceConnectWithoutContext("PhyTxBegin", MakeCallback(tx_begin, ap_thr) );
+		sub_phy->second->TraceConnectWithoutContext("PhyRxBegin", MakeCallback(rx_begin, ap_thr) );
+		sub_phy->second->TraceConnectWithoutContext("PhyTxEnd", MakeCallback(tx_end, ap_thr) );
+		sub_phy->second->TraceConnectWithoutContext("PhyRxEnd", MakeCallback(rx_end, ap_thr) );
+	}
+}
+
+void PrintThroughputInPeriod(map<unsigned int, PeriodApThroughput* > ap_thr,
+								 map<unsigned int, PeriodStaThroughput* > sta_thr,
+								 OutputGenerator* og,
+								 map < unsigned int, vector <ApplicationContainer> > serverApp,
+								 map<unsigned int, vector <unsigned int> > shortest_stas_of_ap
+								 )
+{
+	for(map<unsigned int, vector <unsigned int> >::iterator i = shortest_stas_of_ap.begin();
+		i != shortest_stas_of_ap.end();
+		++i)
+	{
+		uint32_t total_through_packet = 0;
+
+		for(vector <unsigned int>::iterator j = i->second.begin();
+			j != i->second.end();
+			++j)
+		{
+			uint32_t through_packet = DynamicCast<UdpServer> (serverApp[*j][0].Get(0))->GetReceived();
+			og->RecordStaData(*j,sta_thr[*j]->GetThroughput(through_packet));
+			total_through_packet += through_packet;
+		}
+
+		og->RecordApData(i->first, ap_thr[i->first]->GetThroughput(total_through_packet));
+	}
+
+	og->Print();
+
+	if(Simulator::Now() + Seconds(PRINT_PERIOD) < Seconds (ARP_TIME + CLIENT_START_TIME + SIMULATION_TIME))
+		Simulator::Schedule(Seconds(PRINT_PERIOD), &PrintThroughputInPeriod, ap_thr, sta_thr, og, serverApp, shortest_stas_of_ap);
+}
+
+PeriodApThroughput::PeriodApThroughput()
+{
+	ex_through_packets = 0;
+	ch_numbers.reserve(8);
+	last_print_time = Seconds(ARP_TIME + CLIENT_START_TIME);
+
+	min_through_packets = numeric_limits<uint32_t>::max();
+	max_through_packets = numeric_limits<uint32_t>::min();
+	now_through_packets = 0;
+	total_through_packets = 0;
+}
+
+PeriodApThroughput::~PeriodApThroughput()
+{
+}
+
+OutApInfo PeriodApThroughput::GetThroughput(uint32_t through_packets)
+{
+	OutApInfo result;
+
+	Time now = Simulator::Now();
+	if(now == Time("0.0"))
+		now = Seconds (ARP_TIME + CLIENT_START_TIME + SIMULATION_TIME);
+
+	Time period = now - last_print_time;
+	last_print_time = now;
+
+	total_through_packets = through_packets;
+	now_through_packets = total_through_packets - ex_through_packets;
+	ex_through_packets = through_packets;
+
+	if(now_through_packets < min_through_packets)
+		min_through_packets = now_through_packets;
+
+	if(now_through_packets > max_through_packets)
+		max_through_packets = now_through_packets;
+
+	result.avg_throughput = total_through_packets * PAYLOADSIZE * 8 / (MEGA * (now - Seconds(ARP_TIME + CLIENT_START_TIME)).GetSeconds()); //Mbit/s
+	result.min_throughput = min_through_packets * PAYLOADSIZE * 8 / (MEGA * period.GetSeconds());
+	result.max_throughput = max_through_packets * PAYLOADSIZE * 8 / (MEGA * period.GetSeconds());
+
+	//cout<<"period : "<<period.GetNanoSeconds()<<endl;
+	for(map<uint16_t, ns3::Time>::iterator i = busy_time.begin();
+		i != busy_time.end();
+		++i)
+	{
+		//cout<<"ch "<<i->first<<" : time : "<<i->second.GetNanoSeconds()<<endl;
+		result.idle_ratio[i->first] = (1.0 - ( (double) i->second.GetNanoSeconds() / (double) period.GetNanoSeconds() ) ) * 100.0;
+		i->second = Time("0.0");
+	}
+
+	return result;
+}
+void PeriodApThroughput::TxBegin(uint16_t ch_num)
+{
+	latest_tx_begin[ch_num] = Simulator::Now();
+	cout<<"ch "<<ch_num<<" tx begin : "<<latest_tx_begin[ch_num]<<endl;
+}
+void PeriodApThroughput::TxEnd(uint16_t ch_num)
+{
+	busy_time[ch_num] += (Simulator::Now() - latest_tx_begin[ch_num]);
+	cout<<"ch "<<ch_num<<" tx end : "<<Simulator::Now()<<" add time : "<<Simulator::Now() - latest_tx_begin[ch_num]<<endl;
+}
+void PeriodApThroughput::RxBegin(uint16_t ch_num)
+{
+	latest_rx_begin[ch_num] = Simulator::Now();
+	cout<<"ch "<<ch_num<<" rx begin : "<<latest_rx_begin[ch_num]<<endl;
+}
+void PeriodApThroughput::RxEnd(uint16_t ch_num)
+{
+	busy_time[ch_num] += (Simulator::Now() - latest_rx_begin[ch_num]);
+	cout<<"ch "<<ch_num<<" rx end : "<<Simulator::Now()<<" add time : "<<Simulator::Now() - latest_rx_begin[ch_num]<<endl;
+}
+void PeriodApThroughput::AddCh(uint16_t ch_num)
+{
+	ch_numbers.push_back(ch_num);
+	busy_time[ch_num] = Time("0.0"); latest_tx_begin[ch_num] = Time("0.0"); latest_rx_begin[ch_num] = Time("0.0");
+}
+
+void PeriodApThroughput::TxBegin1(ns3::Ptr<const ns3::Packet> packet)
+{
+	TxBegin(ch_numbers[0]);
+}
+void PeriodApThroughput::TxBegin2(ns3::Ptr<const ns3::Packet> packet)
+{
+	TxBegin(ch_numbers[1]);
+}
+void PeriodApThroughput::TxBegin3(ns3::Ptr<const ns3::Packet> packet)
+{
+	TxBegin(ch_numbers[2]);
+}
+void PeriodApThroughput::TxBegin4(ns3::Ptr<const ns3::Packet> packet)
+{
+	TxBegin(ch_numbers[3]);
+}
+void PeriodApThroughput::TxBegin5(ns3::Ptr<const ns3::Packet> packet)
+{
+	TxBegin(ch_numbers[4]);
+}
+void PeriodApThroughput::TxBegin6(ns3::Ptr<const ns3::Packet> packet)
+{
+	TxBegin(ch_numbers[5]);
+}
+void PeriodApThroughput::TxBegin7(ns3::Ptr<const ns3::Packet> packet)
+{
+	TxBegin(ch_numbers[6]);
+}
+void PeriodApThroughput::TxBegin8(ns3::Ptr<const ns3::Packet> packet)
+{
+	TxBegin(ch_numbers[7]);
+}
+
+void PeriodApThroughput::RxBegin1(ns3::Ptr<const ns3::Packet> packet)
+{
+	RxBegin(ch_numbers[0]);
+}
+void PeriodApThroughput::RxBegin2(ns3::Ptr<const ns3::Packet> packet)
+{
+	RxBegin(ch_numbers[1]);
+}
+void PeriodApThroughput::RxBegin3(ns3::Ptr<const ns3::Packet> packet)
+{
+	RxBegin(ch_numbers[2]);
+}
+void PeriodApThroughput::RxBegin4(ns3::Ptr<const ns3::Packet> packet)
+{
+	RxBegin(ch_numbers[3]);
+}
+void PeriodApThroughput::RxBegin5(ns3::Ptr<const ns3::Packet> packet)
+{
+	RxBegin(ch_numbers[4]);
+}
+void PeriodApThroughput::RxBegin6(ns3::Ptr<const ns3::Packet> packet)
+{
+	RxBegin(ch_numbers[5]);
+}
+void PeriodApThroughput::RxBegin7(ns3::Ptr<const ns3::Packet> packet)
+{
+	RxBegin(ch_numbers[6]);
+}
+void PeriodApThroughput::RxBegin8(ns3::Ptr<const ns3::Packet> packet)
+{
+	RxBegin(ch_numbers[7]);
+}
+
+void PeriodApThroughput::TxEnd1(ns3::Ptr<const ns3::Packet> packet)
+{
+	TxEnd(ch_numbers[0]);
+}
+void PeriodApThroughput::TxEnd2(ns3::Ptr<const ns3::Packet> packet)
+{
+	TxEnd(ch_numbers[1]);
+}
+void PeriodApThroughput::TxEnd3(ns3::Ptr<const ns3::Packet> packet)
+{
+	TxEnd(ch_numbers[2]);
+}
+void PeriodApThroughput::TxEnd4(ns3::Ptr<const ns3::Packet> packet)
+{
+	TxEnd(ch_numbers[3]);
+}
+void PeriodApThroughput::TxEnd5(ns3::Ptr<const ns3::Packet> packet)
+{
+	TxEnd(ch_numbers[4]);
+}
+void PeriodApThroughput::TxEnd6(ns3::Ptr<const ns3::Packet> packet)
+{
+	TxEnd(ch_numbers[5]);
+}
+void PeriodApThroughput::TxEnd7(ns3::Ptr<const ns3::Packet> packet)
+{
+	TxEnd(ch_numbers[6]);
+}
+void PeriodApThroughput::TxEnd8(ns3::Ptr<const ns3::Packet> packet)
+{
+	TxEnd(ch_numbers[7]);
+}
+
+void PeriodApThroughput::RxEnd1(ns3::Ptr<const ns3::Packet> packet)
+{
+	RxEnd(ch_numbers[0]);
+}
+void PeriodApThroughput::RxEnd2(ns3::Ptr<const ns3::Packet> packet)
+{
+	RxEnd(ch_numbers[1]);
+}
+void PeriodApThroughput::RxEnd3(ns3::Ptr<const ns3::Packet> packet)
+{
+	RxEnd(ch_numbers[2]);
+}
+void PeriodApThroughput::RxEnd4(ns3::Ptr<const ns3::Packet> packet)
+{
+	RxEnd(ch_numbers[3]);
+}
+void PeriodApThroughput::RxEnd5(ns3::Ptr<const ns3::Packet> packet)
+{
+	RxEnd(ch_numbers[4]);
+}
+void PeriodApThroughput::RxEnd6(ns3::Ptr<const ns3::Packet> packet)
+{
+	RxEnd(ch_numbers[5]);
+}
+void PeriodApThroughput::RxEnd7(ns3::Ptr<const ns3::Packet> packet)
+{
+	RxEnd(ch_numbers[6]);
+}
+void PeriodApThroughput::RxEnd8(ns3::Ptr<const ns3::Packet> packet)
+{
+	RxEnd(ch_numbers[7]);
+}
+
+PeriodStaThroughput::PeriodStaThroughput(double demand)
+{
+	ex_through_packets = 0;
+	min_through_packets = numeric_limits<uint32_t>::max();
+	max_through_packets = numeric_limits<uint32_t>::min();
+	now_through_packets = 0;
+	total_through_packets = 0;
+	last_print_time = Seconds(ARP_TIME + CLIENT_START_TIME);
+	this->demand = demand;
+}
+PeriodStaThroughput::~PeriodStaThroughput()
+{
+}
+
+OutStaInfo PeriodStaThroughput::GetThroughput(uint32_t through_packets)
+{
+	OutStaInfo result;
+
+	Time now = Simulator::Now();
+	if(now == Time("0.0"))
+		now = Seconds (ARP_TIME + CLIENT_START_TIME + SIMULATION_TIME);
+
+	Time period = now - last_print_time;
+	last_print_time = now;
+
+	total_through_packets = through_packets;
+	now_through_packets = total_through_packets - ex_through_packets;
+	ex_through_packets = through_packets;
+
+	if(now_through_packets < min_through_packets)
+		min_through_packets = now_through_packets;
+
+	if(now_through_packets > max_through_packets)
+		max_through_packets = now_through_packets;
+
+	result.avg_throughput = total_through_packets * PAYLOADSIZE * 8 / (MEGA * (now - Seconds(ARP_TIME + CLIENT_START_TIME)).GetSeconds()); //Mbit/s
+	result.min_throughput = min_through_packets * PAYLOADSIZE * 8 / (MEGA * period.GetSeconds());
+	result.max_throughput = max_through_packets * PAYLOADSIZE * 8 / (MEGA * period.GetSeconds());
+
+	result.served_demand_ratio =  result.avg_throughput / demand * 100.0;
+
+
+	return result;
+}
+
 

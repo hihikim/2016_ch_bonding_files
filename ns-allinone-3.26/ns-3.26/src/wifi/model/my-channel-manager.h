@@ -85,6 +85,8 @@ public:
 
   uint32_t GetConvertedSize(Ptr<const Packet> packet);
 
+  std::map<uint16_t, Ptr<WifiPhy>> GetPhys();
+
 
 private:
   uint32_t max_width;

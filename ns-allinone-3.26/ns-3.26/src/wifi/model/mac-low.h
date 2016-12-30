@@ -856,6 +856,7 @@ public:
 
    void EnableChannelBonding (void);
    void SetChannelManager(const WifiPhyHelper &phy,uint32_t ch_num, uint32_t ch_width, enum WifiPhyStandard standard);
+   Ptr<ChannelBondingManager> GetChannelManager();
 
 private:
   /**

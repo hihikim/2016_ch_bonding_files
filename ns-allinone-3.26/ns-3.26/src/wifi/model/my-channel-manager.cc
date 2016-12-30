@@ -1122,6 +1122,10 @@ int ChannelBondingManager::CheckError(Ptr< Packet> Packet)
 
 	return error_index;
 }
+std::map<uint16_t, Ptr<WifiPhy>> ChannelBondingManager::GetPhys()
+{
+	return m_phys;
+}
 
 }
 
