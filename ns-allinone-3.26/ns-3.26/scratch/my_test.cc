@@ -874,8 +874,10 @@ PeriodStaThroughput::PeriodStaThroughput(double demand)
 	last_print_time = Seconds(ARP_TIME + CLIENT_START_TIME);
 	this->demand = demand;
 }
+
 PeriodStaThroughput::~PeriodStaThroughput()
 {
+
 }
 
 OutStaInfo PeriodStaThroughput::GetThroughput(uint32_t through_packets)
@@ -910,4 +912,203 @@ OutStaInfo PeriodStaThroughput::GetThroughput(uint32_t through_packets)
 	return result;
 }
 
+DynamicChannelBonding::DynamicChannelBonding()
+{
+
+}
+
+DynamicChannelBonding::~DynamicChannelBonding()
+{
+
+}
+
+void DynamicChannelBonding::clean_map()
+{
+
+}
+
+void DynamicChannelBonding::insert_mac(unsigned int ap_index, unsigned int ch_num, Mac48Address address)
+{
+
+}
+
+void DynamicChannelBonding::calculate_tau()
+{
+	double tau_i;
+	double p_i;
+	vector<unsigned int> aps = GetApIndexs();
+	map<unsigned int, map<unsigned int, double> > new_tau;
+	unsigned int primary_ch;
+
+	for(vector<unsigned int>::iterator i = aps.begin();
+		i != aps.end();
+		++i)
+	{
+		p_i = p[*i];
+		tau_i = ( 2.0 * ( 1.0 - p_i) ) / ( ( 1.0 - 2 * p_i ) * ( WINDOW_SIZE_BEGIN + 1.0 ) + ( p_i * WINDOW_SIZE_BEGIN) * ( 1 - pow(2*p_i, WINDOW_SIZE_MAX) ) );
+
+		vector<unsigned int> chs = GetApChannels(*i);
+		primary_ch = GetPrimaryChannel(*i);
+		for(vector<unsigned int>::iterator c = chs.begin();
+			c != chs.end();
+			++c)
+		{
+			if(*c == primary_ch)
+			{
+				new_tau[*i][*c] = tau_i;
+			}
+
+			else
+			{
+				new_tau[*i][*c] = 1 - pow( (1.0 - tau[*i][*c]) , GetNI(*i) - 1);
+
+				for(vector<unsigned int>::iterator j = aps.begin();
+					j != aps.end();
+					++j)
+				{
+					if(*i != *j)
+					{
+						new_tau[*i][*c] = new_tau[*i][*c] * pow(1.0 - tau[*j][*c] , GetNIJ(*i,*j));
+					}
+				}
+			}
+		}
+	}
+
+	tau = new_tau;
+}
+
+void DynamicChannelBonding::calculate_p()
+{
+	vector<unsigned int> aps = GetApIndexs();
+	unsigned int primary_ch;
+	unsigned int i, j;
+	double temp_val;
+	for(map<unsigned int, double>::iterator p_i = p.begin();
+		p_i != p.end();
+		++p_i)
+	{
+		i = p_i->first;
+		temp_val = 1.0;
+
+		primary_ch = GetPrimaryChannel(i);
+
+		for(vector<unsigned int>::iterator iter_j = aps.begin();
+			iter_j != aps.end();
+			++iter_j)
+		{
+			j = *iter_j;
+
+			temp_val = temp_val * pow( (1.0 - tau[j][primary_ch] ) , GetNIJ(i,j) );
+		}
+		temp_val = temp_val / (1.0 - tau[i][primary_ch]);
+		temp_val = 1 - temp_val;
+	}
+}
+
+void DynamicChannelBonding::calculate_variables()
+{
+	for(unsigned int i = 0; i < LOOPCOUNT; ++i)
+	{
+		calculate_p();
+		calculate_tau();
+	}
+}
+
+unsigned int DynamicChannelBonding::get_width(unsigned int index)
+{
+	double largest_gamma = 0.0;
+	double gamma, temp;
+	unsigned int proper_width = 20;
+	unsigned int widest = WidestWidth(GetPrimaryChannel(index));
+	vector<unsigned int> aps = GetInterfereApIndexs(index);
+
+	for(unsigned int width = 20; width <= widest; width *= 2)
+	{
+		gamma = 0.0;
+		temp = GetThroughput_demand_ratio(index);
+
+		if(temp > 1.0)
+			temp = 1.0;
+
+		gamma = temp;
+
+		for(vector<unsigned int>::iterator ap = aps.begin();
+			ap != aps.end();
+			++ap)
+		{
+			temp = GetThroughput_demand_ratio(*ap);
+			if(temp > 1.0)
+				temp = 1.0;
+
+			gamma += temp;
+		}
+
+		if(gamma > largest_gamma)
+		{
+			proper_width = width;
+			largest_gamma = gamma;
+		}
+	}
+
+	return proper_width;
+}
+/*
+ *need to do
+ */
+
+
+double DynamicChannelBonding::GetNI(unsigned int i)
+{
+	double result = 0.0;
+	return result;
+}
+
+double DynamicChannelBonding::GetNIJ(unsigned int i, unsigned int j)
+{
+	double result = 0.0;
+	return result;
+}
+
+vector<unsigned int> DynamicChannelBonding::GetApIndexs()
+{
+	vector<unsigned int> result;
+	return result;
+}
+
+vector<unsigned int> DynamicChannelBonding::GetInterfereApIndexs(unsigned int index)
+{
+	vector<unsigned int> result;
+	return result;
+}
+
+vector<unsigned int> DynamicChannelBonding::GetApChannels(unsigned int index)
+{
+	vector<unsigned int> result;
+	return result;
+}
+
+unsigned int DynamicChannelBonding::GetPrimaryChannel(unsigned int index)
+{
+	unsigned int result = 0;
+	return result;
+}
+
+double DynamicChannelBonding::GetThroughputHat(unsigned int index)
+{
+	double result = 0.0;
+	return result;
+}
+
+double DynamicChannelBonding::GetThroughput_demand_ratio(unsigned int index)
+{
+	double result = 0.0;
+	return result;
+}
+
+unsigned int WidestWidth(unsigned int primary_ch)
+{
+	unsigned int result = 0;
+	return result;
+}
 

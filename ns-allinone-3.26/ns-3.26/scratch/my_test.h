@@ -16,6 +16,9 @@
 #define MEGA 1000000
 #define PRINT_PERIOD 1.0
 #define PAYLOADSIZE 1472   //udp
+#define WINDOW_SIZE_BEGIN 32.0
+#define WINDOW_SIZE_MAX 5.0
+#define LOOPCOUNT 100
 
 
 
@@ -32,6 +35,7 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <cmath>
 
 using namespace std;
 using namespace ns3;
@@ -193,5 +197,36 @@ uint16_t actual_ch[] = {36, 40, 44, 48,
 			116, 120, 124, 128,
 			132, 136, 140, 144,
 			149, 153, 157, 161, 165};
+
+unsigned int WidestWidth(unsigned int primary_ch);
+
+class DynamicChannelBonding
+{
+public:
+	DynamicChannelBonding();
+	~DynamicChannelBonding();
+	void clean_map();
+	void insert_mac(unsigned int ap_index, unsigned int ch_num, Mac48Address address);
+	void calculate_tau();
+	void calculate_p();
+	void calculate_variables();
+	unsigned int get_width(unsigned int index);
+	double GetNI(unsigned int i);
+	double GetNIJ(unsigned int i, unsigned int j);
+	vector<unsigned int> GetApIndexs();
+	vector<unsigned int> GetInterfereApIndexs(unsigned int index);
+	vector<unsigned int> GetApChannels(unsigned int index);
+	unsigned int GetPrimaryChannel(unsigned int index);
+	double GetThroughputHat(unsigned int index);
+	double GetThroughput_demand_ratio(unsigned int index);
+
+
+
+private:
+	map< unsigned int, map<unsigned int, map<Mac48Address, bool> > > link_map;
+	map<unsigned int, map<unsigned int, double> > tau;
+	map<unsigned int, double> p;
+
+};
 
 #endif
