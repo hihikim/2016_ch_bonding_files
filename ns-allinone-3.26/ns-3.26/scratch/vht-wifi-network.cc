@@ -87,7 +87,11 @@ int main (int argc, char *argv[])
               NodeContainer wifiApNode;
               wifiApNode.Create (1);
 
-              YansWifiChannelHelper channel = YansWifiChannelHelper::Default ();
+              //YansWifiChannelHelper channel = YansWifiChannelHelper::Default ();
+              YansWifiChannelHelper channel;
+              channel.AddPropagationLoss("ns3::FriisPropagationLossModel" );
+              channel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
+              
               YansWifiPhyHelper phy = YansWifiPhyHelper::Default ();
               phy.SetChannel (channel.Create ());
 

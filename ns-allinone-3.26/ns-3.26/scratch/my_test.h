@@ -71,6 +71,7 @@ struct OutApInfo    //output information of ap
 	double avg_throughput; //average throughput
 	double min_throughput;
 	double max_throughput;
+	double throughput_demand_ratio;
 	map<unsigned int, double> idle_ratio;
 };
 
@@ -118,8 +119,13 @@ public:
 	void SetupOutPutFile(unsigned int test_number);
 	void RecordApData(unsigned int index, OutApInfo outinfo);
 	void RecordStaData(unsigned int index, OutStaInfo outinfo);
+	void PrintLinkInfo(map<unsigned int, vector <unsigned int> > shortest_stas_of_ap);
+	void RecordDistance(unsigned int index,double distance);
+	void PrintDistance();
+	void CleanDistMap();
 
 private:
+	map<unsigned int, double> dist_map;
 	ofstream ap_output_file, sta_output_file;
 	map<uint32_t,OutStaInfo> sta_info;
 	map<uint32_t,OutApInfo> ap_info;
@@ -142,6 +148,7 @@ public:
 	void StateChange8(Time Start, Time duration, WifiPhy::State state);
 
 	void AddCh(uint16_t ch_num);
+	void SetTotalDemand(double total);
 
 	void ResetIdle();
 
@@ -158,6 +165,7 @@ private:
 	uint32_t max_through_packets;
 	uint32_t now_through_packets;
 	uint32_t total_through_packets;
+	double total_demand;
 
 	void IdleTimeOccur(uint16_t ch_num,Time duration);
 };
@@ -180,10 +188,10 @@ private:
 
 
 uint16_t actual_ch[] = {36, 40, 44, 48,
-							52, 56, 60, 64,
-							100, 104, 108, 112,
-							116, 120, 124, 128,
-							132, 136, 140, 144,
-							149, 153, 157, 161, 165};
+			52, 56, 60, 64,
+			100, 104, 108, 112,
+			116, 120, 124, 128,
+			132, 136, 140, 144,
+			149, 153, 157, 161, 165};
 
 #endif

@@ -407,6 +407,8 @@ uint16_t ChannelBondingManager::GetUsableBondingChannel(uint16_t primary)       
 			NS_FATAL_ERROR(oss.str());
 		}
 
+		ch_info = ch_i->second;
+
 
 		if( ch_info.Width >= max_width || ch_info.Parent == usable_ch)
 			break;
@@ -425,6 +427,7 @@ uint16_t ChannelBondingManager::GetUsableBondingChannel(uint16_t primary)       
 
 bool ChannelBondingManager::CheckAllSubChannelReceived(uint16_t ch_num)                   //check all sub channel receive rts-cts
 {
+	//std::cout<<"ch_num : "<<ch_num<<"tf : "<<received_channel[ch_num]<<std::endl;
 	ChannelInfo ch_info;
 	std::map<uint16_t, ChannelInfo>::const_iterator ch_i = ch_map.find(ch_num);
 
@@ -440,6 +443,7 @@ bool ChannelBondingManager::CheckAllSubChannelReceived(uint16_t ch_num)         
 	uint32_t ch_width = ch_info.Width;
 
 	if(ch_width == 20){
+
 		if(received_channel[ch_num])
 		{
 			WifiMacHeader hdr1,hdr2;
@@ -447,6 +451,7 @@ bool ChannelBondingManager::CheckAllSubChannelReceived(uint16_t ch_num)         
 			{
 				last_received_packet[ch_num]->PeekHeader(hdr1);
 				last_received_packet[primary_ch]->PeekHeader(hdr2);
+
 				if(hdr1.GetAddr1() == hdr2.GetAddr1() &&
 					hdr1.GetType() == hdr2.GetType()
 				   )
@@ -649,6 +654,8 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 			{
 
 				//need_rts_cts = false;
+				//NeedRtsCts(false);
+
 				if(!need_rts_cts &&
 					ch_num == primary_ch)
 				{
@@ -660,7 +667,6 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 
 				if(received_num != 0 &&
 					received_num == (request_width/20) ){
-					//std::cout<<"ho~\n";
 					ManageReceived(Packet, rxSnr, txVector, preamble);
 				}
 			}
@@ -687,10 +693,18 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 
 				if(hdr.IsRts() || hdr.IsCts())
 				{
+					//std::cout<<"receive ch : "<<ch_num<<std::endl;
 					if(primary_ch == ch_num)
+						NeedRtsCts(true);
+
+					/*if(primary_ch == ch_num && hdr.IsRts())
 					{
 						NeedRtsCts(true);
 					}
+					else if(primary_ch == ch_num && hdr.IsCts())
+					{
+						NeedRtsCts(false);
+					}*/
 
 					uint16_t usable_bonding_ch = GetUsableBondingChannel(primary_ch);
 
@@ -760,10 +774,10 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 
 void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble, enum mpduType mpdutype)
 {                                               //send packet
+	//std::cout<<primary_ch<<" : width "<<request_width<<std::endl;
 	ConvertPacket(packet);                       //split packet
 
 	ClearReceiveRecord();
-
 
 	//txVector.SetChannelWidth(request_width);
 
@@ -776,6 +790,7 @@ void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector t
 			m_phys[*i]->SendPacket(packet_pieces[*i], txVector, preamble, mpdutype);
 		}
 	}
+
 
 
 	CleanPacketPieces();
@@ -815,9 +830,10 @@ Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)   //s
 {
 	CleanPacketPieces();
 
+
 	WifiMacHeader hdr;
 	packet->PeekHeader(hdr);
-	//std::cout<<hdr.GetTypeString()<<std::endl;
+
 	Ptr<Packet> origin_p = packet->Copy();
 	std::vector<uint16_t> sub_chs = FindSubChannels(request_ch);
 	for(std::vector<uint16_t>::iterator i = sub_chs.begin() ;

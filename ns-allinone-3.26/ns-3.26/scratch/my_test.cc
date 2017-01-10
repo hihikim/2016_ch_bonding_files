@@ -51,12 +51,12 @@ int main (int argc, char *argv[])
 
 	map<unsigned int, vector <unsigned int> > shortest_stas_of_ap; //shortest_stas_of_ap[a] = list of STAs which is allocated with AP a
 
-	for(map<unsigned int,InApInfo>::iterator i = parser.GetApBegin();
+	/*for(map<unsigned int,InApInfo>::iterator i = parser.GetApBegin();
 		i != parser.GetApEnd();
 		++i)
 	{
 		shortest_stas_of_ap[i->first].reserve(1);
-	}
+	}*/
 
 	for(map<unsigned int,InStaInfo>::iterator i = parser.GetStaBegin();
 		i != parser.GetStaEnd();
@@ -78,24 +78,13 @@ int main (int argc, char *argv[])
 				shortest_ap = j->first;
 			}
 		}
-		cout<<"sta "<<i->first<<" : shortest ap "<<shortest_ap<<" distance "<<sqrt(shortest_sq_dist)<<endl;
+		og->RecordDistance(i->first,sqrt(shortest_sq_dist));
 		shortest_stas_of_ap[shortest_ap].push_back(i->first);
 	}
 
-
-
-	for(map<unsigned int,vector <unsigned int>>::iterator i = shortest_stas_of_ap.begin();
-		i != shortest_stas_of_ap.end();
-		++i)
-	{
-		cout<<"AP "<<i->first<<":";
-		for(vector <unsigned int>::iterator j = i->second.begin(); j != i->second.end();j++)
-		{
-			cout<<"STA "<<*j<<" | ";
-		}
-		cout<<endl;
-	}
-
+	og->PrintLinkInfo(shortest_stas_of_ap);
+	og->PrintDistance();
+	og->CleanDistMap();
 
 	map<unsigned int, NodeContainer> ap_nodes;
 	map<unsigned int, NodeContainer> sta_nodes;
@@ -108,11 +97,15 @@ int main (int argc, char *argv[])
 
 
 	YansWifiChannelHelper channel = YansWifiChannelHelper::Default ();
+	//YansWifiChannelHelper channel;
 	YansWifiPhyHelper phy = YansWifiPhyHelper::Default ();
 
 	//channel.AddPropagationLoss("ns3::FriisPropagationLossModel" );
 	//channel.AddPropagationLoss("ns3::FixedRssLossModel", "Rss", DoubleValue(100.0));
 	//channel.AddPropagationLoss("ns3::RangePropagationLossModel", "MaxRange", DoubleValue(250.0));
+
+	//channel.AddPropagationLoss("ns3::LogDistancePropagationLossModel");
+	//channel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
 
 	phy.SetChannel (channel.Create ());
 	phy.Set ("ShortGuardEnabled", BooleanValue (ENABLE_SHORT_GD));
@@ -129,6 +122,7 @@ int main (int argc, char *argv[])
 								"RtsCtsThreshold", UintegerValue(100));*/
 
 	wifi.SetRemoteStationManager ("ns3::MinstrelHtWifiManager", "RtsCtsThreshold", UintegerValue(100));
+	//wifi.SetRemoteStationManager ("ns3::OnoeWifiManager", "RtsCtsThreshold", UintegerValue(100));
 
 
 	//Ssid ssid = Ssid ("ns3-80211ac");
@@ -167,11 +161,13 @@ int main (int argc, char *argv[])
 		InApInfo ap_info = parser.GetApInfo(i->first);
 		m_low->SetChannelManager(phy, actual_ch[ap_info.channel], ap_info.width, WIFI_PHY_STANDARD_80211ac);
 
+
 		ap_thr[i->first] = new PeriodApThroughput();
 
 		LinkTrace(m_low->GetChannelManager()->GetPhys(), ap_thr[i->first]);
 
 		positionAlloc->Add(Vector(ap_info.x, ap_info.y, 0) );
+		double total = 0.0;
 		for(vector <unsigned int>::iterator j = i->second.begin();
 			j != i->second.end();
 			j++)
@@ -197,7 +193,10 @@ int main (int argc, char *argv[])
 			positionAlloc->Add(Vector (sta_info.x, sta_info.y, 0));
 
 			sta_thr[*j] = new PeriodStaThroughput(sta_info.traffic_demand);
+			total += sta_info.traffic_demand;
 		}
+
+		ap_thr[i->first]->SetTotalDemand(total);
 	}
 
 	mobility.SetPositionAllocator (positionAlloc);
@@ -220,7 +219,7 @@ int main (int argc, char *argv[])
 		stack.Install (ap_nodes[i->first]);
 		Ipv4InterfaceContainer apNodeInterface = address.Assign(ap_devs[i->first]);
 
-		cout<<"ap "<<i->first<<" : address ("<<apNodeInterface.GetAddress(0)<<") | ";
+		//cout<<"ap "<<i->first<<" : address ("<<apNodeInterface.GetAddress(0)<<") | ";
 		unsigned int port_num = 5000;
 		unsigned int echo_port = 9;
 
@@ -234,7 +233,7 @@ int main (int argc, char *argv[])
 			stack.Install (sta_nodes[*j]);
 
 			Ipv4InterfaceContainer staNodeInterface = address.Assign(sta_devs[*j]);
-			cout<<"sta "<<*j<<" : address ("<<staNodeInterface.GetAddress(0)<<") | ";
+			//cout<<"sta "<<*j<<" : address ("<<staNodeInterface.GetAddress(0)<<") | ";
 
 			UdpServerHelper myServer (port_num);
 
@@ -293,7 +292,7 @@ int main (int argc, char *argv[])
 			++port_num;
 			++echo_port;
 		}
-		cout<<endl;
+		//cout<<endl;
 	}
 
 	Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
@@ -331,16 +330,6 @@ int main (int argc, char *argv[])
 	Simulator::Destroy ();
 
 	PrintThroughputInPeriod(ap_thr, sta_thr, og, serverApp, shortest_stas_of_ap);
-	/*
-	for(map < unsigned int, vector <ApplicationContainer> >::iterator i = serverApp.begin();
-		i != serverApp.end();
-		++i)
-	{
-		double throughput = 0;
-		uint32_t totalPacketsThrough = DynamicCast<UdpServer> ((i->second)[0].Get (0))->GetReceived ();
-		throughput = totalPacketsThrough * payloadSize * 8 / (SIMULATION_TIME * 1000000.0); //Mbit/s
-		cout<<"sta index : "<<i->first<<" throughput : "<<throughput<<endl;
-	}*/
 
 	og->CloseFile();
 
@@ -545,6 +534,7 @@ void OutputGenerator::Print()
 		ap_output_file<<"average throughput : "<<i->second.avg_throughput<<endl;
 		ap_output_file<<"minimum throughput : "<<i->second.min_throughput<<endl;
 		ap_output_file<<"maximum throughput : "<<i->second.max_throughput<<endl;
+		ap_output_file<<"total throughput / demand(%) : "<<i->second.throughput_demand_ratio<<endl;
 
 		ap_output_file<<"% of the idle time over transmission time :"<<endl;
 
@@ -591,6 +581,46 @@ void OutputGenerator::RecordStaData(unsigned int index, OutStaInfo outinfo)
 {
 	sta_info[index] = outinfo;
 }
+
+void OutputGenerator::PrintLinkInfo(map<unsigned int, vector <unsigned int> > shortest_stas_of_ap)
+{
+	ap_output_file<<"-------------Link Information----------------------"<<endl;
+	for(map<unsigned int,vector <unsigned int>>::iterator i = shortest_stas_of_ap.begin();
+		i != shortest_stas_of_ap.end();
+		++i)
+	{
+		ap_output_file<<"# AP "<<i->first<<" : ";
+		for(vector <unsigned int>::iterator j = i->second.begin(); j != i->second.end();j++)
+		{
+			ap_output_file<<"STA "<<*j<<" | ";
+		}
+		ap_output_file<<endl;
+	}
+	ap_output_file<<"-----------------------------------------------\n";
+}
+
+void OutputGenerator::RecordDistance(unsigned int index,double distance)
+{
+	dist_map[index] = distance;
+}
+
+void OutputGenerator::PrintDistance()
+{
+	sta_output_file<<"---------------------distance information----------------------\n";
+	for(map<unsigned int, double>::iterator i = dist_map.begin();
+		i != dist_map.end();
+		++i)
+	{
+		sta_output_file<<"# STA "<<i->first<<" : "<<i->second<<" m\n";
+	}
+	sta_output_file<<"----------------------------------------------------------\n";
+}
+
+void OutputGenerator::CleanDistMap()
+{
+	dist_map.clear();
+}
+
 
 void LinkTrace(map<uint16_t, Ptr<WifiPhy> > sub_phys,PeriodApThroughput* ap_thr)
 {
@@ -687,6 +717,7 @@ PeriodApThroughput::PeriodApThroughput()
 	max_through_packets = numeric_limits<uint32_t>::min();
 	now_through_packets = 0;
 	total_through_packets = 0;
+	total_demand = 0.0;
 }
 
 PeriodApThroughput::~PeriodApThroughput()
@@ -725,74 +756,96 @@ OutApInfo PeriodApThroughput::GetThroughput(uint32_t through_packets)
 		++i)
 	{
 		//cout<<"ch "<<i->first<<" : time : "<<i->second.GetNanoSeconds()<<endl;
-		result.idle_ratio[i->first] = ( (double) i->second.GetNanoSeconds() / (double) period.GetNanoSeconds() )  * 100.0;
+		result.idle_ratio[i->first] = (1.0 - (double) i->second.GetNanoSeconds() / (double) period.GetNanoSeconds() )  * 100.0;
 		i->second = Time("0.0");
 	}
+
+	result.throughput_demand_ratio = result.avg_throughput / total_demand * 100.0;
 
 	return result;
 }
 
 void PeriodApThroughput::StateChange1(Time Start, Time duration, WifiPhy::State state)
 {
-	if(state == WifiPhy::State::IDLE)
+	//if(state == WifiPhy::State::IDLE)
+	if(state == WifiPhy::State::TX ||
+		state == WifiPhy::State::RX)
 	{
 		IdleTimeOccur(ch_numbers[0], duration);
 	}
 }
 void PeriodApThroughput::StateChange2(Time Start, Time duration, WifiPhy::State state)
 {
-	if(state == WifiPhy::State::IDLE)
-		{
-			IdleTimeOccur(ch_numbers[1], duration);
-		}
+	//if(state == WifiPhy::State::IDLE)
+	if(state == WifiPhy::State::TX ||
+		state == WifiPhy::State::RX)
+	{
+		IdleTimeOccur(ch_numbers[1], duration);
+	}
 }
 void PeriodApThroughput::StateChange3(Time Start, Time duration, WifiPhy::State state)
 {
-	if(state == WifiPhy::State::IDLE)
-		{
-			IdleTimeOccur(ch_numbers[2], duration);
-		}
+	//if(state == WifiPhy::State::IDLE)
+	if(state == WifiPhy::State::TX ||
+		state == WifiPhy::State::RX)
+	{
+		IdleTimeOccur(ch_numbers[2], duration);
+	}
 }
 void PeriodApThroughput::StateChange4(Time Start, Time duration, WifiPhy::State state)
 {
-	if(state == WifiPhy::State::IDLE)
-		{
-			IdleTimeOccur(ch_numbers[3], duration);
-		}
+	//if(state == WifiPhy::State::IDLE)
+	if(state == WifiPhy::State::TX ||
+		state == WifiPhy::State::RX)
+	{
+		IdleTimeOccur(ch_numbers[3], duration);
+	}
 }
 void PeriodApThroughput::StateChange5(Time Start, Time duration, WifiPhy::State state)
 {
-	if(state == WifiPhy::State::IDLE)
-		{
-			IdleTimeOccur(ch_numbers[4], duration);
-		}
+	//if(state == WifiPhy::State::IDLE)
+	if(state == WifiPhy::State::TX ||
+		state == WifiPhy::State::RX)
+	{
+		IdleTimeOccur(ch_numbers[4], duration);
+	}
 }
 void PeriodApThroughput::StateChange6(Time Start, Time duration, WifiPhy::State state)
 {
-	if(state == WifiPhy::State::IDLE)
-		{
-			IdleTimeOccur(ch_numbers[5], duration);
-		}
+	//if(state == WifiPhy::State::IDLE)
+	if(state == WifiPhy::State::TX ||
+		state == WifiPhy::State::RX)
+	{
+		IdleTimeOccur(ch_numbers[5], duration);
+	}
 }
 void PeriodApThroughput::StateChange7(Time Start, Time duration, WifiPhy::State state)
 {
-	if(state == WifiPhy::State::IDLE)
-		{
-			IdleTimeOccur(ch_numbers[6], duration);
-		}
+	//if(state == WifiPhy::State::IDLE)
+	if(state == WifiPhy::State::TX ||
+		state == WifiPhy::State::RX)
+	{
+		IdleTimeOccur(ch_numbers[6], duration);
+	}
 }
 void PeriodApThroughput::StateChange8(Time Start, Time duration, WifiPhy::State state)
 {
-	if(state == WifiPhy::State::IDLE)
-		{
-			IdleTimeOccur(ch_numbers[7], duration);
-		}
+	//if(state == WifiPhy::State::IDLE)
+	if(state == WifiPhy::State::TX ||
+		state == WifiPhy::State::RX)
+	{
+		IdleTimeOccur(ch_numbers[7], duration);
+	}
 }
 
 void PeriodApThroughput::AddCh(uint16_t ch_num)
 {
 	ch_numbers.push_back(ch_num);
 	idle_time[ch_num] = Time("0.0");
+}
+void PeriodApThroughput::SetTotalDemand(double total)
+{
+	total_demand = total;
 }
 
 void PeriodApThroughput::ResetIdle()
