@@ -1067,6 +1067,17 @@ double DynamicChannelBonding::GetNI(unsigned int i)
 double DynamicChannelBonding::GetNIJ(unsigned int i, unsigned int j)
 {
 	double result = 0.0;
+
+	if(i == j)
+	{
+		result = GetNI(i);
+	}
+
+	else
+	{
+
+	}
+
 	return result;
 }
 
