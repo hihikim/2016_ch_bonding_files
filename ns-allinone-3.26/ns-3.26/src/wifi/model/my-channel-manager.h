@@ -71,7 +71,7 @@ public:
   void SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble, enum mpduType mpdutype);
   void SendPacket(Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble);
 
-  std::map<uint16_t, ChannelInfo> ChannelMapping();
+  static std::map<uint16_t, ChannelInfo> ChannelMapping();
 
   void ClearReceiveRecord();
 

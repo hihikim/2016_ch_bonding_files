@@ -13,12 +13,13 @@ int main (int argc, char *argv[])
 	Parser parser;
 	OutputGenerator* og = new OutputGenerator();
 	unsigned int test_number = 0;
-
+	unsigned int payloadSize = 1472;
 	CommandLine cmd;
 	cmd.AddValue("test_number" , "insert number of input file", test_number);
+
 	cmd.Parse(argc,argv);
 
-	uint32_t payloadSize = 1472;
+
 	//uint32_t payloadSize = 1448;
 	//Config::SetDefault ("ns3::TcpSocket::SegmentSize", UintegerValue (payloadSize));
 	ostringstream oss;
@@ -43,293 +44,13 @@ int main (int argc, char *argv[])
 	parser.Parse();
 	parser.CloseFile();
 
-	double shortest_sq_dist, sq_dist;
-	unsigned int shortest_ap;
+	DynamicChannelBonding dcb(payloadSize,og);
 
-	Ptr<UniformRandomVariable> x = CreateObject<UniformRandomVariable> ();
-	//
+	dcb.InputInfo(parser.GetApInfos(),parser.GetStaInfos());
 
-	map<unsigned int, vector <unsigned int> > shortest_stas_of_ap; //shortest_stas_of_ap[a] = list of STAs which is allocated with AP a
+	dcb.CalculateShortestAp();
 
-	/*for(map<unsigned int,InApInfo>::iterator i = parser.GetApBegin();
-		i != parser.GetApEnd();
-		++i)
-	{
-		shortest_stas_of_ap[i->first].reserve(1);
-	}*/
-
-	for(map<unsigned int,InStaInfo>::iterator i = parser.GetStaBegin();
-		i != parser.GetStaEnd();
-		++i)
-	{
-		shortest_sq_dist = numeric_limits<double>::max();
-		InStaInfo sta_info = i->second;
-		for(map<unsigned int,InApInfo>::iterator j = parser.GetApBegin();
-			j != parser.GetApEnd();
-			++j)
-		{
-			InApInfo ap_info = j->second;
-			sq_dist = (sta_info.x - ap_info.x) * (sta_info.x - ap_info.x);
-			sq_dist += (sta_info.y - ap_info.y) * (sta_info.y - ap_info.y);
-
-			if(shortest_sq_dist > sq_dist)
-			{
-				shortest_sq_dist = sq_dist;
-				shortest_ap = j->first;
-			}
-		}
-		og->RecordDistance(i->first,sqrt(shortest_sq_dist));
-		shortest_stas_of_ap[shortest_ap].push_back(i->first);
-	}
-
-	og->PrintLinkInfo(shortest_stas_of_ap);
-	og->PrintDistance();
-	og->CleanDistMap();
-
-	map<unsigned int, NodeContainer> ap_nodes;
-	map<unsigned int, NodeContainer> sta_nodes;
-
-	map<unsigned int, NetDeviceContainer> ap_devs;
-	map<unsigned int, NetDeviceContainer> sta_devs;
-
-	map<unsigned int, PeriodApThroughput* > ap_thr;
-	map<unsigned int, PeriodStaThroughput* > sta_thr;
-
-
-	YansWifiChannelHelper channel = YansWifiChannelHelper::Default ();
-	//YansWifiChannelHelper channel;
-	YansWifiPhyHelper phy = YansWifiPhyHelper::Default ();
-
-	//channel.AddPropagationLoss("ns3::FriisPropagationLossModel" );
-	//channel.AddPropagationLoss("ns3::FixedRssLossModel", "Rss", DoubleValue(100.0));
-	//channel.AddPropagationLoss("ns3::RangePropagationLossModel", "MaxRange", DoubleValue(250.0));
-
-	//channel.AddPropagationLoss("ns3::LogDistancePropagationLossModel");
-	//channel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
-
-	phy.SetChannel (channel.Create ());
-	phy.Set ("ShortGuardEnabled", BooleanValue (ENABLE_SHORT_GD));
-
-	WifiHelper wifi;
-	wifi.SetStandard (WIFI_PHY_STANDARD_80211ac);
-	WifiMacHelper mac;
-
-
-	oss.str("");oss.clear();
-	oss << "VhtMcs" << MCS_NUMBER;
-	/*wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager","DataMode", StringValue (oss.str ()),
-								"ControlMode", StringValue (oss.str ()),
-								"RtsCtsThreshold", UintegerValue(100));*/
-
-	wifi.SetRemoteStationManager ("ns3::MinstrelHtWifiManager", "RtsCtsThreshold", UintegerValue(100));
-	//wifi.SetRemoteStationManager ("ns3::OnoeWifiManager", "RtsCtsThreshold", UintegerValue(100));
-
-
-	//Ssid ssid = Ssid ("ns3-80211ac");
-	Ssid ssid;
-
-	Ptr<RegularWifiMac> m_mac;
-
-	MobilityHelper mobility;
-	Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
-
-
-	for(map<unsigned int, vector <unsigned int>>::iterator i = shortest_stas_of_ap.begin();
-		i != shortest_stas_of_ap.end();
-		++i)
-	{
-		oss.str("");oss.clear();
-
-		oss<<"ns3-80211ac-"<<i->first;
-		ssid = oss.str();
-		ap_nodes[i->first] = NodeContainer();
-		ap_nodes[i->first].Create(1);  //create 1 node
-
-		mac.SetType ("ns3::ApWifiMac",
-					   "Ssid", SsidValue (ssid),
-					   "EnableBeaconJitter", BooleanValue(true)
-					   );
-
-		ap_devs[i->first] = wifi.Install(phy, mac, ap_nodes[i->first]);
-
-
-		m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(ap_devs[i->first].Get(0))->GetMac());
-		Ptr<MacLow> m_low = m_mac->GetLow();
-		m_low->EnableChannelBonding();
-
-
-		InApInfo ap_info = parser.GetApInfo(i->first);
-		m_low->SetChannelManager(phy, actual_ch[ap_info.channel], ap_info.width, WIFI_PHY_STANDARD_80211ac);
-
-
-		ap_thr[i->first] = new PeriodApThroughput();
-
-		LinkTrace(m_low->GetChannelManager()->GetPhys(), ap_thr[i->first]);
-
-		positionAlloc->Add(Vector(ap_info.x, ap_info.y, 0) );
-		double total = 0.0;
-		for(vector <unsigned int>::iterator j = i->second.begin();
-			j != i->second.end();
-			j++)
-		{
-			sta_nodes[*j] = NodeContainer();
-			sta_nodes[*j].Create(1);
-
-			mac.SetType ("ns3::StaWifiMac",
-						   "Ssid", SsidValue (ssid));
-
-			sta_devs[*j] = wifi.Install(phy, mac, sta_nodes[*j]);
-
-
-			m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(sta_devs[*j].Get(0))->GetMac());
-			m_low = m_mac->GetLow();
-			m_low->EnableChannelBonding();
-
-			m_low->SetChannelManager(phy, actual_ch[ap_info.channel], ap_info.width, WIFI_PHY_STANDARD_80211ac);
-
-
-			InStaInfo sta_info = parser.GetStaInfo(*j);
-
-			positionAlloc->Add(Vector (sta_info.x, sta_info.y, 0));
-
-			sta_thr[*j] = new PeriodStaThroughput(sta_info.traffic_demand);
-			total += sta_info.traffic_demand;
-		}
-
-		ap_thr[i->first]->SetTotalDemand(total);
-	}
-
-	mobility.SetPositionAllocator (positionAlloc);
-	mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
-
-	InternetStackHelper stack;
-
-	Ipv4AddressHelper address;
-	address.SetBase (IP_BASE, SUBNET_MASK);
-
-	map < unsigned int, vector <ApplicationContainer> > serverApp, clientApp;
-	map < unsigned int, vector <ApplicationContainer> > echoserverApp, echoclientApp;
-	//map < unsigned int, vector <ApplicationContainer> > App, sinkApp;
-
-	for(map<unsigned int, vector <unsigned int>>::iterator i = shortest_stas_of_ap.begin();
-		i != shortest_stas_of_ap.end();
-		++i)
-	{
-		mobility.Install (ap_nodes[i->first]);
-		stack.Install (ap_nodes[i->first]);
-		Ipv4InterfaceContainer apNodeInterface = address.Assign(ap_devs[i->first]);
-
-		//cout<<"ap "<<i->first<<" : address ("<<apNodeInterface.GetAddress(0)<<") | ";
-		unsigned int port_num = 5000;
-		unsigned int echo_port = 9;
-
-		for(vector <unsigned int>::iterator j = i->second.begin();
-			j != i->second.end();
-			++j)
-		{
-			double diff = x->GetValue(0,1);
-			InStaInfo stainfo = parser.GetStaInfo(*j);
-			mobility.Install (sta_nodes[*j]);
-			stack.Install (sta_nodes[*j]);
-
-			Ipv4InterfaceContainer staNodeInterface = address.Assign(sta_devs[*j]);
-			//cout<<"sta "<<*j<<" : address ("<<staNodeInterface.GetAddress(0)<<") | ";
-
-			UdpServerHelper myServer (port_num);
-
-			ApplicationContainer back;  //for find end
-
-			back =  myServer.Install(sta_nodes[*j]);
-			back.Start (Seconds(ARP_TIME + SERVER_START_TIME));
-			back.Stop (Seconds(ARP_TIME + CLIENT_START_TIME + SIMULATION_TIME ));
-
-			serverApp[*j].push_back(back) ;   //downlink ap -> stas
-
-
-			UdpClientHelper myClient (staNodeInterface.GetAddress (0), port_num);
-			myClient.SetAttribute ("MaxPackets", UintegerValue (4294967295u));
-			//myClient.SetAttribute ("Interval", TimeValue (Time ("0.00001"))); //packets/s
-
-			double interval = (double) payloadSize * 8.0 / (stainfo.traffic_demand * MEGA);
-
-			//cout<<interval<<endl;
-			oss.str("");oss.clear();
-			oss<<interval;
-			myClient.SetAttribute("Interval", TimeValue (Time ( oss.str())));
-
-
-			myClient.SetAttribute ("PacketSize", UintegerValue (payloadSize));
-			//cout<<i->first<<endl;
-
-			back = myClient.Install(ap_nodes[i->first]);
-
-			back.Start( Seconds(ARP_TIME + CLIENT_START_TIME));
-			back.Stop( Seconds (ARP_TIME + CLIENT_START_TIME + SIMULATION_TIME) );
-			clientApp[i->first].push_back(back);
-
-
-			UdpEchoServerHelper echoServer (echo_port);
-			UdpEchoClientHelper echoClient (staNodeInterface.GetAddress(0), echo_port);
-			echoClient.SetAttribute ("MaxPackets", UintegerValue (1));
-			echoClient.SetAttribute ("Interval", TimeValue (Seconds (0.001)));
-			echoClient.SetAttribute ("PacketSize", UintegerValue (1024));
-
-
-			back = echoServer.Install (sta_nodes[*j]) ;
-			back.Start(Seconds(0.0));
-			back.Stop(Seconds(ARP_TIME));
-
-			echoserverApp[*j].push_back(back);
-
-			back = echoClient.Install (ap_nodes[i->first]);
-			back.Start(Seconds(diff + 1.0));
-			//back.Start(Seconds(1.0));
-			back.Stop(Seconds(ARP_TIME));
-
-			echoclientApp[i->first].push_back(back);
-
-
-			++port_num;
-			++echo_port;
-		}
-		//cout<<endl;
-	}
-
-	Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
-	/*OlsrHelper olsr;
-
-	Ipv4StaticRoutingHelper staticRouting;
-
-	Ipv4ListRoutingHelper list;
-	list.Add(staticRouting, 0);
-	list.Add(olsr,10);
-	stack.SetRoutingHelper(list);*/
-
-
-	if(SIMULATION_TIME < PRINT_PERIOD)
-	{
-
-	}
-	else
-	{
-		Simulator::Schedule(Seconds (ARP_TIME + CLIENT_START_TIME + PRINT_PERIOD), &PrintThroughputInPeriod, ap_thr, sta_thr, og, serverApp, shortest_stas_of_ap);
-	}
-
-	for(map<unsigned int, PeriodApThroughput* >::iterator i = ap_thr.begin() ;
-		i != ap_thr.end();
-		++i)
-	{
-		Simulator::Schedule(Seconds (ARP_TIME + CLIENT_START_TIME), &PeriodApThroughput::ResetIdle,i->second);
-		i->second->ResetIdle();
-	}
-
-
-
-	Simulator::Stop (Seconds (ARP_TIME + CLIENT_START_TIME + SIMULATION_TIME));
-	Simulator::Run ();
-	Simulator::Destroy ();
-
-	PrintThroughputInPeriod(ap_thr, sta_thr, og, serverApp, shortest_stas_of_ap);
+	dcb.SetTestEnv();
 
 	og->CloseFile();
 
@@ -347,15 +68,6 @@ Parser::~Parser()
 		input_file.close();
 }
 
-InApInfo Parser::GetApInfo(uint32_t index)
-{
-	return ap_info[index];
-}
-
-InStaInfo Parser::GetStaInfo(uint32_t index)
-{
-	return sta_info[index];
-}
 
 void Parser::SetupInputFile(string path, bool ap_sta)
 {
@@ -481,22 +193,13 @@ void Parser::Clean()
 	sta_info.clear();
 }
 
-map<unsigned int, InApInfo>::iterator Parser::GetApBegin()
+map<unsigned int, InApInfo> Parser::GetApInfos()
 {
-	return ap_info.begin();
+	return ap_info;
 }
-map<unsigned int, InStaInfo>::iterator Parser::GetStaBegin()
+map<unsigned int, InStaInfo> Parser::GetStaInfos()
 {
-	return sta_info.begin();
-}
-
-map<unsigned int, InApInfo>::iterator Parser::GetApEnd()
-{
-	return ap_info.end();
-}
-map<unsigned int, InStaInfo>::iterator Parser::GetStaEnd()
-{
-	return sta_info.end();
+	return sta_info;
 }
 
 OutputGenerator::OutputGenerator()
@@ -847,6 +550,10 @@ void PeriodApThroughput::SetTotalDemand(double total)
 {
 	total_demand = total;
 }
+double PeriodApThroughput::GetTotalDemand()
+{
+	return total_demand;
+}
 
 void PeriodApThroughput::ResetIdle()
 {
@@ -912,9 +619,10 @@ OutStaInfo PeriodStaThroughput::GetThroughput(uint32_t through_packets)
 	return result;
 }
 
-DynamicChannelBonding::DynamicChannelBonding()
+DynamicChannelBonding::DynamicChannelBonding(uint32_t payloadSize,OutputGenerator* og) : NodeManager(payloadSize,og)
 {
-
+	channel_map = ChannelBondingManager::ChannelMapping();
+	make_bit_map();
 }
 
 DynamicChannelBonding::~DynamicChannelBonding()
@@ -924,13 +632,10 @@ DynamicChannelBonding::~DynamicChannelBonding()
 
 void DynamicChannelBonding::clean_map()
 {
-
+	//link_map.clear();
+	total_link_map.clear();
 }
 
-void DynamicChannelBonding::insert_mac(unsigned int ap_index, unsigned int ch_num, Mac48Address address)
-{
-
-}
 
 void DynamicChannelBonding::calculate_tau()
 {
@@ -962,8 +667,9 @@ void DynamicChannelBonding::calculate_tau()
 			{
 				new_tau[*i][*c] = 1 - pow( (1.0 - tau[*i][*c]) , GetNI(*i) - 1);
 
-				for(vector<unsigned int>::iterator j = aps.begin();
-					j != aps.end();
+				vector<unsigned int> aps_of_ch = GetApsUseChannel(*c);
+				for(vector<unsigned int>::iterator j = aps_of_ch.begin();
+					j != aps_of_ch.end();
 					++j)
 				{
 					if(*i != *j)
@@ -980,7 +686,7 @@ void DynamicChannelBonding::calculate_tau()
 
 void DynamicChannelBonding::calculate_p()
 {
-	vector<unsigned int> aps = GetApIndexs();
+	vector<unsigned int> aps;
 	unsigned int primary_ch;
 	unsigned int i, j;
 	double temp_val;
@@ -993,6 +699,8 @@ void DynamicChannelBonding::calculate_p()
 
 		primary_ch = GetPrimaryChannel(i);
 
+		aps = GetApsUseChannel(primary_ch);
+
 		for(vector<unsigned int>::iterator iter_j = aps.begin();
 			iter_j != aps.end();
 			++iter_j)
@@ -1001,6 +709,7 @@ void DynamicChannelBonding::calculate_p()
 
 			temp_val = temp_val * pow( (1.0 - tau[j][primary_ch] ) , GetNIJ(i,j) );
 		}
+
 		temp_val = temp_val / (1.0 - tau[i][primary_ch]);
 		temp_val = 1 - temp_val;
 	}
@@ -1021,7 +730,7 @@ unsigned int DynamicChannelBonding::get_width(unsigned int index)
 	double gamma, temp;
 	unsigned int proper_width = 20;
 	unsigned int widest = WidestWidth(GetPrimaryChannel(index));
-	vector<unsigned int> aps = GetInterfereApIndexs(index);
+	vector<unsigned int> aps;
 
 	for(unsigned int width = 20; width <= widest; width *= 2)
 	{
@@ -1032,6 +741,7 @@ unsigned int DynamicChannelBonding::get_width(unsigned int index)
 			temp = 1.0;
 
 		gamma = temp;
+		aps = GetInterfereApIndexs(index,width);
 
 		for(vector<unsigned int>::iterator ap = aps.begin();
 			ap != aps.end();
@@ -1053,14 +763,20 @@ unsigned int DynamicChannelBonding::get_width(unsigned int index)
 
 	return proper_width;
 }
-/*
- *need to do
- */
-
 
 double DynamicChannelBonding::GetNI(unsigned int i)
 {
 	double result = 0.0;
+	map<Mac48Address, bool> my_link_state = total_link_map[i];
+
+	for(map<Mac48Address, bool>::iterator link = my_link_state.begin();
+		link != my_link_state.end();
+		++link)
+	{
+		if(link->second)
+			result += 1.0;
+	}
+
 	return result;
 }
 
@@ -1075,7 +791,16 @@ double DynamicChannelBonding::GetNIJ(unsigned int i, unsigned int j)
 
 	else
 	{
-
+		for(map<Mac48Address, bool>::iterator addr = total_link_map[j].begin();
+			addr != total_link_map[j].end();
+			++addr)
+		{
+			if(addr->second)
+			{
+				if(total_link_map[i][addr->first])
+					result += 1.0;
+			}
+		}
 	}
 
 	return result;
@@ -1083,30 +808,90 @@ double DynamicChannelBonding::GetNIJ(unsigned int i, unsigned int j)
 
 vector<unsigned int> DynamicChannelBonding::GetApIndexs()
 {
+	return all_aps;
+}
+
+vector<unsigned int> DynamicChannelBonding::GetApsUseChannel(unsigned int channel_number)
+{
+	/*
+	 * need to do
+	 */
 	vector<unsigned int> result;
+
+	for(map<unsigned int, vector <unsigned int> >::iterator ap = shortest_stas_of_ap.begin();
+		ap != shortest_stas_of_ap.end();
+		++ap)
+	{
+		//ap_infos[ap->first].channel
+	}
+
 	return result;
 }
 
-vector<unsigned int> DynamicChannelBonding::GetInterfereApIndexs(unsigned int index)
+vector<unsigned int> DynamicChannelBonding::GetInterfereApIndexs(unsigned int index, unsigned int width)
 {
 	vector<unsigned int> result;
+
+	for(vector <unsigned int>::iterator other = all_aps.begin();
+		other != all_aps.end();
+		++other)
+	{
+		if(index != *other)
+		{
+			if( (UsingChannelsToBit(index, width) & UsingChannelsToBit(*other,ap_infos[*other].width)) != 0 )
+			{
+				result.push_back(*other);
+			}
+		}
+	}
+
 	return result;
 }
 
 vector<unsigned int> DynamicChannelBonding::GetApChannels(unsigned int index)
 {
-	vector<unsigned int> result;
-	return result;
+
+	return using_ch_map[index];
+}
+
+int DynamicChannelBonding::UsingChannelsToBit(unsigned int index, unsigned int width)
+{
+	unsigned int ch_num = GetPrimaryChannel(index);
+	unsigned int widest = WidestWidth(ch_num);
+
+
+	if(width > widest)
+		width = widest;
+
+	int loop_count = 0;
+	while(true)
+	{
+		if(channel_map[ch_num].Width == width)
+			break;
+		else
+		{
+			ch_num = channel_map[ch_num].Parent;
+		}
+
+		++loop_count;
+
+		if(loop_count > 10)
+			NS_FATAL_ERROR("infinite loop\n");
+	}
+
+	return channel_bit_map[ch_num];
 }
 
 unsigned int DynamicChannelBonding::GetPrimaryChannel(unsigned int index)
 {
-	unsigned int result = 0;
-	return result;
+	return ap_infos[index].channel;
 }
 
 double DynamicChannelBonding::GetThroughputHat(unsigned int index)
 {
+	/*
+	 *need to do
+	 */
 	double result = 0.0;
 	return result;
 }
@@ -1114,12 +899,412 @@ double DynamicChannelBonding::GetThroughputHat(unsigned int index)
 double DynamicChannelBonding::GetThroughput_demand_ratio(unsigned int index)
 {
 	double result = 0.0;
+	result = GetThroughputHat(index);
+	result /= ap_thr[index]->GetTotalDemand();
+	return result;
+}
+
+void DynamicChannelBonding::InitTauAndP()
+{
+	/*
+	 *need to do
+	 */
+}
+
+void DynamicChannelBonding::make_bit_map()
+{
+	channel_bit_map[36] = CH_36; channel_bit_map[40] = CH_40; channel_bit_map[44] = CH_44; channel_bit_map[48] = CH_48;
+	channel_bit_map[52] = CH_52; channel_bit_map[56] = CH_56; channel_bit_map[60] = CH_60; channel_bit_map[64] = CH_64;
+
+	channel_bit_map[100] = CH_100; channel_bit_map[104] = CH_104; channel_bit_map[108] = CH_108; channel_bit_map[112] = CH_112;
+	channel_bit_map[116] = CH_116; channel_bit_map[120] = CH_120; channel_bit_map[124] = CH_124; channel_bit_map[128] = CH_128;
+
+	channel_bit_map[132] = CH_132; channel_bit_map[136] = CH_136; channel_bit_map[140] = CH_140; channel_bit_map[144] = CH_144;
+
+	channel_bit_map[149] = CH_149; channel_bit_map[153] = CH_153; channel_bit_map[157] = CH_157; channel_bit_map[161] = CH_161;
+
+	channel_bit_map[165] = CH_165;
+
+	for(std::map<uint16_t, ChannelInfo >::iterator i = channel_map.begin();
+		i != channel_map.end();
+		++i)
+	{
+		fill_bit_map(i->first);
+	}
+}
+
+int DynamicChannelBonding::fill_bit_map(uint16_t ch_num)
+{
+	int result;
+
+	if(channel_bit_map.find(ch_num) == channel_bit_map.end())
+	{
+		/*
+		 * not filled
+		 */
+
+		if(channel_map[ch_num].Width == 20)
+		{
+			ostringstream oss;
+			oss<<"Channel "<<ch_num<<" not filled \n";
+			NS_FATAL_ERROR(oss.str());
+		}
+
+		result = fill_bit_map(channel_map[ch_num].L_CHD);
+		result = result | fill_bit_map(channel_map[ch_num].R_CHD);
+		channel_bit_map[ch_num] = result;
+	}
+
+	else
+	{
+		/*
+		 *  filled
+		 */
+		result = channel_bit_map[ch_num];
+	}
 	return result;
 }
 
 unsigned int WidestWidth(unsigned int primary_ch)
 {
 	unsigned int result = 0;
+	switch(primary_ch)
+	{
+	case 36: case 40: case 44: case 48: case 52: case 56: case 60: case 64:
+	case 100: case 104: case 108: case 112: case 116: case 120: case 124: case 128:
+		result = 160;
+		break;
+
+	case 132: case 136: case 140: case 144: case 149: case 153: case 157: case 161:
+		result = 80;
+		break;
+	case 165:
+		result = 20;
+		break;
+	default:
+		std::ostringstream oss;
+		oss<<primary_ch<<" is wrong prime number";
+		NS_FATAL_ERROR(oss.str());
+	}
 	return result;
 }
+
+NodeManager::NodeManager(uint32_t payloadSize,OutputGenerator* og)
+{
+	this->payloadSize = payloadSize;
+	this->og = og;
+}
+
+NodeManager::~NodeManager()
+{
+
+}
+
+void NodeManager::InputInfo(map<uint32_t, InApInfo> ap_info, map<uint32_t, InStaInfo> sta_info)
+{
+	this->ap_infos = ap_info;
+	this->sta_infos = sta_info;
+}
+
+void NodeManager::CalculateShortestAp()
+{
+	double shortest_sq_dist,sq_dist;
+	unsigned int shortest_ap;
+
+	for(map<unsigned int,InStaInfo>::iterator i = sta_infos.begin();
+		i != sta_infos.end();
+		++i)
+	{
+		shortest_sq_dist = numeric_limits<double>::max();
+		InStaInfo sta_info = i->second;
+		for(map<unsigned int,InApInfo>::iterator j = ap_infos.begin();
+			j != ap_infos.end();
+			++j)
+		{
+			InApInfo ap_info = j->second;
+			sq_dist = (sta_info.x - ap_info.x) * (sta_info.x - ap_info.x);
+			sq_dist += (sta_info.y - ap_info.y) * (sta_info.y - ap_info.y);
+
+			if(shortest_sq_dist > sq_dist)
+			{
+				shortest_sq_dist = sq_dist;
+				shortest_ap = j->first;
+			}
+		}
+		og->RecordDistance(i->first,sqrt(shortest_sq_dist));
+		shortest_stas_of_ap[shortest_ap].push_back(i->first);
+	}
+
+	for(map<unsigned int, vector <unsigned int>>::iterator i = shortest_stas_of_ap.begin();
+		i != shortest_stas_of_ap.end();
+		++i)
+	{
+		all_aps.push_back(i->first);
+	}
+
+	og->PrintLinkInfo(shortest_stas_of_ap);
+	og->PrintDistance();
+	og->CleanDistMap();
+}
+
+void NodeManager::SetTestEnv()
+{
+	Ptr<UniformRandomVariable> x = CreateObject<UniformRandomVariable> ();
+	ostringstream oss;
+	oss.setf(ios::fixed,ios::floatfield);
+
+	YansWifiChannelHelper channel = YansWifiChannelHelper::Default ();
+	//YansWifiChannelHelper channel;
+	YansWifiPhyHelper phy = YansWifiPhyHelper::Default ();
+
+	//channel.AddPropagationLoss("ns3::FriisPropagationLossModel" );
+	//channel.AddPropagationLoss("ns3::FixedRssLossModel", "Rss", DoubleValue(100.0));
+	//channel.AddPropagationLoss("ns3::RangePropagationLossModel", "MaxRange", DoubleValue(250.0));
+
+	//channel.AddPropagationLoss("ns3::LogDistancePropagationLossModel");
+	//channel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
+
+	phy.SetChannel (channel.Create ());
+	phy.Set ("ShortGuardEnabled", BooleanValue (ENABLE_SHORT_GD));
+
+	WifiHelper wifi;
+	wifi.SetStandard (WIFI_PHY_STANDARD_80211ac);
+	WifiMacHelper mac;
+
+	wifi.SetRemoteStationManager ("ns3::MinstrelHtWifiManager", "RtsCtsThreshold", UintegerValue(100));
+
+
+
+	//Ssid ssid = Ssid ("ns3-80211ac");
+	Ssid ssid;
+
+	Ptr<RegularWifiMac> m_mac;
+
+	MobilityHelper mobility;
+	Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
+
+	InApInfo ap_info;
+	InStaInfo sta_info;
+
+	for(map<unsigned int, vector <unsigned int>>::iterator i = shortest_stas_of_ap.begin();
+		i != shortest_stas_of_ap.end();
+		++i)
+	{
+		oss.str("");oss.clear();
+
+		oss<<"ns3-80211ac-"<<i->first;
+		ssid = oss.str();
+		ap_nodes[i->first] = NodeContainer();
+		ap_nodes[i->first].Create(1);  //create 1 node
+
+		mac.SetType ("ns3::ApWifiMac",
+					   "Ssid", SsidValue (ssid),
+					   "EnableBeaconJitter", BooleanValue(true)
+					   );
+
+		ap_devs[i->first] = wifi.Install(phy, mac, ap_nodes[i->first]);
+
+
+		m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(ap_devs[i->first].Get(0))->GetMac());
+		Ptr<MacLow> m_low = m_mac->GetLow();
+		m_low->EnableChannelBonding();
+
+
+		ap_info = ap_infos[i->first];
+		m_low->SetChannelManager(phy, actual_ch[ap_info.channel], ap_info.width, WIFI_PHY_STANDARD_80211ac);
+
+
+		ap_thr[i->first] = new PeriodApThroughput();
+
+		LinkTrace(m_low->GetChannelManager()->GetPhys(), ap_thr[i->first]);
+
+		positionAlloc->Add(Vector(ap_info.x, ap_info.y, 0) );
+		double total = 0.0;
+		for(vector <unsigned int>::iterator j = i->second.begin();
+			j != i->second.end();
+			j++)
+		{
+			sta_nodes[*j] = NodeContainer();
+			sta_nodes[*j].Create(1);
+
+			mac.SetType ("ns3::StaWifiMac",
+						   "Ssid", SsidValue (ssid));
+
+			sta_devs[*j] = wifi.Install(phy, mac, sta_nodes[*j]);
+
+
+			m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(sta_devs[*j].Get(0))->GetMac());
+			m_low = m_mac->GetLow();
+			m_low->EnableChannelBonding();
+
+			m_low->SetChannelManager(phy, actual_ch[ap_info.channel], ap_info.width, WIFI_PHY_STANDARD_80211ac);
+
+
+			sta_info = sta_infos[*j];
+
+			positionAlloc->Add(Vector (sta_info.x, sta_info.y, 0));
+
+			sta_thr[*j] = new PeriodStaThroughput(sta_info.traffic_demand);
+			total += sta_info.traffic_demand;
+		}
+
+		ap_thr[i->first]->SetTotalDemand(total);
+	}
+
+	mobility.SetPositionAllocator (positionAlloc);
+	mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
+
+	InternetStackHelper stack;
+
+	Ipv4AddressHelper address;
+	address.SetBase (IP_BASE, SUBNET_MASK);
+
+	map < unsigned int, vector <ApplicationContainer> > serverApp, clientApp;
+	map < unsigned int, vector <ApplicationContainer> > echoserverApp, echoclientApp;
+
+	for(map<unsigned int, vector <unsigned int>>::iterator i = shortest_stas_of_ap.begin();
+		i != shortest_stas_of_ap.end();
+		++i)
+	{
+		mobility.Install (ap_nodes[i->first]);
+		stack.Install (ap_nodes[i->first]);
+		Ipv4InterfaceContainer apNodeInterface = address.Assign(ap_devs[i->first]);
+
+		//cout<<"ap "<<i->first<<" : address ("<<apNodeInterface.GetAddress(0)<<") | ";
+		unsigned int port_num = 5000;
+		unsigned int echo_port = 9;
+
+		for(vector <unsigned int>::iterator j = i->second.begin();
+			j != i->second.end();
+			++j)
+		{
+			double diff = x->GetValue(0,1);
+			sta_info = sta_infos[*j];
+			mobility.Install (sta_nodes[*j]);
+			stack.Install (sta_nodes[*j]);
+
+			Ipv4InterfaceContainer staNodeInterface = address.Assign(sta_devs[*j]);
+			//cout<<"sta "<<*j<<" : address ("<<staNodeInterface.GetAddress(0)<<") | ";
+
+			UdpServerHelper myServer (port_num);
+
+			ApplicationContainer back;  //for find end
+
+			back =  myServer.Install(sta_nodes[*j]);
+			back.Start (Seconds(ARP_TIME + SERVER_START_TIME));
+			back.Stop (Seconds(ARP_TIME + CLIENT_START_TIME + SIMULATION_TIME ));
+
+			serverApp[*j].push_back(back) ;   //downlink ap -> stas
+
+
+			UdpClientHelper myClient (staNodeInterface.GetAddress (0), port_num);
+			myClient.SetAttribute ("MaxPackets", UintegerValue (4294967295u));
+			//myClient.SetAttribute ("Interval", TimeValue (Time ("0.00001"))); //packets/s
+
+			double interval = (double) payloadSize * 8.0 / (sta_info.traffic_demand * MEGA);
+
+			//cout<<interval<<endl;
+			oss.str("");oss.clear();
+			oss<<interval;
+			myClient.SetAttribute("Interval", TimeValue (Time ( oss.str())));
+
+
+			myClient.SetAttribute ("PacketSize", UintegerValue (payloadSize));
+			//cout<<i->first<<endl;
+
+			back = myClient.Install(ap_nodes[i->first]);
+
+			back.Start( Seconds(ARP_TIME + CLIENT_START_TIME));
+			back.Stop( Seconds (ARP_TIME + CLIENT_START_TIME + SIMULATION_TIME) );
+			clientApp[i->first].push_back(back);
+
+
+			UdpEchoServerHelper echoServer (echo_port);
+			UdpEchoClientHelper echoClient (staNodeInterface.GetAddress(0), echo_port);
+			echoClient.SetAttribute ("MaxPackets", UintegerValue (1));
+			echoClient.SetAttribute ("Interval", TimeValue (Seconds (0.001)));
+			echoClient.SetAttribute ("PacketSize", UintegerValue (1024));
+
+
+			back = echoServer.Install (sta_nodes[*j]) ;
+			back.Start(Seconds(0.0));
+			back.Stop(Seconds(ARP_TIME));
+
+			echoserverApp[*j].push_back(back);
+
+			back = echoClient.Install (ap_nodes[i->first]);
+			back.Start(Seconds(diff + 1.0));
+			//back.Start(Seconds(1.0));
+			back.Stop(Seconds(ARP_TIME));
+
+			echoclientApp[i->first].push_back(back);
+
+
+			++port_num;
+			++echo_port;
+		}
+	}
+
+	Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
+	/*OlsrHelper olsr;
+
+	Ipv4StaticRoutingHelper staticRouting;
+
+	Ipv4ListRoutingHelper list;
+	list.Add(staticRouting, 0);
+	list.Add(olsr,10);
+	stack.SetRoutingHelper(list);*/
+
+	MakeAddressMap();
+
+
+	if(SIMULATION_TIME < PRINT_PERIOD)
+	{
+
+	}
+	else
+	{
+		Simulator::Schedule(Seconds (ARP_TIME + CLIENT_START_TIME + PRINT_PERIOD), &PrintThroughputInPeriod, ap_thr, sta_thr, og, serverApp, shortest_stas_of_ap);
+	}
+
+	for(map<unsigned int, PeriodApThroughput* >::iterator i = ap_thr.begin() ;
+		i != ap_thr.end();
+		++i)
+	{
+		Simulator::Schedule(Seconds (ARP_TIME + CLIENT_START_TIME), &PeriodApThroughput::ResetIdle,i->second);
+		i->second->ResetIdle();
+	}
+
+
+
+	Simulator::Stop (Seconds (ARP_TIME + CLIENT_START_TIME + SIMULATION_TIME));
+	Simulator::Run ();
+	Simulator::Destroy ();
+
+	PrintThroughputInPeriod(ap_thr, sta_thr, og, serverApp, shortest_stas_of_ap);
+
+}
+
+
+void NodeManager::MakeAddressMap()
+{
+	Mac48Address addr;
+	for(map<unsigned int, NetDeviceContainer>::iterator ap = ap_devs.begin();
+		ap != ap_devs.end();
+		++ap)
+	{
+		addr = Mac48Address::ConvertFrom((ap->second.Get(0))->GetAddress());
+		address_map[ addr ] = make_pair(ap->first,true);
+	}
+
+	for(map<unsigned int, NetDeviceContainer>::iterator sta = sta_devs.begin();
+		sta != sta_devs.end();
+		++sta)
+	{
+		addr = Mac48Address::ConvertFrom((sta->second.Get(0))->GetAddress());
+		address_map[addr] = make_pair(sta->first,false);
+	}
+}
+
+
 

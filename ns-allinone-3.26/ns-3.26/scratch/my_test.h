@@ -94,16 +94,14 @@ class Parser
 public:
 	Parser();
 	~Parser();
-	InApInfo GetApInfo(uint32_t index);
-	InStaInfo GetStaInfo(uint32_t index);
+
 	void SetupInputFile(string path, bool ap_sta);  //ap_sta: ap(true) sta(false)
 	void Parse();
 	void CloseFile();
 	void Clean();
-	map<unsigned int, InApInfo>::iterator GetApBegin();
-	map<unsigned int, InStaInfo>::iterator GetStaBegin();
-	map<unsigned int, InApInfo>::iterator GetApEnd();
-	map<unsigned int, InStaInfo>::iterator GetStaEnd();
+
+	map<unsigned int, InApInfo> GetApInfos();
+	map<unsigned int, InStaInfo> GetStaInfos();
 
 private:
 	ifstream input_file;
@@ -153,6 +151,7 @@ public:
 
 	void AddCh(uint16_t ch_num);
 	void SetTotalDemand(double total);
+	double GetTotalDemand();
 
 	void ResetIdle();
 
@@ -198,15 +197,56 @@ uint16_t actual_ch[] = {36, 40, 44, 48,
 			132, 136, 140, 144,
 			149, 153, 157, 161, 165};
 
+
+
 unsigned int WidestWidth(unsigned int primary_ch);
 
-class DynamicChannelBonding
+class NodeManager
 {
 public:
-	DynamicChannelBonding();
+	NodeManager(uint32_t payloadSize,OutputGenerator* og);
+	~NodeManager();
+	void InputInfo(map<uint32_t, InApInfo> ap_info, map<uint32_t, InStaInfo> sta_info);
+	void CalculateShortestAp();
+	void SetTestEnv();
+	void MakeAddressMap();
+
+
+protected:
+	OutputGenerator* og;
+	unsigned int payloadSize;
+	map<unsigned int, vector <unsigned int> > shortest_stas_of_ap;
+	map<int, vector <unsigned int> > using_ch_map;
+
+	vector <unsigned int> all_aps;
+	map<uint32_t, InStaInfo> sta_infos;
+	map<uint32_t, InApInfo> ap_infos;
+
+	map<unsigned int, NodeContainer> ap_nodes;
+	map<unsigned int, NodeContainer> sta_nodes;
+
+	map<unsigned int, NetDeviceContainer> ap_devs;
+	map<unsigned int, NetDeviceContainer> sta_devs;
+
+	map<unsigned int, PeriodApThroughput* > ap_thr;
+	map<unsigned int, PeriodStaThroughput* > sta_thr;
+
+	map< unsigned int, vector <ApplicationContainer> > serverApp, clientApp;
+	map< unsigned int, vector <ApplicationContainer> > echoserverApp, echoclientApp;
+
+	map<Mac48Address,pair<unsigned int,bool>> address_map;  //pair : (index, ap) true-> ap false->sta
+
+
+
+};
+
+
+class DynamicChannelBonding : public NodeManager
+{
+public:
+	DynamicChannelBonding(uint32_t payloadSize,OutputGenerator* og);
 	~DynamicChannelBonding();
 	void clean_map();
-	void insert_mac(unsigned int ap_index, unsigned int ch_num, Mac48Address address);
 	void calculate_tau();
 	void calculate_p();
 	void calculate_variables();
@@ -214,18 +254,61 @@ public:
 	double GetNI(unsigned int i);
 	double GetNIJ(unsigned int i, unsigned int j);
 	vector<unsigned int> GetApIndexs();
-	vector<unsigned int> GetInterfereApIndexs(unsigned int index);
+	vector<unsigned int> GetApsUseChannel(unsigned int channel_number);
+	vector<unsigned int> GetInterfereApIndexs(unsigned int index,unsigned int width);
 	vector<unsigned int> GetApChannels(unsigned int index);
+	int UsingChannelsToBit(unsigned int index, unsigned int width);
+
 	unsigned int GetPrimaryChannel(unsigned int index);
 	double GetThroughputHat(unsigned int index);
 	double GetThroughput_demand_ratio(unsigned int index);
+	void InitTauAndP();
+	void make_bit_map();
 
 
 
 private:
-	map< unsigned int, map<unsigned int, map<Mac48Address, bool> > > link_map;
+	map<unsigned int, map<unsigned int, map<Mac48Address, bool> > > link_map; //link_map[ap_index][channel_number][macaddress] = true/false my_sta_station
+	map<unsigned int, map<Mac48Address, bool> > total_link_map;  //total_link_map[ap_index][macaddress] = my_station; (sum of all signal in channels)
 	map<unsigned int, map<unsigned int, double> > tau;
 	map<unsigned int, double> p;
+	std::map<uint16_t, ChannelInfo > channel_map;
+	std::map<uint16_t, unsigned int> channel_bit_map;
+
+	enum ChannelToBit
+	{
+		CH_36 = 0b1000000000000000000000000,
+		CH_40 = 0b0100000000000000000000000,
+		CH_44 = 0b0010000000000000000000000,
+		CH_48 = 0b0001000000000000000000000,
+		CH_52 = 0b0000100000000000000000000,
+		CH_56 = 0b0000010000000000000000000,
+		CH_60 = 0b0000001000000000000000000,
+		CH_64 = 0b0000000100000000000000000,
+
+		CH_100 = 0b0000000010000000000000000,
+		CH_104 = 0b0000000001000000000000000,
+		CH_108 = 0b0000000000100000000000000,
+		CH_112 = 0b0000000000010000000000000,
+		CH_116 = 0b0000000000001000000000000,
+		CH_120 = 0b0000000000000100000000000,
+		CH_124 = 0b0000000000000010000000000,
+		CH_128 = 0b0000000000000001000000000,
+
+		CH_132 = 0b0000000000000000100000000,
+		CH_136 = 0b0000000000000000010000000,
+		CH_140 = 0b0000000000000000001000000,
+		CH_144 = 0b0000000000000000000100000,
+
+		CH_149 = 0b0000000000000000000010000,
+		CH_153 = 0b0000000000000000000001000,
+		CH_157 = 0b0000000000000000000000100,
+		CH_161 = 0b0000000000000000000000010,
+
+		CH_165 = 0b0000000000000000000000001,
+	};
+
+	int fill_bit_map(uint16_t ch_num);
 
 };
 

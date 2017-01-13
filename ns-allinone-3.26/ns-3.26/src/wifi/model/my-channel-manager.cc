@@ -57,7 +57,7 @@ void ChannelBondingManager::SetMyMac(Ptr<MacLow> mac)
 
 std::map<uint16_t, ChannelInfo >  ChannelBondingManager::ChannelMapping()
 {
-	 std::map<uint16_t, ChannelInfo >  result;                            //make channel map
+	 static std::map<uint16_t, ChannelInfo >  result;                            //make channel map
 	 ChannelInfo ch_info;
 
 	 /*
@@ -909,6 +909,7 @@ uint16_t ChannelBondingManager::GetChannelWithWidth(uint32_t width)      //find 
 		else
 			result = ch_info.Parent;
 	}
+	return 0;
 }
 
 void ChannelBondingManager::NeedRtsCts(bool need){   //set using rts-cts
