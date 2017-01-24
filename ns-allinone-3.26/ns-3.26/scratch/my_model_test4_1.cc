@@ -99,9 +99,12 @@ int main (int argc, char *argv[])
 
         std::ostringstream oss;
         oss << "VhtMcs" << 0;
-        wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager","DataMode", StringValue (oss.str ()),
+        /*wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager","DataMode", StringValue (oss.str ()),
                                     "ControlMode", StringValue (oss.str ()) );
-                                    //"RtsCtsThreshold", UintegerValue(100));
+                                    //"RtsCtsThreshold", UintegerValue(100));*/
+        wifi.SetRemoteStationManager ("ns3::MinstrelHtWifiManager",//"ns3::ConstantRateWifiManager","DataMode", StringValue (oss.str ()),
+                                            //"ControlMode", StringValue (oss.str ()) );
+                                            "RtsCtsThreshold", UintegerValue(100));
 
         Ssid ssid = Ssid ("ns3-80211ac");
 
@@ -112,7 +115,8 @@ int main (int argc, char *argv[])
         staDevice = wifi.Install (phy, mac, wifiStaNode);
 
         mac.SetType ("ns3::ApWifiMac",
-                   "Ssid", SsidValue (ssid));
+                   "Ssid", SsidValue (ssid),
+                   "EnableBeaconJitter", BooleanValue(true));
 
         NetDeviceContainer apDevice, apDevice2;
         apDevice = wifi.Install (phy, mac, wifiApNode);
@@ -127,14 +131,20 @@ int main (int argc, char *argv[])
 
 
         mac.SetType ("ns3::ApWifiMac",
-                   "Ssid", SsidValue (ssid));              
+                   "Ssid", SsidValue (ssid),
+                   "EnableBeaconJitter", BooleanValue(true));
         apDevice2 = wifi.Install (phy, mac, wifiApNode2);
 
         // Set channel width
-        //Config::Set ("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/ChannelWidth", UintegerValue (j));   //전부 다걸림
-        uint32_t ch_36_width = 40;
+        Config::Set ("/NodeList/0/DeviceList/*/$ns3::WifiNetDevice/Phy/ChannelWidth", UintegerValue (160));   //전부 다걸림
+        Config::Set ("/NodeList/1/DeviceList/*/$ns3::WifiNetDevice/Phy/ChannelWidth", UintegerValue (160));   //전부 다걸림
+        Config::Set ("/NodeList/2/DeviceList/*/$ns3::WifiNetDevice/Phy/ChannelWidth", UintegerValue (80));   //전부 다걸림
+        Config::Set ("/NodeList/3/DeviceList/*/$ns3::WifiNetDevice/Phy/ChannelWidth", UintegerValue (80));   //전부 다걸림
+//        Config::Set ("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/ChannelWidth", UintegerValue (160));
+
+        uint32_t ch_36_width = 160;
         uint32_t ch_44_width = 80;
-        Ptr<RegularWifiMac> m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(apDevice.Get(0))->GetMac());
+        /*Ptr<RegularWifiMac> m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(apDevice.Get(0))->GetMac());
 
         Ptr<MacLow> m_low = m_mac->GetLow();
         m_low->EnableChannelBonding();
@@ -164,7 +174,7 @@ int main (int argc, char *argv[])
 
         m_low->EnableChannelBonding();
         m_low->SetChannelManager(phy, 44, ch_44_width, WIFI_PHY_STANDARD_80211ac);
-
+        */
 
 
 
@@ -173,9 +183,9 @@ int main (int argc, char *argv[])
         Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
 
         positionAlloc->Add (Vector (0.0, 0.0, 0.0));
-        positionAlloc->Add (Vector (distance, 0.0, 0.0));
-        positionAlloc->Add (Vector (distance * 2, 0.0, 0.0));  //위치 추가
-        positionAlloc->Add (Vector (distance * 3, 0.0, 0.0));
+        positionAlloc->Add (Vector (-10.0, 0.0, 0.0));
+        positionAlloc->Add (Vector ( 20.0, 0.0, 0.0));  //위치 추가
+        positionAlloc->Add (Vector ( 50.0, 0.0, 0.0));
         mobility.SetPositionAllocator (positionAlloc);
 
         mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");

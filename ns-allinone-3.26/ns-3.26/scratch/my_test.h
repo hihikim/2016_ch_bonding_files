@@ -6,10 +6,11 @@
 #define MCS_NUMBER 0
 #define IP_BASE "192.168.0.0"
 #define SUBNET_MASK "255.255.0.0"
-#define ARP_TIME 1.0
+#define ARP_TIME 2.0
 #define SERVER_START_TIME 0.0
 #define CLIENT_START_TIME 1.0
 #define SIMULATION_TIME 10.0
+//#define SIMULATION_TIME 3.0
 #define AP_INPUT_PATH "./input/ap/"
 #define STA_INPUT_PATH "./input/sta/"
 #define DEFF_UNIT 0
@@ -19,7 +20,11 @@
 #define WINDOW_SIZE_BEGIN 32.0
 #define WINDOW_SIZE_MAX 5.0
 #define LOOPCOUNT 100
+#define CCATHRESHOLD -60.0
+#define EDTHRESHOLD -60.0
+#define TXPOWER 30.0
 
+#define SLOT_TIME 10
 
 
 #include "ns3/core-module.h"
@@ -30,6 +35,7 @@
 #include "ns3/ipv4-global-routing-helper.h"
 #include "ns3/internet-module.h"
 #include "ns3/olsr-helper.h"
+#include "ns3/propagation-loss-model.h"
 
 #include <iostream>
 #include <fstream>
@@ -45,14 +51,14 @@ class PeriodApThroughput;
 class PeriodStaThroughput;
 class OutputGenerator;
 
+ofstream trace_file;
+
+void printcw(const uint32_t cw);
+void printbackoff(const uint32_t cw);
+
 void LinkTrace(map<uint16_t, Ptr<WifiPhy> > sub_phys,PeriodApThroughput* ap_thr);
 
-void PrintThroughputInPeriod(map<unsigned int, PeriodApThroughput* > ap_thr,
-								 map<unsigned int, PeriodStaThroughput* > sta_thr,
-								 OutputGenerator* og,
-								 map < unsigned int, vector <ApplicationContainer> > serverApp,
-								 map<unsigned int, vector <unsigned int> > shortest_stas_of_ap
-								 );
+
 
 struct InApInfo    //input information of ap
 {
@@ -204,25 +210,41 @@ unsigned int WidestWidth(unsigned int primary_ch);
 class NodeManager
 {
 public:
+	enum ChannelManagerMapType
+	{
+		AP = 0,
+		STA = 1,
+	};
+
+	enum LinkType
+	{
+		Up = false,
+		Down = true,
+	};
+
 	NodeManager(uint32_t payloadSize,OutputGenerator* og);
 	~NodeManager();
 	void InputInfo(map<uint32_t, InApInfo> ap_info, map<uint32_t, InStaInfo> sta_info);
 	void CalculateShortestAp();
 	void SetTestEnv();
 	void MakeAddressMap();
+	void PrintThroughputInPeriod();
+	void SetLinkType(LinkType type);
 
 
 protected:
+
 	OutputGenerator* og;
 	unsigned int payloadSize;
 	map<unsigned int, vector <unsigned int> > shortest_stas_of_ap;
-	map<int, vector <unsigned int> > using_ch_map;
+	//map<int, vector <unsigned int> > using_ch_map;
 
 	vector <unsigned int> all_aps;
 	map<uint32_t, InStaInfo> sta_infos;
 	map<uint32_t, InApInfo> ap_infos;
 
 	map<unsigned int, NodeContainer> ap_nodes;
+	map<unsigned int, Ptr<ChannelBondingManager> > ch_manager_map[2];
 	map<unsigned int, NodeContainer> sta_nodes;
 
 	map<unsigned int, NetDeviceContainer> ap_devs;
@@ -231,11 +253,20 @@ protected:
 	map<unsigned int, PeriodApThroughput* > ap_thr;
 	map<unsigned int, PeriodStaThroughput* > sta_thr;
 
-	map< unsigned int, vector <ApplicationContainer> > serverApp, clientApp;
+	map< unsigned int, map <unsigned int,ApplicationContainer> > serverApp, clientApp;
 	map< unsigned int, vector <ApplicationContainer> > echoserverApp, echoclientApp;
+
+	Ptr<PropagationLossModel> PLM;
 
 	map<Mac48Address,pair<unsigned int,bool>> address_map;  //pair : (index, ap) true-> ap false->sta
 
+
+
+	LinkType link_type;
+	Ptr<UniformRandomVariable> x;
+private:
+	void SetAppDownLink();
+	void SetAppUpLink();
 
 
 };
@@ -256,15 +287,22 @@ public:
 	vector<unsigned int> GetApIndexs();
 	vector<unsigned int> GetApsUseChannel(unsigned int channel_number);
 	vector<unsigned int> GetInterfereApIndexs(unsigned int index,unsigned int width);
-	vector<unsigned int> GetApChannels(unsigned int index);
+	vector<unsigned int> GetSubChannels(unsigned int primary, unsigned int width);
 	int UsingChannelsToBit(unsigned int index, unsigned int width);
 
 	unsigned int GetPrimaryChannel(unsigned int index);
-	double GetThroughputHat(unsigned int index);
-	double GetThroughput_demand_ratio(unsigned int index);
+	double GetThroughputHat(unsigned int index, unsigned int width);
+	double GetThroughput_demand_ratio(unsigned int index, unsigned int width);
 	void InitTauAndP();
 	void make_bit_map();
-
+	double Get_ti(unsigned int index, unsigned int width);
+	double Get_tsi(unsigned int index, unsigned int width);
+	double Get_tfi(unsigned int index);
+	vector<unsigned int> FindSubChannels(unsigned int ch_num);
+	vector<double> Calculate_p_c(unsigned int index, unsigned int width);
+	double GetAvgPathLoss(unsigned int index);
+	double GetWhiteNoise(unsigned int width);
+	double GetTauValue(unsigned int index, unsigned int channel, unsigned int width);
 
 
 private:
@@ -272,8 +310,12 @@ private:
 	map<unsigned int, map<Mac48Address, bool> > total_link_map;  //total_link_map[ap_index][macaddress] = my_station; (sum of all signal in channels)
 	map<unsigned int, map<unsigned int, double> > tau;
 	map<unsigned int, double> p;
+	map<unsigned int, map<unsigned int, double>> matrix_F;  //unit(mwatt)
 	std::map<uint16_t, ChannelInfo > channel_map;
 	std::map<uint16_t, unsigned int> channel_bit_map;
+	map<unsigned int, Time>  SIFS, RTS_Time, CTS_Time, ACK_Time;  //map[width] = time;
+	Time DIFS, Slot;
+	double min_sinr;
 
 	enum ChannelToBit
 	{
@@ -308,7 +350,10 @@ private:
 		CH_165 = 0b0000000000000000000000001,
 	};
 
-	int fill_bit_map(uint16_t ch_num);
+	int fill_bit_map(uint16_t ch_num);  //filling and search bit
+	void SetApWidth(unsigned int ap_index, unsigned int width);
+	void InitTimeValues();
+	void InitMatrix();
 
 };
 

@@ -1,93 +1,661 @@
 ---------------------distance information----------------------
-# STA 0 : 29.6382 m
+# STA 0 : 4.26868 m
+# STA 1 : 5 m
+# STA 2 : 5.00632 m
+# STA 3 : 5.00632 m
+# STA 4 : 5 m
+# STA 5 : 10 m
+# STA 6 : 5 m
+# STA 7 : 4.97393 m
+# STA 8 : 4.97393 m
 ----------------------------------------------------------
-Time : 3
-index : 0
-throughput : 29.5107
-average throughput : 29.5107
-minimum throughput : 29.5107
-maximum throughput : 29.5107
-throughput/demand(%) : 99.8736
-
-----------------------------------------
 Time : 4
 index : 0
-throughput : 29.5107
-average throughput : 29.5107
-minimum throughput : 29.5107
-maximum throughput : 29.5107
-throughput/demand(%) : 99.8736
+throughput : 93.4426
+average throughput : 93.4426
+minimum throughput : 93.4426
+maximum throughput : 93.4426
+throughput/demand(%) : 93.4426
+
+index : 1
+throughput : 91.2051
+average throughput : 91.2051
+minimum throughput : 91.2051
+maximum throughput : 91.2051
+throughput/demand(%) : 91.2051
+
+index : 2
+throughput : 99.3541
+average throughput : 99.3541
+minimum throughput : 99.3541
+maximum throughput : 99.3541
+throughput/demand(%) : 99.3541
+
+index : 3
+throughput : 12.3648
+average throughput : 12.3648
+minimum throughput : 12.3648
+maximum throughput : 12.3648
+throughput/demand(%) : 12.3648
+
+index : 4
+throughput : 6.85363
+average throughput : 6.85363
+minimum throughput : 6.85363
+maximum throughput : 6.85363
+throughput/demand(%) : 6.85363
+
+index : 5
+throughput : 95.3856
+average throughput : 95.3856
+minimum throughput : 95.3856
+maximum throughput : 95.3856
+throughput/demand(%) : 95.3856
+
+index : 6
+throughput : 99.7545
+average throughput : 99.7545
+minimum throughput : 99.7545
+maximum throughput : 99.7545
+throughput/demand(%) : 99.7545
+
+index : 7
+throughput : 41.4515
+average throughput : 41.4515
+minimum throughput : 41.4515
+maximum throughput : 41.4515
+throughput/demand(%) : 41.4515
+
+index : 8
+throughput : 57.3138
+average throughput : 57.3138
+minimum throughput : 57.3138
+maximum throughput : 57.3138
+throughput/demand(%) : 57.3138
 
 ----------------------------------------
 Time : 5
 index : 0
-throughput : 29.5107
-average throughput : 29.5107
-minimum throughput : 29.5107
-maximum throughput : 29.5107
-throughput/demand(%) : 99.8736
+throughput : 100.543
+average throughput : 96.993
+minimum throughput : 93.4426
+maximum throughput : 100.543
+throughput/demand(%) : 96.993
+
+index : 1
+throughput : 49.4121
+average throughput : 70.3086
+minimum throughput : 49.4121
+maximum throughput : 91.2051
+throughput/demand(%) : 70.3086
+
+index : 2
+throughput : 97.9174
+average throughput : 98.6358
+minimum throughput : 97.9174
+maximum throughput : 99.3541
+throughput/demand(%) : 98.6358
+
+index : 3
+throughput : 0
+average throughput : 6.1824
+minimum throughput : 0
+maximum throughput : 12.3648
+throughput/demand(%) : 6.1824
+
+index : 4
+throughput : 6.64166
+average throughput : 6.74765
+minimum throughput : 6.64166
+maximum throughput : 6.85363
+throughput/demand(%) : 6.74765
+
+index : 5
+throughput : 99.8958
+average throughput : 97.6407
+minimum throughput : 95.3856
+maximum throughput : 99.8958
+throughput/demand(%) : 97.6407
+
+index : 6
+throughput : 99.7309
+average throughput : 99.7427
+minimum throughput : 99.7309
+maximum throughput : 99.7545
+throughput/demand(%) : 99.7427
+
+index : 7
+throughput : 22.9161
+average throughput : 32.1838
+minimum throughput : 22.9161
+maximum throughput : 41.4515
+throughput/demand(%) : 32.1838
+
+index : 8
+throughput : 75.8021
+average throughput : 66.558
+minimum throughput : 57.3138
+maximum throughput : 75.8021
+throughput/demand(%) : 66.558
 
 ----------------------------------------
 Time : 6
 index : 0
-throughput : 29.5224
-average throughput : 29.5136
-minimum throughput : 29.5107
-maximum throughput : 29.5224
-throughput/demand(%) : 99.8836
+throughput : 97.5053
+average throughput : 97.1638
+minimum throughput : 93.4426
+maximum throughput : 100.543
+throughput/demand(%) : 97.1638
+
+index : 1
+throughput : 71.1506
+average throughput : 70.5893
+minimum throughput : 49.4121
+maximum throughput : 91.2051
+throughput/demand(%) : 70.5893
+
+index : 2
+throughput : 98.2236
+average throughput : 98.4984
+minimum throughput : 97.9174
+maximum throughput : 99.3541
+throughput/demand(%) : 98.4984
+
+index : 3
+throughput : 14.6964
+average throughput : 9.02042
+minimum throughput : 0
+maximum throughput : 14.6964
+throughput/demand(%) : 9.02042
+
+index : 4
+throughput : 7.56019
+average throughput : 7.0185
+minimum throughput : 6.64166
+maximum throughput : 7.56019
+throughput/demand(%) : 7.0185
+
+index : 5
+throughput : 99.8605
+average throughput : 98.3806
+minimum throughput : 95.3856
+maximum throughput : 99.8958
+throughput/demand(%) : 98.3806
+
+index : 6
+throughput : 99.7663
+average throughput : 99.7506
+minimum throughput : 99.7309
+maximum throughput : 99.7663
+throughput/demand(%) : 99.7506
+
+index : 7
+throughput : 60.2813
+average throughput : 41.5497
+minimum throughput : 22.9161
+maximum throughput : 60.2813
+throughput/demand(%) : 41.5497
+
+index : 8
+throughput : 93.7958
+average throughput : 75.6372
+minimum throughput : 57.3138
+maximum throughput : 93.7958
+throughput/demand(%) : 75.6372
 
 ----------------------------------------
 Time : 7
 index : 0
-throughput : 29.5107
-average throughput : 29.513
-minimum throughput : 29.5107
-maximum throughput : 29.5224
-throughput/demand(%) : 99.8816
+throughput : 100.449
+average throughput : 97.9852
+minimum throughput : 93.4426
+maximum throughput : 100.543
+throughput/demand(%) : 97.9852
+
+index : 1
+throughput : 77.2977
+average throughput : 72.2664
+minimum throughput : 49.4121
+maximum throughput : 91.2051
+throughput/demand(%) : 72.2664
+
+index : 2
+throughput : 100.567
+average throughput : 99.0156
+minimum throughput : 97.9174
+maximum throughput : 100.567
+throughput/demand(%) : 99.0156
+
+index : 3
+throughput : 0
+average throughput : 6.76531
+minimum throughput : 0
+maximum throughput : 14.6964
+throughput/demand(%) : 6.76531
+
+index : 4
+throughput : 16.8044
+average throughput : 9.46496
+minimum throughput : 6.64166
+maximum throughput : 16.8044
+throughput/demand(%) : 9.46496
+
+index : 5
+throughput : 99.6838
+average throughput : 98.7064
+minimum throughput : 95.3856
+maximum throughput : 99.8958
+throughput/demand(%) : 98.7064
+
+index : 6
+throughput : 99.778
+average throughput : 99.7574
+minimum throughput : 99.7309
+maximum throughput : 99.778
+throughput/demand(%) : 99.7574
+
+index : 7
+throughput : 51.7437
+average throughput : 44.0982
+minimum throughput : 22.9161
+maximum throughput : 60.2813
+throughput/demand(%) : 44.0982
+
+index : 8
+throughput : 88.2376
+average throughput : 78.7873
+minimum throughput : 57.3138
+maximum throughput : 93.7958
+throughput/demand(%) : 78.7873
 
 ----------------------------------------
 Time : 8
 index : 0
-throughput : 29.5107
-average throughput : 29.5126
-minimum throughput : 29.5107
-maximum throughput : 29.5224
-throughput/demand(%) : 99.8803
+throughput : 97.9645
+average throughput : 97.981
+minimum throughput : 93.4426
+maximum throughput : 100.543
+throughput/demand(%) : 97.981
+
+index : 1
+throughput : 93.0186
+average throughput : 76.4168
+minimum throughput : 49.4121
+maximum throughput : 93.0186
+throughput/demand(%) : 76.4168
+
+index : 2
+throughput : 89.686
+average throughput : 97.1496
+minimum throughput : 89.686
+maximum throughput : 100.567
+throughput/demand(%) : 97.1496
+
+index : 3
+throughput : 8.54938
+average throughput : 7.12212
+minimum throughput : 0
+maximum throughput : 14.6964
+throughput/demand(%) : 7.12212
+
+index : 4
+throughput : 9.7152
+average throughput : 9.51501
+minimum throughput : 6.64166
+maximum throughput : 16.8044
+throughput/demand(%) : 9.51501
+
+index : 5
+throughput : 99.7663
+average throughput : 98.9184
+minimum throughput : 95.3856
+maximum throughput : 99.8958
+throughput/demand(%) : 98.9184
+
+index : 6
+throughput : 99.7074
+average throughput : 99.7474
+minimum throughput : 99.7074
+maximum throughput : 99.778
+throughput/demand(%) : 99.7474
+
+index : 7
+throughput : 27.0377
+average throughput : 40.6861
+minimum throughput : 22.9161
+maximum throughput : 60.2813
+throughput/demand(%) : 40.6861
+
+index : 8
+throughput : 93.3601
+average throughput : 81.7019
+minimum throughput : 57.3138
+maximum throughput : 93.7958
+throughput/demand(%) : 81.7019
 
 ----------------------------------------
 Time : 9
 index : 0
-throughput : 29.5107
-average throughput : 29.5123
-minimum throughput : 29.5107
-maximum throughput : 29.5224
-throughput/demand(%) : 99.8793
+throughput : 101.674
+average throughput : 98.5965
+minimum throughput : 93.4426
+maximum throughput : 101.674
+throughput/demand(%) : 98.5965
+
+index : 1
+throughput : 87.0129
+average throughput : 78.1828
+minimum throughput : 49.4121
+maximum throughput : 93.0186
+throughput/demand(%) : 78.1828
+
+index : 2
+throughput : 96.1393
+average throughput : 96.9812
+minimum throughput : 89.686
+maximum throughput : 100.567
+throughput/demand(%) : 96.9812
+
+index : 3
+throughput : 4.47488
+average throughput : 6.68092
+minimum throughput : 0
+maximum throughput : 14.6964
+throughput/demand(%) : 6.68092
+
+index : 4
+throughput : 15.615
+average throughput : 10.5317
+minimum throughput : 6.64166
+maximum throughput : 16.8044
+throughput/demand(%) : 10.5317
+
+index : 5
+throughput : 99.8605
+average throughput : 99.0754
+minimum throughput : 95.3856
+maximum throughput : 99.8958
+throughput/demand(%) : 99.0754
+
+index : 6
+throughput : 99.9076
+average throughput : 99.7741
+minimum throughput : 99.7074
+maximum throughput : 99.9076
+throughput/demand(%) : 99.7741
+
+index : 7
+throughput : 25.1418
+average throughput : 38.0954
+minimum throughput : 22.9161
+maximum throughput : 60.2813
+throughput/demand(%) : 38.0954
+
+index : 8
+throughput : 76.544
+average throughput : 80.8422
+minimum throughput : 57.3138
+maximum throughput : 93.7958
+throughput/demand(%) : 80.8422
 
 ----------------------------------------
 Time : 10
 index : 0
-throughput : 29.5224
-average throughput : 29.5136
-minimum throughput : 29.5107
-maximum throughput : 29.5224
-throughput/demand(%) : 99.8836
+throughput : 97.2815
+average throughput : 98.4087
+minimum throughput : 93.4426
+maximum throughput : 101.674
+throughput/demand(%) : 98.4087
+
+index : 1
+throughput : 75.2486
+average throughput : 77.7637
+minimum throughput : 49.4121
+maximum throughput : 93.0186
+throughput/demand(%) : 77.7637
+
+index : 2
+throughput : 96.9636
+average throughput : 96.9787
+minimum throughput : 89.686
+maximum throughput : 100.567
+throughput/demand(%) : 96.9787
+
+index : 3
+throughput : 7.32467
+average throughput : 6.77288
+minimum throughput : 0
+maximum throughput : 14.6964
+throughput/demand(%) : 6.77288
+
+index : 4
+throughput : 0.683008
+average throughput : 9.12472
+minimum throughput : 0.683008
+maximum throughput : 16.8044
+throughput/demand(%) : 9.12472
+
+index : 5
+throughput : 99.8369
+average throughput : 99.1842
+minimum throughput : 95.3856
+maximum throughput : 99.8958
+throughput/demand(%) : 99.1842
+
+index : 6
+throughput : 99.7309
+average throughput : 99.768
+minimum throughput : 99.7074
+maximum throughput : 99.9076
+throughput/demand(%) : 99.768
+
+index : 7
+throughput : 61.1999
+average throughput : 41.396
+minimum throughput : 22.9161
+maximum throughput : 61.1999
+throughput/demand(%) : 41.396
+
+index : 8
+throughput : 92.6536
+average throughput : 82.5296
+minimum throughput : 57.3138
+maximum throughput : 93.7958
+throughput/demand(%) : 82.5296
 
 ----------------------------------------
 Time : 11
 index : 0
-throughput : 29.5107
-average throughput : 29.5133
-minimum throughput : 29.5107
-maximum throughput : 29.5224
-throughput/demand(%) : 99.8825
+throughput : 95.9155
+average throughput : 98.097
+minimum throughput : 93.4426
+maximum throughput : 101.674
+throughput/demand(%) : 98.097
+
+index : 1
+throughput : 58.7269
+average throughput : 75.3841
+minimum throughput : 49.4121
+maximum throughput : 93.0186
+throughput/demand(%) : 75.3841
+
+index : 2
+throughput : 94.526
+average throughput : 96.6721
+minimum throughput : 89.686
+maximum throughput : 100.567
+throughput/demand(%) : 96.6721
+
+index : 3
+throughput : 2.84979
+average throughput : 6.2825
+minimum throughput : 0
+maximum throughput : 14.6964
+throughput/demand(%) : 6.2825
+
+index : 4
+throughput : 29.4753
+average throughput : 11.6685
+minimum throughput : 0.683008
+maximum throughput : 29.4753
+throughput/demand(%) : 11.6685
+
+index : 5
+throughput : 99.7192
+average throughput : 99.2511
+minimum throughput : 95.3856
+maximum throughput : 99.8958
+throughput/demand(%) : 99.2511
+
+index : 6
+throughput : 99.8016
+average throughput : 99.7722
+minimum throughput : 99.7074
+maximum throughput : 99.9076
+throughput/demand(%) : 99.7722
+
+index : 7
+throughput : 66.3931
+average throughput : 44.5206
+minimum throughput : 22.9161
+maximum throughput : 66.3931
+throughput/demand(%) : 44.5206
+
+index : 8
+throughput : 88.3082
+average throughput : 83.2519
+minimum throughput : 57.3138
+maximum throughput : 93.7958
+throughput/demand(%) : 83.2519
 
 ----------------------------------------
 Time : 12
 index : 0
-throughput : 29.5107
-average throughput : 29.513
-minimum throughput : 29.5107
-maximum throughput : 29.5224
-throughput/demand(%) : 99.8816
+throughput : 92.9951
+average throughput : 97.5301
+minimum throughput : 92.9951
+maximum throughput : 101.674
+throughput/demand(%) : 97.5301
+
+index : 1
+throughput : 85.376
+average throughput : 76.4943
+minimum throughput : 49.4121
+maximum throughput : 93.0186
+throughput/demand(%) : 76.4943
+
+index : 2
+throughput : 90.9578
+average throughput : 96.0372
+minimum throughput : 89.686
+maximum throughput : 100.567
+throughput/demand(%) : 96.0372
+
+index : 3
+throughput : 0
+average throughput : 5.58444
+minimum throughput : 0
+maximum throughput : 14.6964
+throughput/demand(%) : 5.58444
+
+index : 4
+throughput : 2.00192
+average throughput : 10.5945
+minimum throughput : 0.683008
+maximum throughput : 29.4753
+throughput/demand(%) : 10.5945
+
+index : 5
+throughput : 99.884
+average throughput : 99.3214
+minimum throughput : 95.3856
+maximum throughput : 99.8958
+throughput/demand(%) : 99.3214
+
+index : 6
+throughput : 99.8369
+average throughput : 99.7794
+minimum throughput : 99.7074
+maximum throughput : 99.9076
+throughput/demand(%) : 99.7794
+
+index : 7
+throughput : 40.0148
+average throughput : 44.02
+minimum throughput : 22.9161
+maximum throughput : 66.3931
+throughput/demand(%) : 44.02
+
+index : 8
+throughput : 89.003
+average throughput : 83.8909
+minimum throughput : 57.3138
+maximum throughput : 93.7958
+throughput/demand(%) : 83.8909
+
+----------------------------------------
+Time : 13
+index : 0
+throughput : 92.0294
+average throughput : 96.9801
+minimum throughput : 92.0294
+maximum throughput : 101.674
+throughput/demand(%) : 96.9801
+
+index : 1
+throughput : 51.2492
+average throughput : 73.9698
+minimum throughput : 49.4121
+maximum throughput : 93.0186
+throughput/demand(%) : 73.9698
+
+index : 2
+throughput : 93.4897
+average throughput : 95.7825
+minimum throughput : 89.686
+maximum throughput : 100.567
+throughput/demand(%) : 95.7825
+
+index : 3
+throughput : 0
+average throughput : 5.026
+minimum throughput : 0
+maximum throughput : 14.6964
+throughput/demand(%) : 5.026
+
+index : 4
+throughput : 10.0803
+average throughput : 10.5431
+minimum throughput : 0.683008
+maximum throughput : 29.4753
+throughput/demand(%) : 10.5431
+
+index : 5
+throughput : 99.6603
+average throughput : 99.3553
+minimum throughput : 95.3856
+maximum throughput : 99.8958
+throughput/demand(%) : 99.3553
+
+index : 6
+throughput : 99.9076
+average throughput : 99.7922
+minimum throughput : 99.7074
+maximum throughput : 99.9076
+throughput/demand(%) : 99.7922
+
+index : 7
+throughput : 73.1172
+average throughput : 46.9297
+minimum throughput : 22.9161
+maximum throughput : 73.1172
+throughput/demand(%) : 46.9297
+
+index : 8
+throughput : 92.9362
+average throughput : 84.7954
+minimum throughput : 57.3138
+maximum throughput : 93.7958
+throughput/demand(%) : 84.7954
 
 ----------------------------------------

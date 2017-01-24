@@ -241,6 +241,10 @@ void ChannelBondingManager::SetChannelOption(uint16_t primary_ch,uint32_t max_wi
 		received_channel[*i] = false;
 	}
 }
+void ChannelBondingManager::ChangeMaxWidth(uint32_t Max_Width)
+{
+	this->max_width = Max_Width;
+}
 
 void ChannelBondingManager::SetStation(bool tf)
 {
@@ -543,7 +547,8 @@ void ChannelBondingManager::SetPhysCallback()
 		}
 		else
 		{
-			m_phys[*i]->SetReceiveErrorCallback (MakeCallback (&ChannelBondingManager::ReceiveError, this));
+			m_phys[*i]->SetReceiveErrorCallback (MakeCallback (&ChannelBondingManager::ReceivePrimaryError, this));
+			//m_phys[*i]->SetReceiveErrorCallback (MakeCallback (&ChannelBondingManager::ReceiveError, this));
 		}
 
 		m_phys[*i]->SetReceiveOkCallback(MakeCallback (func, this));
@@ -774,7 +779,7 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 
 void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble, enum mpduType mpdutype)
 {                                               //send packet
-	//std::cout<<primary_ch<<" : width "<<request_width<<std::endl;
+//	std::cout<<primary_ch<<" : width "<<request_width<<std::endl;
 	ConvertPacket(packet);                       //split packet
 
 	ClearReceiveRecord();
@@ -791,10 +796,7 @@ void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector t
 		}
 	}
 
-
-
 	CleanPacketPieces();
-
 }
 
 void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble)
