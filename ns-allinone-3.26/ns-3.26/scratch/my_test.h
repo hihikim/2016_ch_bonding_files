@@ -14,13 +14,14 @@
 #define AP_INPUT_PATH "./input/ap/"
 #define STA_INPUT_PATH "./input/sta/"
 #define DEFF_UNIT 0
-#define MEGA 1000000
+#define MEGA 1000000.0
 #define PRINT_PERIOD 1.0
 #define PAYLOADSIZE 1472   //udp
 #define WINDOW_SIZE_BEGIN 32.0
 #define WINDOW_SIZE_MAX 5.0
 #define LOOPCOUNT 100
 #define CCATHRESHOLD -60.0
+//#define EDTHRESHOLD -60.0
 #define EDTHRESHOLD -60.0
 #define TXPOWER 30.0
 

@@ -425,10 +425,12 @@ OutApInfo PeriodApThroughput::GetThroughput(uint32_t through_packets)
 	if(now_through_packets > max_through_packets)
 		max_through_packets = now_through_packets;
 
-	result.now_through_packets = now_through_packets * PAYLOADSIZE * 8 / (MEGA * period.GetSeconds());
-	result.avg_throughput = total_through_packets * PAYLOADSIZE * 8 / (MEGA * (now - Seconds(ARP_TIME + CLIENT_START_TIME)).GetSeconds()); //Mbit/s
-	result.min_throughput = min_through_packets * PAYLOADSIZE * 8 / (MEGA * period.GetSeconds());
-	result.max_throughput = max_through_packets * PAYLOADSIZE * 8 / (MEGA * period.GetSeconds());
+	result.now_through_packets = now_through_packets / (MEGA * period.GetSeconds()) * PAYLOADSIZE * 8 ;
+
+	result.avg_throughput = total_through_packets / (MEGA * (now - Seconds(ARP_TIME + CLIENT_START_TIME)).GetSeconds()) * PAYLOADSIZE * 8.0 ; //Mbit/s
+
+	result.min_throughput = min_through_packets / (MEGA * period.GetSeconds()) * PAYLOADSIZE * 8;
+	result.max_throughput = max_through_packets / (MEGA * period.GetSeconds()) * PAYLOADSIZE * 8;
 
 	//cout<<"period : "<<period.GetNanoSeconds()<<endl;
 	for(map<uint16_t, ns3::Time>::iterator i = idle_time.begin();
@@ -1522,18 +1524,17 @@ void NodeManager::SetTestEnv()
 
 	Simulator::Stop (Seconds (ARP_TIME + CLIENT_START_TIME + SIMULATION_TIME));
 	Simulator::Run ();
+	PrintThroughputInPeriod();
 	Simulator::Destroy ();
 
-	PrintThroughputInPeriod();
+
 }
 void printcw(const uint32_t cw)
 {
-	cout<<"ho~"<<endl;
 	trace_file<<Now().GetNanoSeconds()<<"ns  :    contention window size = "<<cw<<endl;
 }
 void printbackoff(const uint32_t cw)
 {
-	cout<<"ho~"<<endl;
 	trace_file<<Now().GetNanoSeconds()<<"ns  :    backoff size = "<<cw<<endl;
 }
 
@@ -1582,7 +1583,6 @@ void NodeManager::PrintThroughputInPeriod()
 			og->RecordStaData(*j,sta_thr[*j]->GetThroughput(through_packet));
 			total_through_packet += through_packet;
 		}
-
 		og->RecordApData(i->first, ap_thr[i->first]->GetThroughput(total_through_packet));
 	}
 
