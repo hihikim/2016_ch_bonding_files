@@ -547,8 +547,9 @@ void ChannelBondingManager::SetPhysCallback()
 		}
 		else
 		{
-			m_phys[*i]->SetReceiveErrorCallback (MakeCallback (&ChannelBondingManager::ReceivePrimaryError, this));
-			//m_phys[*i]->SetReceiveErrorCallback (MakeCallback (&ChannelBondingManager::ReceiveError, this));
+			//m_phys[*i]->SetReceiveErrorCallback (MakeCallback (&ChannelBondingManager::ReceivePrimaryError, this));
+//			m_phys[*i]->SetReceiveErrorCallback (MakeCallback (&ChannelBondingManager::ReceiveError, this));
+			m_phys[*i]->SetReceiveErrorCallback(MakeNullCallback<void, Ptr<Packet>, double> ());
 		}
 
 		m_phys[*i]->SetReceiveOkCallback(MakeCallback (func, this));
@@ -608,12 +609,12 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 												&ChannelBondingManager::ClearReceiveRecord, this
 												);
 
-		error_index = CheckError(Packet);
+//		error_index = CheckError(Packet);
 	}
 
 	if(error_index > -1)
 	{
-		m_mac->ReceiveError(error_packets.ErrorPacket[error_index],error_packets.rxSnr);
+//		m_mac->ReceiveError(error_packets.ErrorPacket[error_index],error_packets.rxSnr);
 	}
 
 	else
@@ -779,7 +780,8 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 
 void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble, enum mpduType mpdutype)
 {                                               //send packet
-//	std::cout<<primary_ch<<" : width "<<request_width<<std::endl;
+//	std::cout<<"time : "<<Now().GetNanoSeconds()<<"ns | address : "<<m_mac->GetAddress()<<" : width "<<request_width<<std::endl;
+
 	ConvertPacket(packet);                       //split packet
 
 	ClearReceiveRecord();
@@ -1078,8 +1080,6 @@ int ChannelBondingManager::CheckError(Ptr< Packet> Packet)
 	if(error_packets.ErrorTime == Simulator::Now() &&
 	   error_packets.ErrorPacket.size() > 0)
 	{
-
-
 		AmpduTag ampdu;
 		WifiMacHeader hdr;
 		AmpduSubframeHeader ampduhdr;

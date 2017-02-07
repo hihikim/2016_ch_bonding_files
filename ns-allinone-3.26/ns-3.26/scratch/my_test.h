@@ -125,7 +125,7 @@ public:
 	~OutputGenerator();
 	void CloseFile();
 	void Print();
-	void SetupOutPutFile(unsigned int test_number);
+	void SetupOutPutFile(string test_number);
 	void RecordApData(unsigned int index, OutApInfo outinfo);
 	void RecordStaData(unsigned int index, OutStaInfo outinfo);
 	void PrintLinkInfo(map<unsigned int, vector <unsigned int> > shortest_stas_of_ap);

@@ -803,6 +803,17 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
     {
       //m_aggregateQueue > 0 occurs when a RTS/CTS exchange failed before an A-MPDU transmission.
       //In that case, we transmit the same A-MPDU as previously.
+
+
+	 /*
+      * my edit begin
+      */
+        m_currentPacket = stored_packet->Copy();
+        m_currentHdr = stored_hdr;
+     /*
+      * my edit end
+      */
+
       m_sentMpdus = m_aggregateQueue->GetSize ();
       m_ampdu = true;
       if (m_sentMpdus > 1)
@@ -814,22 +825,23 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
           //VHT single MPDUs are followed by normal ACKs
           m_txParams.EnableAck ();
        }
-      /*
-       * my edit begin
-       */
-      m_currentPacket = stored_packet->Copy();
-      /*
-       * my edit end
-       */
-
     }
   else
     {
       //Perform MPDU aggregation if possible
       m_ampdu = IsAmpdu (m_currentPacket, m_currentHdr);
-      stored_packet = m_currentPacket->Copy();
+
       if (m_ampdu)
         {
+    	  /*
+		   * my edit begin
+		   */
+		    stored_packet = m_currentPacket->Copy();
+		    stored_hdr = m_currentHdr;
+		  /*
+		   * my edit end
+		   */
+
           AmpduTag ampdu;
           m_currentPacket->PeekPacketTag (ampdu);
           if (ampdu.GetRemainingNbOfMpdus () > 0)
@@ -1757,7 +1769,7 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
       /*
        * my add begin
        */
-      NS_LOG_DEBUG ("remainingAmpduDuration "<<remainingAmpduDuration.GetNanoSeconds()<<"ns");
+      NS_LOG_DEBUG ("first size = "<<packet->GetSize()<<" firstremainingAmpduDuration "<<remainingAmpduDuration.GetNanoSeconds()<<"ns");
       /*
        * my add end
        */

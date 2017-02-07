@@ -13,7 +13,8 @@ int main (int argc, char *argv[])
 	RngSeedManager::SetSeed((unsigned int)time(NULL));
 	Parser parser;
 	OutputGenerator* og = new OutputGenerator();
-	unsigned int test_number = 0;
+//	unsigned int test_number = 0;
+	string test_number;
 	unsigned int payloadSize = 1472;
 	bool link_type = NodeManager::LinkType::Down;
 	CommandLine cmd;
@@ -271,7 +272,7 @@ void OutputGenerator::Print()
 	sta_output_file<<"----------------------------------------"<<endl;
 }
 
-void OutputGenerator::SetupOutPutFile(unsigned int test_number)
+void OutputGenerator::SetupOutPutFile(string test_number)
 {
 	ostringstream oss;
 	oss<<"./output/ap/"<<test_number;
@@ -1339,6 +1340,7 @@ void NodeManager::SetTestEnv()
 	phy.Set("TxPowerStart", DoubleValue(TXPOWER));
 
 
+
 	//channel.AddPropagationLoss("ns3::FriisPropagationLossModel" );
 	//channel.AddPropagationLoss("ns3::FixedRssLossModel", "Rss", DoubleValue(100.0));
 	//channel.AddPropagationLoss("ns3::RangePropagationLossModel", "MaxRange", DoubleValue(250.0));
@@ -1358,10 +1360,7 @@ void NodeManager::SetTestEnv()
 	WifiMacHelper mac;
 
 	wifi.SetRemoteStationManager ("ns3::MinstrelHtWifiManager", "RtsCtsThreshold", UintegerValue(100),
-									"PacketLength",UintegerValue(PAYLOADSIZE)/*,
-									"PrintStats",BooleanValue(true)*/);
-
-
+									"PacketLength",UintegerValue(PAYLOADSIZE));
 
 	//Ssid ssid = Ssid ("ns3-80211ac");
 	Ssid ssid;

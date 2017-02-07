@@ -139,7 +139,7 @@ int main (int argc, char *argv[])
 
               // Set channel width
               //Config::Set ("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/ChannelWidth", UintegerValue (j));   //전부 다걸림
-	      Ptr<RegularWifiMac> m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(apDevice.Get(0))->GetMac());
+              Ptr<RegularWifiMac> m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(apDevice.Get(0))->GetMac());
 
               Ptr<MacLow> m_low = m_mac->GetLow();
               m_low->EnableChannelBonding();
@@ -170,7 +170,7 @@ int main (int argc, char *argv[])
               m_low->EnableChannelBonding();
               m_low->SetChannelManager(phy, 40, j, WIFI_PHY_STANDARD_80211ac);
               
-              
+
 
 
               // mobility.
