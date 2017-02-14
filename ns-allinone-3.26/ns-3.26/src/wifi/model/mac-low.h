@@ -1412,7 +1412,8 @@ private:
   bool enable_ch_bonding;
   Ptr<ChannelBondingManager> ch_m;
   Ptr<Packet> stored_packet;
-  WifiMacHeader stored_hdr;
+  const WifiMacHeader* stored_hdr;
+  bool remove_flag;
 };
 
 } //namespace ns3

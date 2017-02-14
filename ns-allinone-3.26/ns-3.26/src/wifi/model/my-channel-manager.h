@@ -133,7 +133,7 @@ private:
 
   void SetUpChannelNumbers();
 
-  int CheckError(Ptr<Packet> Packet);
+  int CheckError(Ptr<const Packet> Packet);
 
   void Receive1Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
   void Receive2Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);

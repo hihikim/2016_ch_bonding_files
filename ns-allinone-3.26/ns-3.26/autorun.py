@@ -53,6 +53,12 @@ for root, dirs, files in os.walk(INPUT_FILE_PATH + "waterfall/"):
         if(filename[0] != '.'):
             input_files.append("waterfall/" + filename)
 
+'''
+for root, dirs, files in os.walk(INPUT_FILE_PATH):
+    for filename in files:
+        if(filename[0] != '.'):
+            input_files.append(filename)
+'''
 while len(input_files) is not 0:
     while len(procs) < MAX_PROCESS and len(input_files) is not 0 :
         #add jobs

@@ -63,7 +63,7 @@ int main (int argc, char *argv[])
         std::cout << "MCS value" << "\t\t" << "Channel width" << "\t\t" << "short GI" << "\t\t" << "Throughput" << '\n';
 
 
-          
+
         uint32_t payloadSize; //1500 byte IP packet
         if (udp)
         {
@@ -99,12 +99,12 @@ int main (int argc, char *argv[])
 
         std::ostringstream oss;
         oss << "VhtMcs" << 0;
-        /*wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager","DataMode", StringValue (oss.str ()),
-                                    "ControlMode", StringValue (oss.str ()) );
-                                    //"RtsCtsThreshold", UintegerValue(100));*/
-        wifi.SetRemoteStationManager ("ns3::MinstrelHtWifiManager",//"ns3::ConstantRateWifiManager","DataMode", StringValue (oss.str ()),
-                                            //"ControlMode", StringValue (oss.str ()) );
-                                            "RtsCtsThreshold", UintegerValue(100));
+        wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager","DataMode", StringValue (oss.str ()),
+                                    "ControlMode", StringValue (oss.str ()) ,
+                                    "RtsCtsThreshold", UintegerValue(100));
+//        wifi.SetRemoteStationManager ("ns3::MinstrelHtWifiManager",//"ns3::ConstantRateWifiManager","DataMode", StringValue (oss.str ()),
+//                                            //"ControlMode", StringValue (oss.str ()) );
+//                                            "RtsCtsThreshold", UintegerValue(100));
 
         Ssid ssid = Ssid ("ns3-80211ac");
 
@@ -344,6 +344,6 @@ int main (int argc, char *argv[])
         std::cout << 0 << "\t\t\t" << ch_44_width << " MHz\t\t\t" << 0 << "\t\t\t" << throughput2 << " Mbit/s" << std::endl;
 
 
-    
+
   return 0;
 }

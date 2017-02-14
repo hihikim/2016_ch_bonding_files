@@ -232,8 +232,8 @@ void OutputGenerator::Print()
 	if(now == Time("0.0"))
 		now = Seconds (ARP_TIME + CLIENT_START_TIME + SIMULATION_TIME);
 
-	ap_output_file<<"Time : "<<now.GetSeconds()<<endl;
-	sta_output_file<<"Time : "<<now.GetSeconds()<<endl;
+	ap_output_file<<"Time : "<<(now.GetSeconds() - (ARP_TIME + CLIENT_START_TIME))<<endl;
+	sta_output_file<<"Time : "<<(now.GetSeconds() - (ARP_TIME + CLIENT_START_TIME))<<endl;
 
 	for(map<unsigned int, OutApInfo>::iterator i = ap_info.begin();
 		i != ap_info.end();

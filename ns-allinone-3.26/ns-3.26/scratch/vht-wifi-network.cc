@@ -91,7 +91,7 @@ int main (int argc, char *argv[])
               YansWifiChannelHelper channel;
               channel.AddPropagationLoss("ns3::FriisPropagationLossModel" );
               channel.SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
-              
+
               YansWifiPhyHelper phy = YansWifiPhyHelper::Default ();
               phy.SetChannel (channel.Create ());
 
@@ -101,12 +101,13 @@ int main (int argc, char *argv[])
               WifiHelper wifi;
               wifi.SetStandard (WIFI_PHY_STANDARD_80211ac);
               WifiMacHelper mac;
-                
+
               std::ostringstream oss;
               oss << "VhtMcs" << i;
               wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager","DataMode", StringValue (oss.str ()),
-                                            "ControlMode", StringValue (oss.str ()));
-                
+                                            "ControlMode", StringValue (oss.str ()),
+                                            "RtsCtsThreshold", UintegerValue(100));
+
               Ssid ssid = Ssid ("ns3-80211ac");
 
               mac.SetType ("ns3::StaWifiMac",

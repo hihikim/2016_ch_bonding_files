@@ -380,6 +380,7 @@ MacLow::MacLow ()
   m_aggregateQueue = CreateObject<WifiMacQueue> ();
 
   enable_ch_bonding = false;
+  remove_flag = false;
 }
 
 MacLow::~MacLow ()
@@ -782,9 +783,6 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
   if(enable_ch_bonding)
   {
 	  ch_m->CheckChannelBeforeSend();
-	  //if(hdr->IsData() || hdr->IsQosData())
-		  //m_currentPacket = ch_m->ConvertPacket(m_currentPacket);
-	  //ch_m->ConvertPacket(m_currentPacket);
   }
 
 
@@ -798,51 +796,50 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
       //is sent between A-MPDU transmissions. It avoids to unexpectedly flush the aggregate
       //queue when previous RTS request has failed.
       m_ampdu = false;
+      remove_flag = false;
     }
   else if (m_aggregateQueue->GetSize () > 0)
     {
       //m_aggregateQueue > 0 occurs when a RTS/CTS exchange failed before an A-MPDU transmission.
       //In that case, we transmit the same A-MPDU as previously.
 
-
-	 /*
-      * my edit begin
-      */
-        m_currentPacket = stored_packet->Copy();
-        m_currentHdr = stored_hdr;
-     /*
-      * my edit end
-      */
+     // my edit begin
+      m_currentPacket = stored_packet->Copy();
+      m_currentHdr = *stored_hdr;
+     // my edit end
 
       m_sentMpdus = m_aggregateQueue->GetSize ();
       m_ampdu = true;
       if (m_sentMpdus > 1)
-        {
+       {
           m_txParams.EnableCompressedBlockAck ();
-        }
+       }
+
       else if (m_currentHdr.IsQosData ())
-        {
+       {
           //VHT single MPDUs are followed by normal ACKs
           m_txParams.EnableAck ();
        }
     }
+
   else
     {
+	  remove_flag = false;
       //Perform MPDU aggregation if possible
+
+//	  stored_packet = m_currentPacket->Copy();
+//	  stored_hdr = m_currentHdr;
+
       m_ampdu = IsAmpdu (m_currentPacket, m_currentHdr);
+
+      //my edit begin
+      stored_packet = m_currentPacket->Copy();
+	  stored_hdr = &m_currentHdr;
+	  // my edit end
 
       if (m_ampdu)
         {
-    	  /*
-		   * my edit begin
-		   */
-		    stored_packet = m_currentPacket->Copy();
-		    stored_hdr = m_currentHdr;
-		  /*
-		   * my edit end
-		   */
-
-          AmpduTag ampdu;
+    	  AmpduTag ampdu;
           m_currentPacket->PeekPacketTag (ampdu);
           if (ampdu.GetRemainingNbOfMpdus () > 0)
             {
@@ -885,7 +882,8 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
       if ((m_ctsToSelfSupported || m_stationManager->GetUseNonErpProtection ()) && NeedCtsToSelf ())
         {
     	  if(enable_ch_bonding)
-				ch_m->NeedRtsCts(true);
+            ch_m->NeedRtsCts(true);
+
           SendCtsToSelf ();
         }
       else
@@ -1733,10 +1731,16 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
   if (!m_ampdu || hdr->IsRts () || hdr->IsBlockAck ())
     {
 	  if(!enable_ch_bonding)
+	  {
         m_phy->SendPacket (packet, txVector, preamble);
+	  }
 
+	  //  my add begin
 	  else
+	  {
 		 ch_m->SendPacket(packet, txVector, preamble);
+	  }
+	  //  my add end
     }
 
   else
@@ -1769,6 +1773,12 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
       /*
        * my add begin
        */
+      if(remainingAmpduDuration > MilliSeconds(10))
+	  {
+	    NormalAckTimeout();
+	    CancelAllEvents();
+	    return;
+	  }
       NS_LOG_DEBUG ("first size = "<<packet->GetSize()<<" firstremainingAmpduDuration "<<remainingAmpduDuration.GetNanoSeconds()<<"ns");
       /*
        * my add end

@@ -95,16 +95,21 @@ int main (int argc, char *argv[])
               // Set guard interv58374 Mbit/s
 
               phy.Set ("ShortGuardEnabled", BooleanValue (k));
+              phy.Set("CcaMode1Threshold", DoubleValue(-60.0));
+              phy.Set("EnergyDetectionThreshold", DoubleValue(-60.0));
+              phy.Set("TxPowerEnd", DoubleValue(30.0));
+              phy.Set("TxPowerStart", DoubleValue(30.0));
 
               WifiHelper wifi;
               wifi.SetStandard (WIFI_PHY_STANDARD_80211ac);
               WifiMacHelper mac;
-                
+
               std::ostringstream oss;
               oss << "VhtMcs" << i;
               wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager","DataMode", StringValue (oss.str ()),
-                                            "ControlMode", StringValue (oss.str ()));
-                
+                                            "ControlMode", StringValue (oss.str ()),
+                                            "RtsCtsThreshold", UintegerValue(100));
+
               Ssid ssid = Ssid ("ns3-80211ac");
 
               mac.SetType ("ns3::StaWifiMac",
@@ -127,7 +132,7 @@ int main (int argc, char *argv[])
               m_low->EnableChannelBonding();
               m_low->SetChannelManager(phy, 36, j, WIFI_PHY_STANDARD_80211ac);
 
-              
+
               m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(staDevice.Get(0))->GetMac());
 
               m_low = m_mac->GetLow();
