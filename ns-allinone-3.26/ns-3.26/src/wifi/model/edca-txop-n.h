@@ -478,6 +478,9 @@ public:
    */
   int64_t AssignStreams (int64_t stream);
 
+  //my added func
+  void ClearAgreeQueue(Mac48Address recipient, uint8_t tid);
+
 
 private:
   void DoInitialize ();

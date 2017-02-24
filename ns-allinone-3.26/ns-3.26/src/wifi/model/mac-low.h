@@ -26,6 +26,7 @@
 #include <stdint.h>
 #include <ostream>
 #include <map>
+#include <stack>
 
 #include "wifi-mac-header.h"
 #include "wifi-mode.h"
@@ -46,6 +47,8 @@
 #include "mpdu-aggregator.h"
 #include "msdu-aggregator.h"
 #include "ns3/wifi-helper.h"
+
+
 
 #include "my-channel-manager.h"
 
@@ -302,6 +305,11 @@ public:
   /**
    */
   virtual Mac48Address GetDestAddressForAggregation (const WifiMacHeader &hdr);
+
+  /*
+   * my added func
+   */
+  virtual void ClearAgreeQueue(Mac48Address recipient, uint8_t tid);
 };
 
 /**
@@ -1411,9 +1419,8 @@ private:
    */
   bool enable_ch_bonding;
   Ptr<ChannelBondingManager> ch_m;
-  Ptr<Packet> stored_packet;
-  const WifiMacHeader* stored_hdr;
-  bool remove_flag;
+  Ptr<Packet> stored_packet, stored_original_packet;
+  WifiMacHeader stored_hdr, stored_original_hdr;
 };
 
 } //namespace ns3
