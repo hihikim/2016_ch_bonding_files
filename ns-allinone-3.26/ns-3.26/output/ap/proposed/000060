@@ -1,1310 +1,1632 @@
 -------------Link Information----------------------
-# AP 0 : STA 0 | STA 6 | STA 18 | 
-# AP 1 : STA 7 | STA 15 | 
-# AP 2 : STA 13 | STA 20 | STA 23 | STA 24 | 
-# AP 3 : STA 12 | STA 19 | STA 22 | 
-# AP 4 : STA 21 | 
-# AP 5 : STA 2 | STA 8 | STA 9 | STA 14 | 
-# AP 7 : STA 1 | STA 4 | STA 10 | STA 11 | STA 16 | 
-# AP 8 : STA 3 | STA 5 | STA 17 | 
+# AP 0 : STA 8 | STA 9 | STA 15 | STA 42 | STA 43 | STA 47 | 
+# AP 1 : STA 5 | STA 20 | STA 40 | 
+# AP 2 : STA 10 | STA 23 | STA 30 | STA 45 | 
+# AP 3 : STA 2 | STA 3 | STA 12 | STA 17 | STA 19 | STA 26 | STA 28 | STA 38 | STA 39 | STA 41 | STA 48 | STA 49 | 
+# AP 4 : STA 13 | 
+# AP 5 : STA 18 | STA 31 | STA 36 | 
+# AP 6 : STA 4 | STA 16 | STA 22 | STA 33 | STA 44 | 
+# AP 7 : STA 0 | STA 14 | STA 25 | STA 29 | STA 32 | STA 34 | STA 35 | 
+# AP 8 : STA 1 | STA 7 | STA 24 | STA 27 | 
+# AP 9 : STA 6 | STA 11 | STA 21 | STA 37 | STA 46 | 
 -----------------------------------------------
 Time : 1
 index : 0
-throughput : 6.28838
-average throughput : 6.28838
-minimum throughput : 6.28838
-maximum throughput : 6.28838
-total throughput / demand(%) : 6.64123
+throughput : 16.4628
+average throughput : 16.4628
+minimum throughput : 16.4628
+maximum throughput : 16.4628
+total throughput / demand(%) : 5.08854
 % of the idle time over transmission time :
-Channel 36 : 52.5742
-Channel 40 : 52.6546
-Channel 44 : 52.8066
-Channel 48 : 52.8066
-Channel 52 : 100
-Channel 56 : 100
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 39.7103
+Channel 40 : 39.8659
+Channel 44 : 40.4603
+Channel 48 : 40.4603
+Channel 52 : 41.294
+Channel 56 : 41.3408
+Channel 60 : 9.85002
+Channel 64 : 9.85002
 
 index : 1
-throughput : 24.1172
-average throughput : 24.1172
-minimum throughput : 24.1172
-maximum throughput : 24.1172
-total throughput / demand(%) : 16.3639
+throughput : 19.7012
+average throughput : 19.7012
+minimum throughput : 19.7012
+maximum throughput : 19.7012
+total throughput / demand(%) : 11.6448
 % of the idle time over transmission time :
-Channel 36 : 44.6051
-Channel 40 : 44.9898
-Channel 44 : 45.4694
-Channel 48 : 45.4694
-Channel 52 : 31.9268
-Channel 56 : 31.9268
-Channel 60 : 87.0316
-Channel 64 : 87.0316
+Channel 36 : 27.8471
+Channel 40 : 27.8471
+Channel 44 : 27.8471
+Channel 48 : 27.8471
+Channel 52 : 41.0778
+Channel 56 : 41.0778
+Channel 60 : 100
+Channel 64 : 100
 
 index : 2
-throughput : 53.3335
-average throughput : 53.3335
-minimum throughput : 53.3335
-maximum throughput : 53.3335
-total throughput / demand(%) : 21.9686
+throughput : 54.7231
+average throughput : 54.7231
+minimum throughput : 54.7231
+maximum throughput : 54.7231
+total throughput / demand(%) : 34.3236
 % of the idle time over transmission time :
-Channel 36 : 70.3002
-Channel 40 : 70.7959
-Channel 44 : 71.7787
-Channel 48 : 71.7787
-Channel 52 : 16.6292
-Channel 56 : 16.6292
-Channel 60 : 90.484
-Channel 64 : 90.484
+Channel 36 : 48.3547
+Channel 40 : 49.9637
+Channel 44 : 51.2805
+Channel 48 : 51.2805
+Channel 52 : 29.1202
+Channel 56 : 29.1202
+Channel 60 : 95.0492
+Channel 64 : 95.0492
 
 index : 3
-throughput : 0.5888
-average throughput : 0.5888
-minimum throughput : 0.5888
-maximum throughput : 0.5888
-total throughput / demand(%) : 0.355322
+throughput : 0.270848
+average throughput : 0.270848
+minimum throughput : 0.270848
+maximum throughput : 0.270848
+total throughput / demand(%) : 0.0450691
 % of the idle time over transmission time :
-Channel 36 : 72.3789
-Channel 40 : 73.0702
-Channel 44 : 74.0598
-Channel 48 : 74.0598
-Channel 52 : 3.06504
-Channel 56 : 3.06504
-Channel 60 : 87.0316
-Channel 64 : 87.0316
+Channel 36 : 81.4377
+Channel 40 : 81.7211
+Channel 44 : 81.7491
+Channel 48 : 81.7491
+Channel 52 : 68.1134
+Channel 56 : 68.1602
+Channel 60 : 10.2992
+Channel 64 : 10.2992
 
 index : 4
-throughput : 7.26579
-average throughput : 7.26579
-minimum throughput : 7.26579
-maximum throughput : 7.26579
-total throughput / demand(%) : 100.121
+throughput : 16.4864
+average throughput : 16.4864
+minimum throughput : 16.4864
+maximum throughput : 16.4864
+total throughput / demand(%) : 25.9465
 % of the idle time over transmission time :
-Channel 36 : 56.6503
-Channel 40 : 57.3494
-Channel 44 : 58.1778
-Channel 48 : 58.1778
-Channel 52 : 3.06498
-Channel 56 : 3.06498
-Channel 60 : 87.0316
-Channel 64 : 87.0316
+Channel 36 : 50.5314
+Channel 40 : 52.0054
+Channel 44 : 53.3322
+Channel 48 : 53.3322
+Channel 52 : 29.1278
+Channel 56 : 29.1278
+Channel 60 : 100
+Channel 64 : 100
 
 index : 5
-throughput : 89.6625
-average throughput : 89.6625
-minimum throughput : 89.6625
-maximum throughput : 89.6625
-total throughput / demand(%) : 36.1383
+throughput : 2.74381
+average throughput : 2.74381
+minimum throughput : 2.74381
+maximum throughput : 2.74381
+total throughput / demand(%) : 2.43049
 % of the idle time over transmission time :
-Channel 36 : 36.9615
-Channel 40 : 36.9615
-Channel 44 : 36.9615
-Channel 48 : 36.9615
-Channel 52 : 46.1486
-Channel 56 : 46.1486
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 42.4654
+Channel 40 : 42.2711
+Channel 44 : 42.2771
+Channel 48 : 42.2771
+Channel 52 : 19.7586
+Channel 56 : 19.8054
+Channel 60 : 94.0621
+Channel 64 : 94.0621
+
+index : 6
+throughput : 63.4726
+average throughput : 63.4726
+minimum throughput : 63.4726
+maximum throughput : 63.4726
+total throughput / demand(%) : 24.2992
+% of the idle time over transmission time :
+Channel 36 : 45.1972
+Channel 40 : 45.1972
+Channel 44 : 45.1972
+Channel 48 : 45.1972
+Channel 52 : 40.5739
+Channel 56 : 40.5739
+Channel 60 : 95.0472
+Channel 64 : 95.0472
 
 index : 7
-throughput : 5.79379
-average throughput : 5.79379
-minimum throughput : 5.79379
-maximum throughput : 5.79379
-total throughput / demand(%) : 1.94197
+throughput : 111.648
+average throughput : 111.648
+minimum throughput : 111.648
+maximum throughput : 111.648
+total throughput / demand(%) : 40.0962
 % of the idle time over transmission time :
-Channel 36 : 84.8567
-Channel 40 : 85.1007
-Channel 44 : 85.1035
-Channel 48 : 85.1035
-Channel 52 : 99.5504
-Channel 56 : 99.5504
+Channel 36 : 37.182
+Channel 40 : 37.2848
+Channel 44 : 37.8372
+Channel 48 : 37.8372
+Channel 52 : 41.3069
+Channel 56 : 41.3537
+Channel 60 : 9.42055
+Channel 64 : 9.42055
+
+index : 8
+throughput : 0.35328
+average throughput : 0.35328
+minimum throughput : 0.35328
+maximum throughput : 0.35328
+total throughput / demand(%) : 0.121448
+% of the idle time over transmission time :
+Channel 36 : 68.3368
+Channel 40 : 68.6055
+Channel 44 : 68.6335
+Channel 48 : 68.6335
+Channel 52 : 41.1935
+Channel 56 : 41.1935
 Channel 60 : 100
 Channel 64 : 100
 
-index : 8
-throughput : 1.1305
-average throughput : 1.1305
-minimum throughput : 1.1305
-maximum throughput : 1.1305
-total throughput / demand(%) : 0.514245
+index : 9
+throughput : 9.59744
+average throughput : 9.59744
+minimum throughput : 9.59744
+maximum throughput : 9.59744
+total throughput / demand(%) : 3.92721
 % of the idle time over transmission time :
-Channel 36 : 58.3144
-Channel 40 : 58.5404
-Channel 44 : 58.784
-Channel 48 : 58.784
-Channel 52 : 99.8305
-Channel 56 : 99.8305
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 41.3915
+Channel 40 : 41.4943
+Channel 44 : 42.0622
+Channel 48 : 42.0622
+Channel 52 : 41.2482
+Channel 56 : 41.295
+Channel 60 : 9.43331
+Channel 64 : 9.43331
 
 ----------------------------------------
 Time : 2
 index : 0
-throughput : 22.2213
-average throughput : 14.2548
-minimum throughput : 6.28838
-maximum throughput : 22.2213
-total throughput / demand(%) : 15.0547
+throughput : 1.7664
+average throughput : 9.11462
+minimum throughput : 1.7664
+maximum throughput : 16.4628
+total throughput / demand(%) : 2.81726
 % of the idle time over transmission time :
-Channel 36 : 10.6457
-Channel 40 : 10.6945
-Channel 44 : 10.8957
-Channel 48 : 10.8957
-Channel 52 : 100
-Channel 56 : 100
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 36.3729
+Channel 40 : 37.4733
+Channel 44 : 39.3961
+Channel 48 : 39.3961
+Channel 52 : 22.7052
+Channel 56 : 22.7052
+Channel 60 : 27.7967
+Channel 64 : 27.7967
 
 index : 1
-throughput : 63.8259
-average throughput : 43.9716
-minimum throughput : 24.1172
-maximum throughput : 63.8259
-total throughput / demand(%) : 29.8353
+throughput : 59.8339
+average throughput : 39.7676
+minimum throughput : 19.7012
+maximum throughput : 59.8339
+total throughput / demand(%) : 23.5054
 % of the idle time over transmission time :
-Channel 36 : 6.65006
-Channel 40 : 6.87176
-Channel 44 : 7.77966
-Channel 48 : 7.77966
-Channel 52 : 6.10012
-Channel 56 : 6.10012
-Channel 60 : 87.1348
-Channel 64 : 87.1348
+Channel 36 : 13.0125
+Channel 40 : 13.0125
+Channel 44 : 13.0324
+Channel 48 : 13.0324
+Channel 52 : 6.86619
+Channel 56 : 6.86619
+Channel 60 : 99.9987
+Channel 64 : 99.9987
 
 index : 2
-throughput : 75.5313
-average throughput : 64.4324
-minimum throughput : 53.3335
-maximum throughput : 75.5313
-total throughput / demand(%) : 26.5403
+throughput : 73.1172
+average throughput : 63.9201
+minimum throughput : 54.7231
+maximum throughput : 73.1172
+total throughput / demand(%) : 40.0922
 % of the idle time over transmission time :
-Channel 36 : 26.5594
-Channel 40 : 27.515
-Channel 44 : 30.6182
-Channel 48 : 30.6182
-Channel 52 : 5.08946
-Channel 56 : 5.08946
-Channel 60 : 90.5888
-Channel 64 : 90.5888
+Channel 36 : 36.6925
+Channel 40 : 41.3514
+Channel 44 : 42.8909
+Channel 48 : 42.8909
+Channel 52 : 10.0833
+Channel 56 : 10.0833
+Channel 60 : 77.1457
+Channel 64 : 77.1457
 
 index : 3
-throughput : 15.6503
-average throughput : 8.11955
-minimum throughput : 0.5888
-maximum throughput : 15.6503
-total throughput / demand(%) : 4.89989
+throughput : 0.694784
+average throughput : 0.482816
+minimum throughput : 0.270848
+maximum throughput : 0.694784
+total throughput / demand(%) : 0.0803405
 % of the idle time over transmission time :
-Channel 36 : 41.6775
-Channel 40 : 42.948
-Channel 44 : 46.0794
-Channel 48 : 46.0794
-Channel 52 : 0.24918
-Channel 56 : 0.24918
-Channel 60 : 87.1348
-Channel 64 : 87.1348
+Channel 36 : 64.2194
+Channel 40 : 66.5714
+Channel 44 : 67.3399
+Channel 48 : 67.3399
+Channel 52 : 27.1889
+Channel 56 : 27.1889
+Channel 60 : 27.952
+Channel 64 : 27.952
 
 index : 4
-throughput : 7.25402
-average throughput : 7.2599
-minimum throughput : 7.25402
-maximum throughput : 7.26579
-total throughput / demand(%) : 100.04
+throughput : 15.9447
+average throughput : 16.2156
+minimum throughput : 15.9447
+maximum throughput : 16.4864
+total throughput / demand(%) : 25.5202
 % of the idle time over transmission time :
-Channel 36 : 16.5306
-Channel 40 : 17.2602
-Channel 44 : 20.0094
-Channel 48 : 20.0094
-Channel 52 : 0.249169
-Channel 56 : 0.249169
-Channel 60 : 87.1348
-Channel 64 : 87.1348
+Channel 36 : 40.951
+Channel 40 : 44.9886
+Channel 44 : 46.5306
+Channel 48 : 46.5306
+Channel 52 : 10.0757
+Channel 56 : 10.0757
+Channel 60 : 100
+Channel 64 : 100
 
 index : 5
-throughput : 121.305
-average throughput : 105.484
-minimum throughput : 89.6625
-maximum throughput : 121.305
-total throughput / demand(%) : 42.515
+throughput : 2.944
+average throughput : 2.8439
+minimum throughput : 2.74381
+maximum throughput : 2.944
+total throughput / demand(%) : 2.51916
 % of the idle time over transmission time :
-Channel 36 : 13.6013
-Channel 40 : 13.6013
-Channel 44 : 13.6013
-Channel 48 : 13.6013
-Channel 52 : 10.6965
-Channel 56 : 10.6965
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 23.6189
+Channel 40 : 24.04
+Channel 44 : 24.6019
+Channel 48 : 24.6019
+Channel 52 : 2.67836
+Channel 56 : 2.67836
+Channel 60 : 76.0707
+Channel 64 : 76.0707
+
+index : 6
+throughput : 39.0963
+average throughput : 51.2845
+minimum throughput : 39.0963
+maximum throughput : 63.4726
+total throughput / demand(%) : 19.6332
+% of the idle time over transmission time :
+Channel 36 : 27.4896
+Channel 40 : 27.4912
+Channel 44 : 27.9448
+Channel 48 : 27.9448
+Channel 52 : 6.63916
+Channel 56 : 6.63916
+Channel 60 : 77.1457
+Channel 64 : 77.1457
 
 index : 7
-throughput : 0.5888
-average throughput : 3.1913
-minimum throughput : 0.5888
-maximum throughput : 5.79379
-total throughput / demand(%) : 1.06966
+throughput : 93.7252
+average throughput : 102.687
+minimum throughput : 93.7252
+maximum throughput : 111.648
+total throughput / demand(%) : 36.8778
 % of the idle time over transmission time :
-Channel 36 : 68.4986
-Channel 40 : 68.9082
-Channel 44 : 69.1342
-Channel 48 : 69.1342
-Channel 52 : 99.622
-Channel 56 : 99.622
+Channel 36 : 28.0972
+Channel 40 : 29.8803
+Channel 44 : 31.7691
+Channel 48 : 31.7691
+Channel 52 : 22.7052
+Channel 56 : 22.7052
+Channel 60 : 27.1658
+Channel 64 : 27.1658
+
+index : 8
+throughput : 2.41408
+average throughput : 1.38368
+minimum throughput : 0.35328
+maximum throughput : 2.41408
+total throughput / demand(%) : 0.47567
+% of the idle time over transmission time :
+Channel 36 : 55.9532
+Channel 40 : 58.1102
+Channel 44 : 58.3801
+Channel 48 : 58.3801
+Channel 52 : 6.80521
+Channel 56 : 6.80521
 Channel 60 : 100
 Channel 64 : 100
 
-index : 8
-throughput : 8.38451
-average throughput : 4.7575
-minimum throughput : 1.1305
-maximum throughput : 8.38451
-total throughput / demand(%) : 2.16412
+index : 9
+throughput : 3.02643
+average throughput : 6.31194
+minimum throughput : 3.02643
+maximum throughput : 9.59744
+total throughput / demand(%) : 2.5828
 % of the idle time over transmission time :
-Channel 36 : 73.6509
-Channel 40 : 73.8617
-Channel 44 : 74.3725
-Channel 48 : 74.3725
-Channel 52 : 99.8318
-Channel 56 : 99.8318
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 37.574
+Channel 40 : 38.6636
+Channel 44 : 40.5512
+Channel 48 : 40.5512
+Channel 52 : 22.7204
+Channel 56 : 22.7204
+Channel 60 : 27.1719
+Channel 64 : 27.1719
 
 ----------------------------------------
 Time : 3
 index : 0
-throughput : 55.5356
-average throughput : 28.0151
-minimum throughput : 6.28838
-maximum throughput : 55.5356
-total throughput / demand(%) : 29.5871
+throughput : 31.0533
+average throughput : 16.4275
+minimum throughput : 1.7664
+maximum throughput : 31.0533
+total throughput / demand(%) : 5.07762
 % of the idle time over transmission time :
-Channel 36 : 5.88783
-Channel 40 : 5.88783
-Channel 44 : 5.88783
-Channel 48 : 5.88783
-Channel 52 : 100
-Channel 56 : 100
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 14.9685
+Channel 40 : 14.9685
+Channel 44 : 14.9685
+Channel 48 : 14.9685
+Channel 52 : 5.14913
+Channel 56 : 5.14913
+Channel 60 : 66.8454
+Channel 64 : 66.8454
 
 index : 1
-throughput : 78.6519
-average throughput : 55.5317
-minimum throughput : 24.1172
-maximum throughput : 78.6519
-total throughput / demand(%) : 37.679
+throughput : 36.8471
+average throughput : 38.7941
+minimum throughput : 19.7012
+maximum throughput : 59.8339
+total throughput / demand(%) : 22.93
 % of the idle time over transmission time :
-Channel 36 : 4.59034
-Channel 40 : 4.76792
-Channel 44 : 4.93541
-Channel 48 : 4.93541
-Channel 52 : 3.586
-Channel 56 : 3.586
-Channel 60 : 87.2016
-Channel 64 : 87.2016
+Channel 36 : 4.72874
+Channel 40 : 4.72874
+Channel 44 : 4.64851
+Channel 48 : 4.72874
+Channel 52 : 22.6393
+Channel 56 : 22.6393
+Channel 60 : 99.9929
+Channel 64 : 99.9929
 
 index : 2
-throughput : 76.2496
-average throughput : 68.3715
-minimum throughput : 53.3335
-maximum throughput : 76.2496
-total throughput / demand(%) : 28.1628
+throughput : 94.526
+average throughput : 74.1221
+minimum throughput : 54.7231
+maximum throughput : 94.526
+total throughput / demand(%) : 46.491
 % of the idle time over transmission time :
-Channel 36 : 21.5175
-Channel 40 : 22.6919
-Channel 44 : 23.7428
-Channel 48 : 23.7428
-Channel 52 : 5.09399
-Channel 56 : 5.09399
-Channel 60 : 90.6512
-Channel 64 : 90.6512
+Channel 36 : 9.48477
+Channel 40 : 10.423
+Channel 44 : 11.14
+Channel 48 : 11.14
+Channel 52 : 4.59491
+Channel 56 : 4.59491
+Channel 60 : 39.9701
+Channel 64 : 39.9701
 
 index : 3
-throughput : 12.9889
-average throughput : 9.74268
-minimum throughput : 0.5888
-maximum throughput : 15.6503
-total throughput / demand(%) : 5.87939
+throughput : 0.5888
+average throughput : 0.518144
+minimum throughput : 0.270848
+maximum throughput : 0.694784
+total throughput / demand(%) : 0.0862191
 % of the idle time over transmission time :
-Channel 36 : 28.8794
-Channel 40 : 30.2536
-Channel 44 : 31.4865
-Channel 48 : 31.4865
-Channel 52 : 0.263762
-Channel 56 : 0.263762
-Channel 60 : 87.2016
-Channel 64 : 87.2016
+Channel 36 : 50.8138
+Channel 40 : 52.2506
+Channel 44 : 52.7714
+Channel 48 : 52.7714
+Channel 52 : 26.9116
+Channel 56 : 26.9116
+Channel 60 : 65.2419
+Channel 64 : 65.2419
 
 index : 4
-throughput : 7.25402
-average throughput : 7.25794
-minimum throughput : 7.25402
-maximum throughput : 7.26579
-total throughput / demand(%) : 100.013
+throughput : 49.8831
+average throughput : 27.4381
+minimum throughput : 15.9447
+maximum throughput : 49.8831
+total throughput / demand(%) : 43.1824
 % of the idle time over transmission time :
-Channel 36 : 10.9915
-Channel 40 : 11.3364
-Channel 44 : 12.2569
-Channel 48 : 12.2569
-Channel 52 : 0.263759
-Channel 56 : 0.263759
-Channel 60 : 87.2016
-Channel 64 : 87.2016
+Channel 36 : 10.0901
+Channel 40 : 11.0053
+Channel 44 : 11.6865
+Channel 48 : 11.6865
+Channel 52 : 4.60253
+Channel 56 : 4.60253
+Channel 60 : 100
+Channel 64 : 100
 
 index : 5
-throughput : 127.475
-average throughput : 112.814
-minimum throughput : 89.6625
-maximum throughput : 127.475
-total throughput / demand(%) : 45.4696
+throughput : 60.5757
+average throughput : 22.0879
+minimum throughput : 2.74381
+maximum throughput : 60.5757
+total throughput / demand(%) : 19.5656
 % of the idle time over transmission time :
-Channel 36 : 15.2423
-Channel 40 : 15.2423
-Channel 44 : 15.2423
-Channel 48 : 15.2423
-Channel 52 : 8.45702
-Channel 56 : 8.45702
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 34.8741
+Channel 40 : 34.9848
+Channel 44 : 35.0227
+Channel 48 : 35.0227
+Channel 52 : 1.11166
+Channel 56 : 1.11166
+Channel 60 : 38.0863
+Channel 64 : 38.0863
+
+index : 6
+throughput : 8.76134
+average throughput : 37.1101
+minimum throughput : 8.76134
+maximum throughput : 63.4726
+total throughput / demand(%) : 14.2068
+% of the idle time over transmission time :
+Channel 36 : 36.705
+Channel 40 : 36.7282
+Channel 44 : 36.7282
+Channel 48 : 36.7282
+Channel 52 : 22.1041
+Channel 56 : 22.1041
+Channel 60 : 39.9701
+Channel 64 : 39.9701
 
 index : 7
-throughput : 5.49939
-average throughput : 3.96066
-minimum throughput : 0.5888
-maximum throughput : 5.79379
-total throughput / demand(%) : 1.32754
+throughput : 21.3381
+average throughput : 75.5705
+minimum throughput : 21.3381
+maximum throughput : 111.648
+total throughput / demand(%) : 27.1396
 % of the idle time over transmission time :
-Channel 36 : 74.6783
-Channel 40 : 75.3711
-Channel 44 : 75.3711
-Channel 48 : 75.3711
-Channel 52 : 99.6044
-Channel 56 : 99.6044
+Channel 36 : 12.4842
+Channel 40 : 13.5432
+Channel 44 : 13.641
+Channel 48 : 13.641
+Channel 52 : 5.14913
+Channel 56 : 5.14913
+Channel 60 : 65.0613
+Channel 64 : 65.0613
+
+index : 8
+throughput : 10.6573
+average throughput : 4.47488
+minimum throughput : 0.35328
+maximum throughput : 10.6573
+total throughput / demand(%) : 1.53834
+% of the idle time over transmission time :
+Channel 36 : 21.1855
+Channel 40 : 22.4774
+Channel 44 : 22.9764
+Channel 48 : 22.9764
+Channel 52 : 22.6403
+Channel 56 : 22.6403
 Channel 60 : 100
 Channel 64 : 100
 
-index : 8
-throughput : 10.1391
-average throughput : 6.55138
-minimum throughput : 1.1305
-maximum throughput : 10.1391
-total throughput / demand(%) : 2.98012
+index : 9
+throughput : 2.50829
+average throughput : 5.04405
+minimum throughput : 2.50829
+maximum throughput : 9.59744
+total throughput / demand(%) : 2.064
 % of the idle time over transmission time :
-Channel 36 : 66.2154
-Channel 40 : 66.7486
-Channel 44 : 66.9842
-Channel 48 : 66.9842
-Channel 52 : 99.8317
-Channel 56 : 99.8317
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 16.0229
+Channel 40 : 16.0385
+Channel 44 : 16.0385
+Channel 48 : 16.0385
+Channel 52 : 5.08818
+Channel 56 : 5.08818
+Channel 60 : 65.1197
+Channel 64 : 65.1197
 
 ----------------------------------------
 Time : 4
 index : 0
-throughput : 28.5215
-average throughput : 28.1417
-minimum throughput : 6.28838
-maximum throughput : 55.5356
-total throughput / demand(%) : 29.7208
+throughput : 60.5051
+average throughput : 27.4469
+minimum throughput : 1.7664
+maximum throughput : 60.5051
+total throughput / demand(%) : 8.48363
 % of the idle time over transmission time :
-Channel 36 : 3.6107
-Channel 40 : 3.6107
-Channel 44 : 3.6107
-Channel 48 : 3.6107
-Channel 52 : 100
-Channel 56 : 100
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 5.85921
+Channel 40 : 5.85921
+Channel 44 : 5.85921
+Channel 48 : 5.85921
+Channel 52 : 75.135
+Channel 56 : 75.135
+Channel 60 : 9.68764
+Channel 64 : 9.95884
 
 index : 1
-throughput : 78.7814
-average throughput : 61.3441
-minimum throughput : 24.1172
-maximum throughput : 78.7814
-total throughput / demand(%) : 41.6228
+throughput : 42.3229
+average throughput : 39.6763
+minimum throughput : 19.7012
+maximum throughput : 59.8339
+total throughput / demand(%) : 23.4514
 % of the idle time over transmission time :
-Channel 36 : 5.92807
-Channel 40 : 6.32789
-Channel 44 : 6.4247
-Channel 48 : 6.4247
-Channel 52 : 3.48995
-Channel 56 : 3.48995
-Channel 60 : 87.2248
-Channel 64 : 87.2248
+Channel 36 : 1.19119
+Channel 40 : 1.19119
+Channel 44 : 1.27143
+Channel 48 : 1.19119
+Channel 52 : 11.8341
+Channel 56 : 11.8341
+Channel 60 : 99.9983
+Channel 64 : 99.9983
 
 index : 2
-throughput : 83.327
-average throughput : 72.1103
-minimum throughput : 53.3335
-maximum throughput : 83.327
-total throughput / demand(%) : 29.7029
+throughput : 111.978
+average throughput : 83.586
+minimum throughput : 54.7231
+maximum throughput : 111.978
+total throughput / demand(%) : 52.4271
 % of the idle time over transmission time :
-Channel 36 : 39.7278
-Channel 40 : 42.4566
-Channel 44 : 43.1782
-Channel 48 : 43.1782
-Channel 52 : 3.61307
-Channel 56 : 3.61307
-Channel 60 : 90.6744
-Channel 64 : 90.6744
+Channel 36 : 10.918
+Channel 40 : 10.9258
+Channel 44 : 11.0646
+Channel 48 : 11.0646
+Channel 52 : 4.24927
+Channel 56 : 4.24927
+Channel 60 : 93.9756
+Channel 64 : 93.9756
 
 index : 3
-throughput : 0.270848
-average throughput : 7.37472
+throughput : 0.282624
+average throughput : 0.459264
 minimum throughput : 0.270848
-maximum throughput : 15.6503
-total throughput / demand(%) : 4.4504
+maximum throughput : 0.694784
+total throughput / demand(%) : 0.0764215
 % of the idle time over transmission time :
-Channel 36 : 45.3283
-Channel 40 : 47.8381
-Channel 44 : 48.5007
-Channel 48 : 48.5007
-Channel 52 : 0.137072
-Channel 56 : 0.137072
-Channel 60 : 87.2248
-Channel 64 : 87.2248
+Channel 36 : 14.5659
+Channel 40 : 15.0627
+Channel 44 : 15.5113
+Channel 48 : 15.5113
+Channel 52 : 82.4055
+Channel 56 : 82.4055
+Channel 60 : 10.0169
+Channel 64 : 10.2881
 
 index : 4
-throughput : 7.25402
-average throughput : 7.25696
-minimum throughput : 7.25402
-maximum throughput : 7.26579
-total throughput / demand(%) : 99.9994
+throughput : 33.4438
+average throughput : 28.9395
+minimum throughput : 15.9447
+maximum throughput : 49.8831
+total throughput / demand(%) : 45.5454
 % of the idle time over transmission time :
-Channel 36 : 13.4785
-Channel 40 : 14.0755
-Channel 44 : 14.1753
-Channel 48 : 14.1753
-Channel 52 : 0.137084
-Channel 56 : 0.137084
-Channel 60 : 87.2248
-Channel 64 : 87.2248
+Channel 36 : 11.2721
+Channel 40 : 11.2777
+Channel 44 : 11.3641
+Channel 48 : 11.3641
+Channel 52 : 4.2569
+Channel 56 : 4.2569
+Channel 60 : 100
+Channel 64 : 100
 
 index : 5
-throughput : 127.652
-average throughput : 116.524
-minimum throughput : 89.6625
-maximum throughput : 127.652
-total throughput / demand(%) : 46.9646
+throughput : 1.56621
+average throughput : 16.9574
+minimum throughput : 1.56621
+maximum throughput : 60.5757
+total throughput / demand(%) : 15.0211
 % of the idle time over transmission time :
-Channel 36 : 14.4132
-Channel 40 : 14.4132
-Channel 44 : 14.4132
-Channel 48 : 14.4132
-Channel 52 : 6.9697
-Channel 56 : 6.9697
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 6.05921
+Channel 40 : 6.19367
+Channel 44 : 6.28813
+Channel 48 : 6.28813
+Channel 52 : 3.31753
+Channel 56 : 3.31753
+Channel 60 : 93.0424
+Channel 64 : 93.0424
+
+index : 6
+throughput : 79.6764
+average throughput : 47.7517
+minimum throughput : 8.76134
+maximum throughput : 79.6764
+total throughput / demand(%) : 18.2807
+% of the idle time over transmission time :
+Channel 36 : 6.84085
+Channel 40 : 6.88173
+Channel 44 : 6.93087
+Channel 48 : 6.93087
+Channel 52 : 11.6253
+Channel 56 : 11.6253
+Channel 60 : 93.9756
+Channel 64 : 93.9756
 
 index : 7
-throughput : 1.34246
-average throughput : 3.30611
-minimum throughput : 0.5888
-maximum throughput : 5.79379
-total throughput / demand(%) : 1.10815
+throughput : 99.8134
+average throughput : 81.6312
+minimum throughput : 21.3381
+maximum throughput : 111.648
+total throughput / demand(%) : 29.3162
 % of the idle time over transmission time :
-Channel 36 : 53.787
-Channel 40 : 55.0118
-Channel 44 : 55.2226
-Channel 48 : 55.2226
-Channel 52 : 99.5892
-Channel 56 : 99.5892
+Channel 36 : 5.68306
+Channel 40 : 6.13042
+Channel 44 : 6.15256
+Channel 48 : 6.15256
+Channel 52 : 75.135
+Channel 56 : 75.135
+Channel 60 : 9.26927
+Channel 64 : 9.54046
+
+index : 8
+throughput : 59.6454
+average throughput : 18.2675
+minimum throughput : 0.35328
+maximum throughput : 59.6454
+total throughput / demand(%) : 6.27985
+% of the idle time over transmission time :
+Channel 36 : 9.84344
+Channel 40 : 10.211
+Channel 44 : 10.5587
+Channel 48 : 10.5587
+Channel 52 : 11.8257
+Channel 56 : 11.8257
 Channel 60 : 100
 Channel 64 : 100
 
-index : 8
-throughput : 33.1259
-average throughput : 13.195
-minimum throughput : 1.1305
-maximum throughput : 33.1259
-total throughput / demand(%) : 6.00221
+index : 9
+throughput : 1.24826
+average throughput : 4.0951
+minimum throughput : 1.24826
+maximum throughput : 9.59744
+total throughput / demand(%) : 1.67569
 % of the idle time over transmission time :
-Channel 36 : 14.5326
-Channel 40 : 14.5326
-Channel 44 : 14.5326
-Channel 48 : 14.5326
-Channel 52 : 99.7821
-Channel 56 : 99.7821
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 7.25508
+Channel 40 : 7.25508
+Channel 44 : 7.26628
+Channel 48 : 7.26628
+Channel 52 : 75.2264
+Channel 56 : 75.2264
+Channel 60 : 9.26444
+Channel 64 : 9.53564
 
 ----------------------------------------
 Time : 5
 index : 0
-throughput : 59.5395
-average throughput : 34.4212
-minimum throughput : 6.28838
-maximum throughput : 59.5395
-total throughput / demand(%) : 36.3527
+throughput : 69.2429
+average throughput : 35.8061
+minimum throughput : 1.7664
+maximum throughput : 69.2429
+total throughput / demand(%) : 11.0674
 % of the idle time over transmission time :
-Channel 36 : 3.71867
-Channel 40 : 3.71867
-Channel 44 : 3.71867
-Channel 48 : 3.71867
-Channel 52 : 100
-Channel 56 : 100
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 5.52938
+Channel 40 : 6.08201
+Channel 44 : 6.53561
+Channel 48 : 6.53561
+Channel 52 : 70.744
+Channel 56 : 70.744
+Channel 60 : 29.0838
+Channel 64 : 29.7326
 
 index : 1
-throughput : 77.6745
-average throughput : 64.6102
-minimum throughput : 24.1172
-maximum throughput : 78.7814
-total throughput / demand(%) : 43.8389
+throughput : 79.8177
+average throughput : 47.7046
+minimum throughput : 19.7012
+maximum throughput : 79.8177
+total throughput / demand(%) : 28.1967
 % of the idle time over transmission time :
-Channel 36 : 3.80363
-Channel 40 : 3.80363
-Channel 44 : 3.80683
-Channel 48 : 3.80683
-Channel 52 : 3.46845
-Channel 56 : 3.46845
-Channel 60 : 87.2016
-Channel 64 : 87.2016
+Channel 36 : 0.709906
+Channel 40 : 0.709906
+Channel 44 : 0.709906
+Channel 48 : 0.709906
+Channel 52 : 3.26589
+Channel 56 : 3.26589
+Channel 60 : 99.998
+Channel 64 : 99.998
 
 index : 2
-throughput : 84.8696
-average throughput : 74.6622
-minimum throughput : 53.3335
-maximum throughput : 84.8696
-total throughput / demand(%) : 30.754
+throughput : 112.437
+average throughput : 89.3563
+minimum throughput : 54.7231
+maximum throughput : 112.437
+total throughput / demand(%) : 56.0463
 % of the idle time over transmission time :
-Channel 36 : 18.2188
-Channel 40 : 18.2188
-Channel 44 : 18.2188
-Channel 48 : 18.2188
-Channel 52 : 3.36569
-Channel 56 : 3.36569
-Channel 60 : 90.6512
-Channel 64 : 90.6512
+Channel 36 : 45.0264
+Channel 40 : 46.1818
+Channel 44 : 48.0027
+Channel 48 : 48.0027
+Channel 52 : 4.5316
+Channel 56 : 4.5316
+Channel 60 : 75.3487
+Channel 64 : 75.8407
 
 index : 3
-throughput : 0.2944
-average throughput : 5.95866
+throughput : 1.472
+average throughput : 0.661811
 minimum throughput : 0.270848
-maximum throughput : 15.6503
-total throughput / demand(%) : 3.59586
+maximum throughput : 1.472
+total throughput / demand(%) : 0.110125
 % of the idle time over transmission time :
-Channel 36 : 31.7534
-Channel 40 : 31.7534
-Channel 44 : 31.8342
-Channel 48 : 31.8342
-Channel 52 : 0.119819
-Channel 56 : 0.119819
-Channel 60 : 87.2016
-Channel 64 : 87.2016
+Channel 36 : 11.2391
+Channel 40 : 11.2406
+Channel 44 : 12.5215
+Channel 48 : 12.5215
+Channel 52 : 72.1858
+Channel 56 : 72.1858
+Channel 60 : 29.1986
+Channel 64 : 29.8482
 
 index : 4
-throughput : 7.25402
-average throughput : 7.25637
-minimum throughput : 7.25402
-maximum throughput : 7.26579
-total throughput / demand(%) : 99.9913
+throughput : 6.67699
+average throughput : 24.487
+minimum throughput : 6.67699
+maximum throughput : 49.8831
+total throughput / demand(%) : 38.538
 % of the idle time over transmission time :
-Channel 36 : 16.1102
-Channel 40 : 16.1102
-Channel 44 : 16.1942
-Channel 48 : 16.1942
-Channel 52 : 0.119807
-Channel 56 : 0.119807
-Channel 60 : 87.2016
-Channel 64 : 87.2016
+Channel 36 : 48.8101
+Channel 40 : 50.1345
+Channel 44 : 51.2109
+Channel 48 : 51.2109
+Channel 52 : 4.52398
+Channel 56 : 4.52398
+Channel 60 : 100
+Channel 64 : 100
 
 index : 5
-throughput : 127.44
-average throughput : 118.707
-minimum throughput : 89.6625
-maximum throughput : 127.652
-total throughput / demand(%) : 47.8446
+throughput : 2.49651
+average throughput : 14.0653
+minimum throughput : 1.56621
+maximum throughput : 60.5757
+total throughput / demand(%) : 12.4591
 % of the idle time over transmission time :
-Channel 36 : 15.8966
-Channel 40 : 15.8966
-Channel 44 : 15.9806
-Channel 48 : 15.9806
-Channel 52 : 6.74159
-Channel 56 : 6.74159
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 4.47578
+Channel 40 : 4.4974
+Channel 44 : 4.57324
+Channel 48 : 4.57324
+Channel 52 : 3.15331
+Channel 56 : 3.15331
+Channel 60 : 74.2788
+Channel 64 : 74.7784
+
+index : 6
+throughput : 107.468
+average throughput : 59.6949
+minimum throughput : 8.76134
+maximum throughput : 107.468
+total throughput / demand(%) : 22.853
+% of the idle time over transmission time :
+Channel 36 : 4.92254
+Channel 40 : 4.96134
+Channel 44 : 4.96542
+Channel 48 : 4.96542
+Channel 52 : 3.25092
+Channel 56 : 3.25092
+Channel 60 : 75.3487
+Channel 64 : 75.8407
 
 index : 7
-throughput : 18.6767
-average throughput : 6.38024
-minimum throughput : 0.5888
-maximum throughput : 18.6767
-total throughput / demand(%) : 2.13854
+throughput : 88.1787
+average throughput : 82.9407
+minimum throughput : 21.3381
+maximum throughput : 111.648
+total throughput / demand(%) : 29.7865
 % of the idle time over transmission time :
-Channel 36 : 16.4139
-Channel 40 : 16.4139
-Channel 44 : 16.4139
-Channel 48 : 16.4139
-Channel 52 : 99.5708
-Channel 56 : 99.5708
+Channel 36 : 5.25093
+Channel 40 : 5.59426
+Channel 44 : 6.33396
+Channel 48 : 6.33396
+Channel 52 : 70.744
+Channel 56 : 70.744
+Channel 60 : 28.4785
+Channel 64 : 29.1281
+
+index : 8
+throughput : 100.814
+average throughput : 34.7769
+minimum throughput : 0.35328
+maximum throughput : 100.814
+total throughput / demand(%) : 11.9553
+% of the idle time over transmission time :
+Channel 36 : 7.79387
+Channel 40 : 7.79987
+Channel 44 : 8.97597
+Channel 48 : 8.97597
+Channel 52 : 3.27556
+Channel 56 : 3.27556
 Channel 60 : 100
 Channel 64 : 100
 
-index : 8
-throughput : 46.3857
-average throughput : 19.8331
-minimum throughput : 1.1305
-maximum throughput : 46.3857
-total throughput / demand(%) : 9.02179
+index : 9
+throughput : 0.05888
+average throughput : 3.28786
+minimum throughput : 0.05888
+maximum throughput : 9.59744
+total throughput / demand(%) : 1.34537
 % of the idle time over transmission time :
-Channel 36 : 7.48972
-Channel 40 : 7.48972
-Channel 44 : 7.48972
-Channel 48 : 7.48972
-Channel 52 : 99.8046
-Channel 56 : 99.8046
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 6.6638
+Channel 40 : 7.20588
+Channel 44 : 7.68391
+Channel 48 : 7.68391
+Channel 52 : 70.744
+Channel 56 : 70.744
+Channel 60 : 28.4757
+Channel 64 : 29.1253
 
 ----------------------------------------
 Time : 6
 index : 0
-throughput : 59.7279
-average throughput : 38.639
-minimum throughput : 6.28838
-maximum throughput : 59.7279
-total throughput / demand(%) : 40.8071
+throughput : 63.3549
+average throughput : 40.3976
+minimum throughput : 1.7664
+maximum throughput : 69.2429
+total throughput / demand(%) : 12.4866
 % of the idle time over transmission time :
-Channel 36 : 4.30867
-Channel 40 : 4.30867
-Channel 44 : 4.30867
-Channel 48 : 4.30867
-Channel 52 : 100
-Channel 56 : 100
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 5.25949
+Channel 40 : 5.56565
+Channel 44 : 5.56565
+Channel 48 : 5.56565
+Channel 52 : 7.02257
+Channel 56 : 7.02257
+Channel 60 : 42.2804
+Channel 64 : 42.2804
 
 index : 1
-throughput : 78.487
-average throughput : 66.923
-minimum throughput : 24.1172
-maximum throughput : 78.7814
-total throughput / demand(%) : 45.4082
+throughput : 72.446
+average throughput : 51.8281
+minimum throughput : 19.7012
+maximum throughput : 79.8177
+total throughput / demand(%) : 30.634
 % of the idle time over transmission time :
-Channel 36 : 5.22603
-Channel 40 : 5.45279
-Channel 44 : 5.57912
-Channel 48 : 5.57912
-Channel 52 : 3.46456
-Channel 56 : 3.46456
-Channel 60 : 87.2016
-Channel 64 : 87.2016
+Channel 36 : 0.400093
+Channel 40 : 0.400093
+Channel 44 : 0.400093
+Channel 48 : 0.400093
+Channel 52 : 3.69407
+Channel 56 : 3.69407
+Channel 60 : 99.998
+Channel 64 : 99.998
 
 index : 2
-throughput : 85.5173
-average throughput : 76.4714
-minimum throughput : 53.3335
-maximum throughput : 85.5173
-total throughput / demand(%) : 31.4993
+throughput : 102.487
+average throughput : 91.5447
+minimum throughput : 54.7231
+maximum throughput : 112.437
+total throughput / demand(%) : 57.4189
 % of the idle time over transmission time :
-Channel 36 : 28.8496
-Channel 40 : 29.8712
-Channel 44 : 30.6753
-Channel 48 : 30.6753
-Channel 52 : 3.33027
-Channel 56 : 3.33027
-Channel 60 : 90.6512
-Channel 64 : 90.6512
+Channel 36 : 3.05465
+Channel 40 : 3.05465
+Channel 44 : 3.05745
+Channel 48 : 3.05745
+Channel 52 : 5.15033
+Channel 56 : 5.15033
+Channel 60 : 62.1781
+Channel 64 : 62.1781
 
 index : 3
 throughput : 0
-average throughput : 4.96555
+average throughput : 0.551509
 minimum throughput : 0
-maximum throughput : 15.6503
-total throughput / demand(%) : 2.99655
+maximum throughput : 1.472
+total throughput / demand(%) : 0.0917711
 % of the idle time over transmission time :
-Channel 36 : 38.5075
-Channel 40 : 39.7133
-Channel 44 : 40.4333
-Channel 48 : 40.4333
-Channel 52 : 0.184057
-Channel 56 : 0.184057
-Channel 60 : 87.2016
-Channel 64 : 87.2016
+Channel 36 : 10.3434
+Channel 40 : 10.3434
+Channel 44 : 10.3434
+Channel 48 : 10.3434
+Channel 52 : 10.9546
+Channel 56 : 10.9546
+Channel 60 : 42.2408
+Channel 64 : 42.2408
 
 index : 4
-throughput : 7.25402
-average throughput : 7.25598
-minimum throughput : 7.25402
-maximum throughput : 7.26579
-total throughput / demand(%) : 99.9859
+throughput : 51.2138
+average throughput : 28.9415
+minimum throughput : 6.67699
+maximum throughput : 51.2138
+total throughput / demand(%) : 45.5484
 % of the idle time over transmission time :
-Channel 36 : 15.2312
-Channel 40 : 15.5299
-Channel 44 : 15.6618
-Channel 48 : 15.6618
-Channel 52 : 0.184072
-Channel 56 : 0.184072
-Channel 60 : 87.2016
-Channel 64 : 87.2016
+Channel 36 : 3.05788
+Channel 40 : 3.05788
+Channel 44 : 3.06068
+Channel 48 : 3.06068
+Channel 52 : 5.15033
+Channel 56 : 5.15033
+Channel 60 : 100
+Channel 64 : 100
 
 index : 5
-throughput : 127.569
-average throughput : 120.184
-minimum throughput : 89.6625
-maximum throughput : 127.652
-total throughput / demand(%) : 48.44
+throughput : 38.3427
+average throughput : 18.1115
+minimum throughput : 1.56621
+maximum throughput : 60.5757
+total throughput / demand(%) : 16.0433
 % of the idle time over transmission time :
-Channel 36 : 15.347
-Channel 40 : 15.347
-Channel 44 : 15.347
-Channel 48 : 15.347
-Channel 52 : 6.61586
-Channel 56 : 6.61586
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 5.07522
+Channel 40 : 5.07522
+Channel 44 : 5.07522
+Channel 48 : 5.07522
+Channel 52 : 0.682281
+Channel 56 : 0.682281
+Channel 60 : 61.35
+Channel 64 : 61.35
+
+index : 6
+throughput : 121.328
+average throughput : 69.9671
+minimum throughput : 8.76134
+maximum throughput : 121.328
+total throughput / demand(%) : 26.7855
+% of the idle time over transmission time :
+Channel 36 : 5.13401
+Channel 40 : 5.13401
+Channel 44 : 5.13401
+Channel 48 : 5.13401
+Channel 52 : 3.61695
+Channel 56 : 3.61695
+Channel 60 : 62.1781
+Channel 64 : 62.1781
 
 index : 7
-throughput : 20.6904
-average throughput : 8.76527
-minimum throughput : 0.5888
-maximum throughput : 20.6904
-total throughput / demand(%) : 2.93795
+throughput : 27.8385
+average throughput : 73.757
+minimum throughput : 21.3381
+maximum throughput : 111.648
+total throughput / demand(%) : 26.4883
 % of the idle time over transmission time :
-Channel 36 : 32.1906
-Channel 40 : 32.1906
-Channel 44 : 32.4966
-Channel 48 : 32.4966
-Channel 52 : 99.5684
-Channel 56 : 99.5684
+Channel 36 : 5.9014
+Channel 40 : 6.21252
+Channel 44 : 6.21252
+Channel 48 : 6.21252
+Channel 52 : 7.02257
+Channel 56 : 7.02257
+Channel 60 : 41.5551
+Channel 64 : 41.5551
+
+index : 8
+throughput : 60.5404
+average throughput : 39.0708
+minimum throughput : 0.35328
+maximum throughput : 100.814
+total throughput / demand(%) : 13.4314
+% of the idle time over transmission time :
+Channel 36 : 5.6541
+Channel 40 : 5.6541
+Channel 44 : 5.6541
+Channel 48 : 5.6541
+Channel 52 : 3.70044
+Channel 56 : 3.70044
 Channel 60 : 100
 Channel 64 : 100
 
-index : 8
-throughput : 29.2634
-average throughput : 21.4048
-minimum throughput : 1.1305
-maximum throughput : 46.3857
-total throughput / demand(%) : 9.73673
+index : 9
+throughput : 8.36096
+average throughput : 4.13338
+minimum throughput : 0.05888
+maximum throughput : 9.59744
+total throughput / demand(%) : 1.69135
 % of the idle time over transmission time :
-Channel 36 : 8.56523
-Channel 40 : 8.80083
-Channel 44 : 8.80083
-Channel 48 : 8.80083
-Channel 52 : 99.7984
-Channel 56 : 99.7984
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 6.28802
+Channel 40 : 6.60474
+Channel 44 : 6.60474
+Channel 48 : 6.60474
+Channel 52 : 6.93107
+Channel 56 : 6.93107
+Channel 60 : 41.5944
+Channel 64 : 41.5944
 
 ----------------------------------------
 Time : 7
 index : 0
-throughput : 43.4888
-average throughput : 39.3318
-minimum throughput : 6.28838
-maximum throughput : 59.7279
-total throughput / demand(%) : 41.5388
+throughput : 55.5945
+average throughput : 42.5686
+minimum throughput : 1.7664
+maximum throughput : 69.2429
+total throughput / demand(%) : 13.1576
 % of the idle time over transmission time :
-Channel 36 : 4.61354
-Channel 40 : 4.61354
-Channel 44 : 4.61354
-Channel 48 : 4.61354
-Channel 52 : 100
-Channel 56 : 100
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 7.77597
+Channel 40 : 7.77597
+Channel 44 : 7.77597
+Channel 48 : 7.77597
+Channel 52 : 57.5877
+Channel 56 : 57.5877
+Channel 60 : 31.6486
+Channel 64 : 31.6486
 
 index : 1
-throughput : 79.0287
-average throughput : 68.6524
-minimum throughput : 24.1172
-maximum throughput : 79.0287
-total throughput / demand(%) : 46.5816
+throughput : 77.1799
+average throughput : 55.4498
+minimum throughput : 19.7012
+maximum throughput : 79.8177
+total throughput / demand(%) : 32.7747
 % of the idle time over transmission time :
-Channel 36 : 3.31956
-Channel 40 : 3.36221
-Channel 44 : 3.57698
-Channel 48 : 3.57698
-Channel 52 : 3.33409
-Channel 56 : 3.33409
-Channel 60 : 87.2016
-Channel 64 : 87.2016
+Channel 36 : 1.02243
+Channel 40 : 1.02243
+Channel 44 : 1.02243
+Channel 48 : 1.02243
+Channel 52 : 3.46367
+Channel 56 : 3.46367
+Channel 60 : 100
+Channel 64 : 100
 
 index : 2
-throughput : 83.6214
-average throughput : 77.4928
-minimum throughput : 53.3335
-maximum throughput : 85.5173
-total throughput / demand(%) : 31.92
+throughput : 110.647
+average throughput : 94.2736
+minimum throughput : 54.7231
+maximum throughput : 112.437
+total throughput / demand(%) : 59.1305
 % of the idle time over transmission time :
-Channel 36 : 16.9587
-Channel 40 : 17.4663
-Channel 44 : 18.7907
-Channel 48 : 18.7907
-Channel 52 : 3.39109
-Channel 56 : 3.39109
-Channel 60 : 90.6512
-Channel 64 : 90.6512
+Channel 36 : 3.80227
+Channel 40 : 3.85134
+Channel 44 : 3.85414
+Channel 48 : 3.85414
+Channel 52 : 4.72291
+Channel 56 : 4.72291
+Channel 60 : 72.4818
+Channel 64 : 72.4818
 
 index : 3
-throughput : 2.11968
-average throughput : 4.55899
+throughput : 0
+average throughput : 0.472722
 minimum throughput : 0
-maximum throughput : 15.6503
-total throughput / demand(%) : 2.7512
+maximum throughput : 1.472
+total throughput / demand(%) : 0.0786609
 % of the idle time over transmission time :
-Channel 36 : 27.4896
-Channel 40 : 27.9936
-Channel 44 : 29.2855
-Channel 48 : 29.2855
-Channel 52 : 0.110137
-Channel 56 : 0.110137
-Channel 60 : 87.2016
-Channel 64 : 87.2016
+Channel 36 : 15.9203
+Channel 40 : 17.4075
+Channel 44 : 17.4075
+Channel 48 : 17.4075
+Channel 52 : 59.528
+Channel 56 : 59.528
+Channel 60 : 31.7383
+Channel 64 : 31.7383
 
 index : 4
-throughput : 7.25402
-average throughput : 7.2557
-minimum throughput : 7.25402
-maximum throughput : 7.26579
-total throughput / demand(%) : 99.9821
+throughput : 30.6294
+average throughput : 29.1826
+minimum throughput : 6.67699
+maximum throughput : 51.2138
+total throughput / demand(%) : 45.9279
 % of the idle time over transmission time :
-Channel 36 : 13.9755
-Channel 40 : 14.2549
-Channel 44 : 15.1141
-Channel 48 : 15.1141
-Channel 52 : 0.110164
-Channel 56 : 0.110164
-Channel 60 : 87.1988
-Channel 64 : 87.1988
+Channel 36 : 3.85908
+Channel 40 : 3.86908
+Channel 44 : 3.87188
+Channel 48 : 3.87188
+Channel 52 : 4.73053
+Channel 56 : 4.73053
+Channel 60 : 100
+Channel 64 : 100
 
 index : 5
-throughput : 127.581
-average throughput : 121.241
-minimum throughput : 89.6625
-maximum throughput : 127.652
-total throughput / demand(%) : 48.8659
+throughput : 27.6618
+average throughput : 19.4758
+minimum throughput : 1.56621
+maximum throughput : 60.5757
+total throughput / demand(%) : 17.2519
 % of the idle time over transmission time :
-Channel 36 : 14.8147
-Channel 40 : 14.8147
-Channel 44 : 14.8147
-Channel 48 : 14.8147
-Channel 52 : 6.6189
-Channel 56 : 6.6189
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 6.21464
+Channel 40 : 6.28364
+Channel 44 : 6.28364
+Channel 48 : 6.28364
+Channel 52 : 2.67729
+Channel 56 : 2.67729
+Channel 60 : 71.543
+Channel 64 : 71.543
+
+index : 6
+throughput : 92.1708
+average throughput : 73.1391
+minimum throughput : 8.76134
+maximum throughput : 121.328
+total throughput / demand(%) : 27.9998
+% of the idle time over transmission time :
+Channel 36 : 6.4113
+Channel 40 : 6.4113
+Channel 44 : 6.4113
+Channel 48 : 6.4113
+Channel 52 : 3.43938
+Channel 56 : 3.43938
+Channel 60 : 72.4818
+Channel 64 : 72.4818
 
 index : 7
-throughput : 16.086
-average throughput : 9.81109
-minimum throughput : 0.5888
-maximum throughput : 20.6904
-total throughput / demand(%) : 3.28849
+throughput : 41.7224
+average throughput : 69.1806
+minimum throughput : 21.3381
+maximum throughput : 111.648
+total throughput / demand(%) : 24.8448
 % of the idle time over transmission time :
-Channel 36 : 28.6205
-Channel 40 : 28.6205
-Channel 44 : 28.9333
-Channel 48 : 28.9333
-Channel 52 : 99.592
-Channel 56 : 99.592
+Channel 36 : 6.57861
+Channel 40 : 6.68363
+Channel 44 : 6.68363
+Channel 48 : 6.68363
+Channel 52 : 57.5877
+Channel 56 : 57.5877
+Channel 60 : 31.1702
+Channel 64 : 31.1702
+
+index : 8
+throughput : 52.0146
+average throughput : 40.9199
+minimum throughput : 0.35328
+maximum throughput : 100.814
+total throughput / demand(%) : 14.0671
+% of the idle time over transmission time :
+Channel 36 : 10.8781
+Channel 40 : 12.2963
+Channel 44 : 12.2963
+Channel 48 : 12.2963
+Channel 52 : 3.49148
+Channel 56 : 3.49148
 Channel 60 : 100
 Channel 64 : 100
 
-index : 8
-throughput : 12.7534
-average throughput : 20.1689
-minimum throughput : 1.1305
-maximum throughput : 46.3857
-total throughput / demand(%) : 9.17453
+index : 9
+throughput : 7.46598
+average throughput : 4.60946
+minimum throughput : 0.05888
+maximum throughput : 9.59744
+total throughput / demand(%) : 1.88616
 % of the idle time over transmission time :
-Channel 36 : 14.3442
-Channel 40 : 14.3442
-Channel 44 : 14.3442
-Channel 48 : 14.3442
-Channel 52 : 99.806
-Channel 56 : 99.806
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 8.73293
+Channel 40 : 8.76013
+Channel 44 : 8.76013
+Channel 48 : 8.76013
+Channel 52 : 57.6791
+Channel 56 : 57.6791
+Channel 60 : 31.1806
+Channel 64 : 31.1806
 
 ----------------------------------------
 Time : 8
 index : 0
-throughput : 46.0559
-average throughput : 40.1724
-minimum throughput : 6.28838
-maximum throughput : 59.7279
-total throughput / demand(%) : 42.4265
+throughput : 52.3443
+average throughput : 43.7905
+minimum throughput : 1.7664
+maximum throughput : 69.2429
+total throughput / demand(%) : 13.5353
 % of the idle time over transmission time :
-Channel 36 : 3.93294
-Channel 40 : 3.93294
-Channel 44 : 3.93294
-Channel 48 : 3.93294
-Channel 52 : 100
-Channel 56 : 100
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 15.8129
+Channel 40 : 15.8925
+Channel 44 : 15.9633
+Channel 48 : 15.9633
+Channel 52 : 51.2432
+Channel 56 : 51.2432
+Channel 60 : 19.1795
+Channel 64 : 19.1795
 
 index : 1
-throughput : 96.1039
-average throughput : 72.0838
-minimum throughput : 24.1172
-maximum throughput : 96.1039
-total throughput / demand(%) : 48.9099
+throughput : 78.8756
+average throughput : 58.378
+minimum throughput : 19.7012
+maximum throughput : 79.8177
+total throughput / demand(%) : 34.5055
 % of the idle time over transmission time :
-Channel 36 : 3.06321
-Channel 40 : 3.15535
-Channel 44 : 3.233
-Channel 48 : 3.233
-Channel 52 : 3.52791
-Channel 56 : 3.52791
-Channel 60 : 87.2072
-Channel 64 : 87.2072
+Channel 36 : 1.07665
+Channel 40 : 1.11888
+Channel 44 : 1.11888
+Channel 48 : 1.11888
+Channel 52 : 3.4097
+Channel 56 : 3.4097
+Channel 60 : 100
+Channel 64 : 100
 
 index : 2
-throughput : 83.9158
-average throughput : 78.2957
-minimum throughput : 53.3335
-maximum throughput : 85.5173
-total throughput / demand(%) : 32.2507
+throughput : 106.997
+average throughput : 95.864
+minimum throughput : 54.7231
+maximum throughput : 112.437
+total throughput / demand(%) : 60.1281
 % of the idle time over transmission time :
-Channel 36 : 15.6324
-Channel 40 : 16.1548
-Channel 44 : 16.7196
-Channel 48 : 16.7196
-Channel 52 : 3.17984
-Channel 56 : 3.17984
-Channel 60 : 90.6596
-Channel 64 : 90.6596
+Channel 36 : 3.81771
+Channel 40 : 4.26811
+Channel 44 : 4.27811
+Channel 48 : 4.27811
+Channel 52 : 4.88799
+Channel 56 : 4.88799
+Channel 60 : 84.3279
+Channel 64 : 84.3279
 
 index : 3
-throughput : 0.741888
-average throughput : 4.08186
+throughput : 0.753664
+average throughput : 0.50784
 minimum throughput : 0
-maximum throughput : 15.6503
-total throughput / demand(%) : 2.46327
+maximum throughput : 1.472
+total throughput / demand(%) : 0.0845045
 % of the idle time over transmission time :
-Channel 36 : 28.3895
-Channel 40 : 28.9007
-Channel 44 : 29.4227
-Channel 48 : 29.4227
-Channel 52 : 0.127563
-Channel 56 : 0.127563
-Channel 60 : 87.2072
-Channel 64 : 87.2072
+Channel 36 : 18.3202
+Channel 40 : 18.3236
+Channel 44 : 18.3236
+Channel 48 : 18.3236
+Channel 52 : 54.014
+Channel 56 : 54.014
+Channel 60 : 19.4559
+Channel 64 : 19.4559
 
 index : 4
-throughput : 7.26579
-average throughput : 7.25696
-minimum throughput : 7.25402
-maximum throughput : 7.26579
-total throughput / demand(%) : 99.9994
+throughput : 41.7695
+average throughput : 30.756
+minimum throughput : 6.67699
+maximum throughput : 51.2138
+total throughput / demand(%) : 48.4041
 % of the idle time over transmission time :
-Channel 36 : 14.6943
-Channel 40 : 14.8037
-Channel 44 : 14.9034
-Channel 48 : 14.9034
-Channel 52 : 0.127564
-Channel 56 : 0.127564
-Channel 60 : 87.21
-Channel 64 : 87.21
+Channel 36 : 3.87561
+Channel 40 : 4.32601
+Channel 44 : 4.33601
+Channel 48 : 4.33601
+Channel 52 : 4.88799
+Channel 56 : 4.88799
+Channel 60 : 100
+Channel 64 : 100
 
 index : 5
-throughput : 127.522
-average throughput : 122.026
-minimum throughput : 89.6625
-maximum throughput : 127.652
-total throughput / demand(%) : 49.1824
+throughput : 0.836096
+average throughput : 17.1459
+minimum throughput : 0.836096
+maximum throughput : 60.5757
+total throughput / demand(%) : 15.188
 % of the idle time over transmission time :
-Channel 36 : 15.1882
-Channel 40 : 15.1882
-Channel 44 : 15.1882
-Channel 48 : 15.1882
-Channel 52 : 6.56613
-Channel 56 : 6.56613
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 5.43573
+Channel 40 : 5.43573
+Channel 44 : 5.43573
+Channel 48 : 5.43573
+Channel 52 : 2.4605
+Channel 56 : 2.4605
+Channel 60 : 83.2728
+Channel 64 : 83.2728
+
+index : 6
+throughput : 70.7031
+average throughput : 72.8346
+minimum throughput : 8.76134
+maximum throughput : 121.328
+total throughput / demand(%) : 27.8832
+% of the idle time over transmission time :
+Channel 36 : 5.69078
+Channel 40 : 5.69078
+Channel 44 : 5.72433
+Channel 48 : 5.72433
+Channel 52 : 3.41937
+Channel 56 : 3.41937
+Channel 60 : 84.3279
+Channel 64 : 84.3279
 
 index : 7
-throughput : 15.5914
-average throughput : 10.5336
-minimum throughput : 0.5888
-maximum throughput : 20.6904
-total throughput / demand(%) : 3.53068
+throughput : 92.4298
+average throughput : 72.0868
+minimum throughput : 21.3381
+maximum throughput : 111.648
+total throughput / demand(%) : 25.8885
 % of the idle time over transmission time :
-Channel 36 : 16.7207
-Channel 40 : 16.7279
-Channel 44 : 16.7819
-Channel 48 : 16.7819
-Channel 52 : 99.616
-Channel 56 : 99.616
+Channel 36 : 13.0433
+Channel 40 : 13.1128
+Channel 44 : 13.1295
+Channel 48 : 13.1295
+Channel 52 : 51.2481
+Channel 56 : 51.2481
+Channel 60 : 18.7211
+Channel 64 : 18.7211
+
+index : 8
+throughput : 34.6568
+average throughput : 40.137
+minimum throughput : 0.35328
+maximum throughput : 100.814
+total throughput / demand(%) : 13.798
+% of the idle time over transmission time :
+Channel 36 : 14.3692
+Channel 40 : 14.3692
+Channel 44 : 14.3692
+Channel 48 : 14.3692
+Channel 52 : 3.43927
+Channel 56 : 3.43927
 Channel 60 : 100
 Channel 64 : 100
 
-index : 8
-throughput : 15.3088
-average throughput : 19.5614
-minimum throughput : 1.1305
-maximum throughput : 46.3857
-total throughput / demand(%) : 8.89818
+index : 9
+throughput : 0.482816
+average throughput : 4.09363
+minimum throughput : 0.05888
+maximum throughput : 9.59744
+total throughput / demand(%) : 1.67509
 % of the idle time over transmission time :
-Channel 36 : 5.38263
-Channel 40 : 5.38263
-Channel 44 : 5.38263
-Channel 48 : 5.38263
-Channel 52 : 99.8108
-Channel 56 : 99.8108
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 16.1066
+Channel 40 : 16.1862
+Channel 44 : 16.257
+Channel 48 : 16.257
+Channel 52 : 51.2432
+Channel 56 : 51.2432
+Channel 60 : 18.7135
+Channel 64 : 18.7135
 
 ----------------------------------------
 Time : 9
 index : 0
-throughput : 35.1749
-average throughput : 39.6171
-minimum throughput : 6.28838
-maximum throughput : 59.7279
-total throughput / demand(%) : 41.84
+throughput : 53.1333
+average throughput : 44.8286
+minimum throughput : 1.7664
+maximum throughput : 69.2429
+total throughput / demand(%) : 13.8562
 % of the idle time over transmission time :
-Channel 36 : 3.96688
-Channel 40 : 3.96688
-Channel 44 : 3.96688
-Channel 48 : 3.96688
-Channel 52 : 100
-Channel 56 : 100
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 5.5761
+Channel 40 : 5.5761
+Channel 44 : 5.5761
+Channel 48 : 5.5761
+Channel 52 : 67.66
+Channel 56 : 68.5192
+Channel 60 : 72.8363
+Channel 64 : 72.8363
 
 index : 1
-throughput : 96.1275
-average throughput : 74.7554
-minimum throughput : 24.1172
-maximum throughput : 96.1275
-total throughput / demand(%) : 50.7225
+throughput : 75.3428
+average throughput : 60.263
+minimum throughput : 19.7012
+maximum throughput : 79.8177
+total throughput / demand(%) : 35.6196
 % of the idle time over transmission time :
-Channel 36 : 2.09223
-Channel 40 : 2.2398
-Channel 44 : 2.2398
-Channel 48 : 2.2398
-Channel 52 : 3.48434
-Channel 56 : 3.48434
-Channel 60 : 87.1988
-Channel 64 : 87.1988
+Channel 36 : 1.29032
+Channel 40 : 1.24809
+Channel 44 : 1.27052
+Channel 48 : 1.27052
+Channel 52 : 3.30957
+Channel 56 : 3.30957
+Channel 60 : 100
+Channel 64 : 100
 
 index : 2
-throughput : 84.7872
-average throughput : 79.017
-minimum throughput : 53.3335
-maximum throughput : 85.5173
-total throughput / demand(%) : 32.5478
+throughput : 109.635
+average throughput : 97.3941
+minimum throughput : 54.7231
+maximum throughput : 112.437
+total throughput / demand(%) : 61.0878
 % of the idle time over transmission time :
-Channel 36 : 8.42999
-Channel 40 : 8.93759
-Channel 44 : 8.93759
-Channel 48 : 8.93759
-Channel 52 : 3.36287
-Channel 56 : 3.36287
-Channel 60 : 90.6512
-Channel 64 : 90.6512
+Channel 36 : 4.08934
+Channel 40 : 4.09494
+Channel 44 : 4.09774
+Channel 48 : 4.09774
+Channel 52 : 4.74458
+Channel 56 : 4.74458
+Channel 60 : 33.9405
+Channel 64 : 33.9405
 
 index : 3
-throughput : 0
-average throughput : 3.62832
+throughput : 1.1305
+average throughput : 0.577024
 minimum throughput : 0
-maximum throughput : 15.6503
-total throughput / demand(%) : 2.18957
+maximum throughput : 1.472
+total throughput / demand(%) : 0.0960167
 % of the idle time over transmission time :
-Channel 36 : 22.5624
-Channel 40 : 23.4211
-Channel 44 : 23.4211
-Channel 48 : 23.4211
-Channel 52 : 0.231629
-Channel 56 : 0.231629
-Channel 60 : 87.1988
-Channel 64 : 87.1988
+Channel 36 : 9.81985
+Channel 40 : 9.81985
+Channel 44 : 10.3367
+Channel 48 : 10.3367
+Channel 52 : 68.5272
+Channel 56 : 69.3402
+Channel 60 : 71.1038
+Channel 64 : 71.1038
 
 index : 4
-throughput : 7.25402
-average throughput : 7.25663
-minimum throughput : 7.25402
-maximum throughput : 7.26579
-total throughput / demand(%) : 99.9949
+throughput : 18.9476
+average throughput : 29.4439
+minimum throughput : 6.67699
+maximum throughput : 51.2138
+total throughput / demand(%) : 46.3392
 % of the idle time over transmission time :
-Channel 36 : 15.6293
-Channel 40 : 15.7713
-Channel 44 : 15.7713
-Channel 48 : 15.7713
-Channel 52 : 0.231633
-Channel 56 : 0.231633
-Channel 60 : 87.1988
-Channel 64 : 87.1988
+Channel 36 : 4.14956
+Channel 40 : 4.15516
+Channel 44 : 4.15796
+Channel 48 : 4.15796
+Channel 52 : 4.74458
+Channel 56 : 4.74458
+Channel 60 : 100
+Channel 64 : 100
 
 index : 5
-throughput : 127.534
-average throughput : 122.638
-minimum throughput : 89.6625
-maximum throughput : 127.652
-total throughput / demand(%) : 49.429
+throughput : 45.8322
+average throughput : 20.3332
+minimum throughput : 0.836096
+maximum throughput : 60.5757
+total throughput / demand(%) : 18.0114
 % of the idle time over transmission time :
-Channel 36 : 15.8301
-Channel 40 : 15.8301
-Channel 44 : 15.8301
-Channel 48 : 15.8301
-Channel 52 : 6.63358
-Channel 56 : 6.63358
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 4.17909
+Channel 40 : 4.17909
+Channel 44 : 4.71835
+Channel 48 : 4.71835
+Channel 52 : 3.1235
+Channel 56 : 3.19388
+Channel 60 : 31.8764
+Channel 64 : 31.8764
+
+index : 6
+throughput : 82.9737
+average throughput : 73.9611
+minimum throughput : 8.76134
+maximum throughput : 121.328
+total throughput / demand(%) : 28.3145
+% of the idle time over transmission time :
+Channel 36 : 4.89482
+Channel 40 : 4.89482
+Channel 44 : 5.43442
+Channel 48 : 5.43442
+Channel 52 : 3.22305
+Channel 56 : 3.22305
+Channel 60 : 33.9405
+Channel 64 : 33.9405
 
 index : 7
-throughput : 7.87814
-average throughput : 10.2386
-minimum throughput : 0.5888
-maximum throughput : 20.6904
-total throughput / demand(%) : 3.43178
+throughput : 25.8601
+average throughput : 66.9505
+minimum throughput : 21.3381
+maximum throughput : 111.648
+total throughput / demand(%) : 24.0439
 % of the idle time over transmission time :
-Channel 36 : 5.17176
-Channel 40 : 5.17176
-Channel 44 : 5.17176
-Channel 48 : 5.17176
-Channel 52 : 99.5892
-Channel 56 : 99.5892
+Channel 36 : 5.71052
+Channel 40 : 5.71052
+Channel 44 : 5.71052
+Channel 48 : 5.71052
+Channel 52 : 67.66
+Channel 56 : 68.5192
+Channel 60 : 70.8455
+Channel 64 : 70.8455
+
+index : 8
+throughput : 41.7812
+average throughput : 40.3197
+minimum throughput : 0.35328
+maximum throughput : 100.814
+total throughput / demand(%) : 13.8608
+% of the idle time over transmission time :
+Channel 36 : 6.72844
+Channel 40 : 6.72844
+Channel 44 : 6.72844
+Channel 48 : 6.72844
+Channel 52 : 3.31863
+Channel 56 : 3.31863
 Channel 60 : 100
 Channel 64 : 100
 
-index : 8
-throughput : 25.4008
-average throughput : 20.2102
-minimum throughput : 1.1305
-maximum throughput : 46.3857
-total throughput / demand(%) : 9.19332
+index : 9
+throughput : 0
+average throughput : 3.63878
+minimum throughput : 0
+maximum throughput : 9.59744
+total throughput / demand(%) : 1.48897
 % of the idle time over transmission time :
-Channel 36 : 4.76227
-Channel 40 : 5.21587
-Channel 44 : 5.21587
-Channel 48 : 5.21587
-Channel 52 : 99.7898
-Channel 56 : 99.7898
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 6.40598
+Channel 40 : 6.40598
+Channel 44 : 6.40631
+Channel 48 : 6.40631
+Channel 52 : 67.66
+Channel 56 : 68.5192
+Channel 60 : 71.0352
+Channel 64 : 71.0352
 
 ----------------------------------------
 Time : 10
 index : 0
-throughput : 31.0415
-average throughput : 38.7595
-minimum throughput : 6.28838
-maximum throughput : 59.7279
-total throughput / demand(%) : 40.9344
+throughput : 88.8381
+average throughput : 49.2296
+minimum throughput : 1.7664
+maximum throughput : 88.8381
+total throughput / demand(%) : 15.2165
 % of the idle time over transmission time :
-Channel 36 : 3.5561
-Channel 40 : 3.5561
-Channel 44 : 3.5561
-Channel 48 : 3.5561
-Channel 52 : 100
-Channel 56 : 100
+Channel 36 : 3.92728
+Channel 40 : 3.92728
+Channel 44 : 3.92728
+Channel 48 : 3.92728
+Channel 52 : 15.5414
+Channel 56 : 15.5414
+Channel 60 : 7.42097
+Channel 64 : 7.42097
+
+index : 1
+throughput : 75.5548
+average throughput : 61.7922
+minimum throughput : 19.7012
+maximum throughput : 79.8177
+total throughput / demand(%) : 36.5235
+% of the idle time over transmission time :
+Channel 36 : 0.207831
+Channel 40 : 0.207831
+Channel 44 : 0.207831
+Channel 48 : 0.207831
+Channel 52 : 3.66637
+Channel 56 : 3.66637
 Channel 60 : 100
 Channel 64 : 100
 
-index : 1
-throughput : 95.8684
-average throughput : 76.8667
-minimum throughput : 24.1172
-maximum throughput : 96.1275
-total throughput / demand(%) : 52.1551
-% of the idle time over transmission time :
-Channel 36 : 1.84646
-Channel 40 : 1.84646
-Channel 44 : 1.86988
-Channel 48 : 1.86988
-Channel 52 : 3.527
-Channel 56 : 3.527
-Channel 60 : 87.2016
-Channel 64 : 87.2016
-
 index : 2
-throughput : 84.3397
-average throughput : 79.5492
-minimum throughput : 53.3335
-maximum throughput : 85.5173
-total throughput / demand(%) : 32.7671
+throughput : 100.967
+average throughput : 97.7514
+minimum throughput : 54.7231
+maximum throughput : 112.437
+total throughput / demand(%) : 61.3119
 % of the idle time over transmission time :
-Channel 36 : 7.41677
-Channel 40 : 7.41677
-Channel 44 : 7.56877
-Channel 48 : 7.56877
-Channel 52 : 3.39226
-Channel 56 : 3.39226
-Channel 60 : 90.6512
-Channel 64 : 90.6512
+Channel 36 : 3.77932
+Channel 40 : 3.78212
+Channel 44 : 3.78492
+Channel 48 : 3.78492
+Channel 52 : 5.21386
+Channel 56 : 5.21386
+Channel 60 : 96.4268
+Channel 64 : 96.4268
 
 index : 3
 throughput : 0
-average throughput : 3.26548
+average throughput : 0.519322
 minimum throughput : 0
-maximum throughput : 15.6503
-total throughput / demand(%) : 1.97061
+maximum throughput : 1.472
+total throughput / demand(%) : 0.086415
 % of the idle time over transmission time :
-Channel 36 : 21.349
-Channel 40 : 21.349
-Channel 44 : 21.4732
-Channel 48 : 21.4732
-Channel 52 : 0.124163
-Channel 56 : 0.124163
-Channel 60 : 87.2016
-Channel 64 : 87.2016
+Channel 36 : 9.79603
+Channel 40 : 9.79603
+Channel 44 : 9.79603
+Channel 48 : 9.79603
+Channel 52 : 19.9253
+Channel 56 : 19.9253
+Channel 60 : 8.05016
+Channel 64 : 8.05016
 
 index : 4
-throughput : 7.25402
-average throughput : 7.25637
-minimum throughput : 7.25402
-maximum throughput : 7.26579
-total throughput / demand(%) : 99.9913
+throughput : 21.4676
+average throughput : 28.6463
+minimum throughput : 6.67699
+maximum throughput : 51.2138
+total throughput / demand(%) : 45.0839
 % of the idle time over transmission time :
-Channel 36 : 16.1286
-Channel 40 : 16.1286
-Channel 44 : 16.1286
-Channel 48 : 16.1286
-Channel 52 : 0.124178
-Channel 56 : 0.124178
-Channel 60 : 87.2016
-Channel 64 : 87.2016
+Channel 36 : 3.78425
+Channel 40 : 3.78705
+Channel 44 : 3.78985
+Channel 48 : 3.78985
+Channel 52 : 5.19861
+Channel 56 : 5.19861
+Channel 60 : 100
+Channel 64 : 100
 
 index : 5
-throughput : 127.546
-average throughput : 123.129
-minimum throughput : 89.6625
-maximum throughput : 127.652
-total throughput / demand(%) : 49.6268
+throughput : 0
+average throughput : 18.2999
+minimum throughput : 0
+maximum throughput : 60.5757
+total throughput / demand(%) : 16.2102
 % of the idle time over transmission time :
-Channel 36 : 16.061
-Channel 40 : 16.061
-Channel 44 : 16.061
-Channel 48 : 16.061
-Channel 52 : 6.80778
-Channel 56 : 6.80778
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 4.99156
+Channel 40 : 4.99156
+Channel 44 : 4.99156
+Channel 48 : 4.99156
+Channel 52 : 0.876616
+Channel 56 : 0.876616
+Channel 60 : 95.7012
+Channel 64 : 95.7012
+
+index : 6
+throughput : 66.9583
+average throughput : 73.2609
+minimum throughput : 8.76134
+maximum throughput : 121.328
+total throughput / demand(%) : 28.0464
+% of the idle time over transmission time :
+Channel 36 : 5.01889
+Channel 40 : 5.01889
+Channel 44 : 5.01889
+Channel 48 : 5.01889
+Channel 52 : 3.60435
+Channel 56 : 3.60435
+Channel 60 : 96.4268
+Channel 64 : 96.4268
 
 index : 7
-throughput : 49.6005
-average throughput : 14.1748
-minimum throughput : 0.5888
-maximum throughput : 49.6005
-total throughput / demand(%) : 4.75112
+throughput : 111.024
+average throughput : 71.3578
+minimum throughput : 21.3381
+maximum throughput : 111.648
+total throughput / demand(%) : 25.6267
 % of the idle time over transmission time :
-Channel 36 : 3.84591
-Channel 40 : 3.84591
-Channel 44 : 3.9979
-Channel 48 : 3.9979
-Channel 52 : 99.5648
-Channel 56 : 99.5648
+Channel 36 : 4.48512
+Channel 40 : 4.48512
+Channel 44 : 4.48512
+Channel 48 : 4.48512
+Channel 52 : 15.5459
+Channel 56 : 15.5459
+Channel 60 : 7.18618
+Channel 64 : 7.18618
+
+index : 8
+throughput : 33.3379
+average throughput : 39.6215
+minimum throughput : 0.35328
+maximum throughput : 100.814
+total throughput / demand(%) : 13.6207
+% of the idle time over transmission time :
+Channel 36 : 5.1702
+Channel 40 : 5.1702
+Channel 44 : 5.1702
+Channel 48 : 5.1702
+Channel 52 : 3.67197
+Channel 56 : 3.67197
 Channel 60 : 100
 Channel 64 : 100
 
-index : 8
-throughput : 48.0579
-average throughput : 22.995
-minimum throughput : 1.1305
-maximum throughput : 48.0579
-total throughput / demand(%) : 10.4601
+index : 9
+throughput : 1.80173
+average throughput : 3.45508
+minimum throughput : 0
+maximum throughput : 9.59744
+total throughput / demand(%) : 1.4138
 % of the idle time over transmission time :
-Channel 36 : 3.56144
-Channel 40 : 3.56144
-Channel 44 : 3.56144
-Channel 48 : 3.56144
-Channel 52 : 99.8013
-Channel 56 : 99.8013
-Channel 60 : 100
-Channel 64 : 100
+Channel 36 : 4.48632
+Channel 40 : 4.48632
+Channel 44 : 4.48632
+Channel 48 : 4.48632
+Channel 52 : 15.5297
+Channel 56 : 15.5297
+Channel 60 : 7.18745
+Channel 64 : 7.18745
 
 ----------------------------------------
