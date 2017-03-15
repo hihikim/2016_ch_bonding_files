@@ -132,6 +132,7 @@ class Parser:
             query[algo]['min'] = '=SUM('
             query[algo]['max'] = '=SUM('
             query[algo]['avg'] = '=SUM('
+            query[algo]['predict'] = '=SUM('
 
         for ap in self.result[algorithms[0]].keys():
             worksheet.merge_range(start_row - 1, start_col + (ap_index * 3), start_row - 1, start_col + (ap_index * 3 + 2), ap, center_format)
@@ -145,11 +146,12 @@ class Parser:
                 query[algorithms[algo]]['min'] += (self.get_cell_addr(start_row+2 , start_col + (ap_index * 3 + algo)) + ",")
                 query[algorithms[algo]]['max'] += (self.get_cell_addr(start_row+3 , start_col + (ap_index * 3 + algo)) + ",")
                 query[algorithms[algo]]['avg'] += (self.get_cell_addr(start_row+4 , start_col + (ap_index * 3 + algo)) + ",")
+                query[algorithms[algo]]['predict'] += (self.get_cell_addr(start_row+1 , start_col + (ap_index * 3 + algo)) + ",")
 
             ap_index += 1
 
         algo_num = 0
-        opt_list = ['min','max', 'avg']
+        opt_list = ['min','max', 'avg','predict'] #option list
         for algo in query:
             opt_num = 0
             worksheet.write(start_row + 9 , start_col + algo_num , algo, center_format)

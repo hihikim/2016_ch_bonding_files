@@ -1362,6 +1362,11 @@ void NodeManager::SetTestEnv()
 	wifi.SetRemoteStationManager ("ns3::MinstrelHtWifiManager", "RtsCtsThreshold", UintegerValue(100),
 									"PacketLength",UintegerValue(PAYLOADSIZE));
 
+//	oss << "VhtMcs" << 7;
+//	wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager","DataMode", StringValue (oss.str ()),
+//                                  "ControlMode", StringValue (oss.str ()),
+//                                  "RtsCtsThreshold", UintegerValue(100));
+
 	//Ssid ssid = Ssid ("ns3-80211ac");
 	Ssid ssid;
 
