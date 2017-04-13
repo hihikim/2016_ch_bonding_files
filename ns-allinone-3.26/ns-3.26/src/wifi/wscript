@@ -80,6 +80,9 @@ def build(bld):
         'model/ht-operations.cc',
         'model/dsss-parameter-set.cc',
         'model/edca-parameter-set.cc',
+
+        'model/my-channel-manager.cc',
+
         'helper/wifi-radio-energy-model-helper.cc',
         'helper/vht-wifi-mac-helper.cc',
         'helper/ht-wifi-mac-helper.cc',
@@ -184,6 +187,9 @@ def build(bld):
         'model/ht-operations.h',
         'model/dsss-parameter-set.h',
         'model/edca-parameter-set.h',
+
+        'model/my-channel-manager.h',
+
         'helper/wifi-radio-energy-model-helper.h',
         'helper/vht-wifi-mac-helper.h',
         'helper/ht-wifi-mac-helper.h',

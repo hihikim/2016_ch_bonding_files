@@ -504,6 +504,7 @@ YansWifiPhy::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, WifiPr
       //send the first MPDU in an MPDU
       m_txMpduReferenceNumber++;
     }
+
   struct mpduInfo aMpdu;
   aMpdu.type = mpdutype;
   aMpdu.mpduRefNumber = m_txMpduReferenceNumber;

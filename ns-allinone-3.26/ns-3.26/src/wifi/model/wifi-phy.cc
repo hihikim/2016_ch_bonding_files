@@ -2964,6 +2964,7 @@ WifiPhy::AssignStreams (int64_t stream)
   return 1;
 }
 
+
 std::ostream& operator<< (std::ostream& os, enum WifiPhy::State state)
 {
   switch (state)

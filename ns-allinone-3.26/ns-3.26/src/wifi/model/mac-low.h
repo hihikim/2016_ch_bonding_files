@@ -26,6 +26,7 @@
 #include <stdint.h>
 #include <ostream>
 #include <map>
+#include <stack>
 
 #include "wifi-mac-header.h"
 #include "wifi-mode.h"
@@ -45,6 +46,11 @@
 #include "wifi-tx-vector.h"
 #include "mpdu-aggregator.h"
 #include "msdu-aggregator.h"
+#include "ns3/wifi-helper.h"
+
+
+
+#include "my-channel-manager.h"
 
 class TwoLevelAggregationTest;
 class AmpduAggregationTest;
@@ -55,6 +61,7 @@ class WifiPhy;
 class WifiMac;
 class EdcaTxopN;
 class WifiMacQueue;
+class ChannelBondingManager;
 
 /**
  * \ingroup wifi
@@ -298,6 +305,11 @@ public:
   /**
    */
   virtual Mac48Address GetDestAddressForAggregation (const WifiMacHeader &hdr);
+
+  /*
+   * my added func
+   */
+  virtual void ClearAgreeQueue(Mac48Address recipient, uint8_t tid);
 };
 
 /**
@@ -843,6 +855,16 @@ public:
    * \return TXVECTOR for the given packet
    */
   virtual WifiTxVector GetDataTxVector (Ptr<const Packet> packet, const WifiMacHeader *hdr) const;
+
+
+
+  /**---------------------MY EDIT #1-----------------------------------------------
+   * using channel bonding enable
+   */
+
+   void EnableChannelBonding (void);
+   void SetChannelManager(const WifiPhyHelper &phy,uint32_t ch_num, uint32_t ch_width, enum WifiPhyStandard standard);
+   Ptr<ChannelBondingManager> GetChannelManager();
 
 private:
   /**
@@ -1390,6 +1412,15 @@ private:
   WifiTxVector m_currentTxVector;     //!< TXVECTOR used for the current packet transmission
   std::vector<Item> m_txPackets;      //!< Contain temporary items to be sent with the next A-MPDU transmission, once RTS/CTS exchange has succeeded. It is not used in other cases.
   uint32_t m_nTxMpdus;                //!<Holds the number of transmitted MPDUs in the last A-MPDU transmission
+
+  /*
+   *------------------------------------MY EDIT #2---------------------------
+   *add bool
+   */
+  bool enable_ch_bonding;
+  Ptr<ChannelBondingManager> ch_m;
+  Ptr<Packet> stored_packet, stored_original_packet;
+  WifiMacHeader stored_hdr, stored_original_hdr;
 };
 
 } //namespace ns3

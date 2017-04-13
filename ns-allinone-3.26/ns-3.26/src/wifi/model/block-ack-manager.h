@@ -361,6 +361,14 @@ public:
    */
   void SetTxFailedCallback (TxFailed callback);
 
+  /*
+   * my added function
+   */
+  void ClearAgreeQueue(Mac48Address recipient, uint8_t tid);
+  /*
+   * clear the packet in agreement queue
+   */
+
 
 private:
   /**

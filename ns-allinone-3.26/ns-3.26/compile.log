@@ -1,0 +1,48 @@
+Waf: Entering directory `/home/tykim/workspace/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build'
+[2114/2183] Linking build/libns3.26-netanim-test-debug.so
+[2119/2183] Linking build/scratch/my_model_test3_1
+[2121/2183] Linking build/bindings/python/ns/config_store.so
+[2123/2183] Linking build/bindings/python/ns/mobility.so
+[2124/2183] Linking build/bindings/python/ns/nix_vector_routing.so
+[2125/2183] Linking build/bindings/python/ns/stats.so
+[2128/2183] Linking build/bindings/python/ns/sixlowpan.so
+[2130/2183] Linking build/bindings/python/ns/point_to_point_layout.so
+[2132/2183] Linking build/scratch/my_model_test4_2
+[2140/2183] Linking build/bindings/python/ns/dsdv.so
+[2141/2183] Linking build/scratch/my_model_test2
+[2142/2183] Linking build/bindings/python/ns/_core.so
+[2143/2183] Linking build/scratch/scratch-simulator
+[2144/2183] Linking build/scratch/subdir/subdir
+[2145/2183] Linking build/bindings/python/ns/flow_monitor.so
+[2146/2183] Linking build/bindings/python/ns/applications.so
+[2147/2183] Linking build/bindings/python/ns/virtual_net_device.so
+[2148/2183] Linking build/bindings/python/ns/mesh.so
+[2149/2183] Linking build/bindings/python/ns/wifi.so
+[2150/2183] Linking build/bindings/python/ns/topology_read.so
+[2151/2183] Linking build/bindings/python/ns/wimax.so
+[2152/2183] Linking build/scratch/my_model_test
+[2153/2183] Linking build/scratch/my_model_test3
+[2154/2183] Linking build/bindings/python/ns/csma.so
+[2155/2183] Linking scratch/my_model_test4_1
+[2156/2183] Linking build/bindings/python/ns/internet_apps.so
+[2157/2183] Linking build/bindings/python/ns/tap_bridge.so
+[2158/2183] Linking build/scratch/my_test
+[2159/2183] Linking build/bindings/python/ns/energy.so
+[2160/2183] Linking build/bindings/python/ns/mpi.so
+[2161/2183] Linking build/bindings/python/ns/wave.so
+[2162/2183] Linking build/scratch/my_model_test5
+[2163/2183] Linking build/bindings/python/ns/network.so
+[2164/2183] Linking build/bindings/python/ns/propagation.so
+[2165/2183] Linking build/bindings/python/ns/point_to_point.so
+[2166/2183] Linking build/bindings/python/ns/olsr.so
+scratch/my_test.cc.3.o: In function `DynamicChannelBonding::calculate_tau()':
+/home/tykim/workspace/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/../scratch/my_test.cc:664: undefined reference to `DynamicChannelBonding::GetApsUseChannel(unsigned int)'
+scratch/my_test.cc.3.o: In function `DynamicChannelBonding::calculate_p()':
+/home/tykim/workspace/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/../scratch/my_test.cc:696: undefined reference to `DynamicChannelBonding::GetApsUseChannel(unsigned int)'
+collect2: error: ld returned 1 exit status
+
+Waf: Leaving directory `/home/tykim/workspace/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build'
+Build failed
+ -> task in 'my_test' failed (exit status 1): 
+	{task 139939068826000: cxxprogram my_test.cc.3.o -> my_test}
+['/usr/bin/g++', '-pthread', 'scratch/my_test.cc.3.o', '-o', '/home/tykim/workspace/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/scratch/my_test', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-Wl,--no-as-needed', '-L.', '-lns3.26-aodv-debug', '-lns3.26-test-debug', '-lns3.26-dsr-debug', '-lns3.26-mesh-debug', '-lns3.26-netanim-debug', '-lns3.26-wave-debug', '-lns3.26-wifi-debug', '-lns3.26-lr-wpan-debug', '-lns3.26-lte-debug', '-lns3.26-spectrum-debug', '-lns3.26-antenna-debug', '-lns3.26-applications-debug', '-lns3.26-csma-layout-debug', '-lns3.26-dsdv-debug', '-lns3.26-flow-monitor-debug', '-lns3.26-internet-apps-debug', '-lns3.26-wimax-debug', '-lns3.26-nix-vector-routing-debug', '-lns3.26-olsr-debug', '-lns3.26-point-to-point-layout-debug', '-lns3.26-sixlowpan-debug', '-lns3.26-tap-bridge-debug', '-lns3.26-internet-debug', '-lns3.26-bridge-debug', '-lns3.26-point-to-point-debug', '-lns3.26-mpi-debug', '-lns3.26-traffic-control-debug', '-lns3.26-buildings-debug', '-lns3.26-propagation-debug', '-lns3.26-uan-debug', '-lns3.26-mobility-debug', '-lns3.26-energy-debug', '-lns3.26-config-store-debug', '-lns3.26-csma-debug', '-lns3.26-fd-net-device-debug', '-lns3.26-virtual-net-device-debug', '-lns3.26-topology-read-debug', '-lns3.26-network-debug', '-lns3.26-stats-debug', '-lns3.26-core-debug', '-lrt', '-lxml2']

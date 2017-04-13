@@ -227,6 +227,12 @@ public:
     return m_txop->MapDestAddressForAggregation (hdr);
   }
 
+  //my add func
+  virtual void ClearAgreeQueue(Mac48Address recipient, uint8_t tid)
+  {
+    m_txop->ClearAgreeQueue(recipient,tid);
+  }
+
 private:
   EdcaTxopN *m_txop;
 };
@@ -1826,6 +1832,12 @@ EdcaTxopN::AssignStreams (int64_t stream)
   NS_LOG_FUNCTION (this << stream);
   m_rng->AssignStreams (stream);
   return 1;
+}
+
+void
+EdcaTxopN::ClearAgreeQueue(Mac48Address recipient, uint8_t tid)
+{
+  m_baManager->ClearAgreeQueue(recipient,tid);
 }
 
 void

@@ -1,0 +1,80 @@
+Waf: Entering directory `/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build'
+Waf: Leaving directory `/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build'
+Build commands will be stored in build/compile_commands.json
+'build' finished successfully (1.143s)
+MCS value		Channel width		short GI		Throughput
+0			20 MHz			0			5.8091 Mbit/s
+0			20 MHz			1			6.55452 Mbit/s
+0			40 MHz			0			10.7703 Mbit/s
+0			40 MHz			1			12.3295 Mbit/s
+0			80 MHz			0			18.7533 Mbit/s
+0			80 MHz			1			21.974 Mbit/s
+0			160 MHz			0			29.9899 Mbit/s
+0			160 MHz			1			36.1935 Mbit/s
+1			20 MHz			0			11.8196 Mbit/s
+1			20 MHz			1			13.1667 Mbit/s
+1			40 MHz			0			22.2449 Mbit/s
+1			40 MHz			1			24.8733 Mbit/s
+1			80 MHz			0			39.7829 Mbit/s
+1			80 MHz			1			44.737 Mbit/s
+1			160 MHz			0			65.6583 Mbit/s
+1			160 MHz			1			74.2265 Mbit/s
+2			20 MHz			0			17.7747 Mbit/s
+2			20 MHz			1			19.7554 Mbit/s
+2			40 MHz			0			33.5475 Mbit/s
+2			40 MHz			1			37.3452 Mbit/s
+2			80 MHz			0			60.173 Mbit/s
+2			80 MHz			1			67.0184 Mbit/s
+2			160 MHz			0			100.005 Mbit/s
+2			160 MHz			1			111.301 Mbit/s
+3			20 MHz			0			23.7805 Mbit/s
+3			20 MHz			1			26.3912 Mbit/s
+3			40 MHz			0			45.0043 Mbit/s
+3			40 MHz			1			49.942 Mbit/s
+3			80 MHz			0			81.1625 Mbit/s
+3			80 MHz			1			90.1889 Mbit/s
+3			160 MHz			0			135.806 Mbit/s
+3			160 MHz			1			150.397 Mbit/s
+4			20 MHz			0			35.686 Mbit/s
+4			20 MHz			1			39.6828 Mbit/s
+4			40 MHz			0			67.6201 Mbit/s
+4			40 MHz			1			75.2322 Mbit/s
+4			80 MHz			0			122.38 Mbit/s
+4			80 MHz			1			136.079 Mbit/s
+4			160 MHz			0			205.596 Mbit/s
+4			160 MHz			1			228.343 Mbit/s
+5			20 MHz			0			47.5468 Mbit/s
+5			20 MHz			1			52.8801 Mbit/s
+5			40 MHz			0			90.0628 Mbit/s
+5			40 MHz			1			100.243 Mbit/s
+5			80 MHz			0			162.296 Mbit/s
+5			80 MHz			1			181.003 Mbit/s
+5			160 MHz			0			271.709 Mbit/s
+5			160 MHz			1			303.72 Mbit/s
+6			20 MHz			0			53.5584 Mbit/s
+6			20 MHz			1			59.4476 Mbit/s
+6			40 MHz			0			101.446 Mbit/s
+6			40 MHz			1			112.765 Mbit/s
+6			80 MHz			0			183.179 Mbit/s
+6			80 MHz			1			203.818 Mbit/s
+6			160 MHz			0			306.28 Mbit/s
+6			160 MHz			1			341.663 Mbit/s
+7			20 MHz			0			59.4959 Mbit/s
+7			20 MHz			1			66.114 Mbit/s
+7			40 MHz			0			112.682 Mbit/s
+7			40 MHz			1			125.283 Mbit/s
+7			80 MHz			0			203.54 Mbit/s
+7			80 MHz			1			226.029 Mbit/s
+7			160 MHz			0			341.398 Mbit/s
+7			160 MHz			1			379.626 Mbit/s
+8			20 MHz			0			71.4167 Mbit/s
+8			20 MHz			1			79.3844 Mbit/s
+8			40 MHz			0			135.379 Mbit/s
+8			40 MHz			1			150.43 Mbit/s
+8			80 MHz			0			244.643 Mbit/s
+8			80 MHz			1			272.263 Mbit/s
+8			160 MHz			0			411.111 Mbit/s
+8			160 MHz			1			27.206 Mbit/s
+assert failed. cond="channelWidth != 20", msg="VHT MCS 9 forbidden at 20 MHz (only allowed when NSS = 3)", file=../src/wifi/model/wifi-mode.cc, line=167
+terminate called without an active exception
+Command ['/home/kty/workspace_git/2016_ch_bonding_ns3/ns-allinone-3.26/ns-3.26/build/scratch/my_model_test2'] terminated with signal SIGIOT. Run it under a debugger to get more information (./waf --run <program> --command-template="gdb --args %s <args>").
