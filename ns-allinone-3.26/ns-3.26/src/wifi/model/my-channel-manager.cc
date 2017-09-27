@@ -548,8 +548,8 @@ void ChannelBondingManager::SetPhysCallback()
 		else
 		{
 			//m_phys[*i]->SetReceiveErrorCallback (MakeCallback (&ChannelBondingManager::ReceivePrimaryError, this));
-  			m_phys[*i]->SetReceiveErrorCallback (MakeCallback (&ChannelBondingManager::ReceiveError, this));
-//			m_phys[*i]->SetReceiveErrorCallback(MakeNullCallback<void, Ptr<Packet>, double> ());
+//  			m_phys[*i]->SetReceiveErrorCallback (MakeCallback (&ChannelBondingManager::ReceiveError, this));
+			m_phys[*i]->SetReceiveErrorCallback(MakeNullCallback<void, Ptr<Packet>, double> ());
 		}
 
 		m_phys[*i]->SetReceiveOkCallback(MakeCallback (func, this));
@@ -609,7 +609,7 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 												&ChannelBondingManager::ClearReceiveRecord, this
 												);
 
-  		error_index = CheckError(Packet);
+//  		error_index = CheckError(Packet);
 	}
 
 	bool isampdu = false;                              //manage 1 subchannel receive packet
@@ -673,7 +673,10 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 					request_ch = GetChannelWithWidth(request_width);
 				}
 
-				uint32_t received_num = GetNumberOfReceive();
+//				uint32_t received_num = GetNumberOfReceive();
+				uint32_t received_num = 0;
+				if (ch_num == primary_ch)
+					received_num = request_width/20;
 
 				if(received_num != 0 &&
 					received_num == (request_width/20) ){
@@ -745,7 +748,7 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 
 void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
 {
-	bool isampdu = false;                   //marge receive packet and forwardup to mac-low
+//	bool isampdu = false;                   //marge receive packet and forwardup to mac-low
 	AmpduTag ampdu;
 	WifiMacHeader hdr;
 	AmpduSubframeHeader ampduhdr;
@@ -758,17 +761,19 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 		p->RemoveHeader(ampduhdr);
 		p->PeekHeader(hdr);
 		p->AddHeader(ampduhdr);
-		isampdu = true;
+//		isampdu = true;
 	}
 
 	else
 	{
 		p->PeekHeader(hdr);
-		isampdu = false;
+//		isampdu = false;
 	}
 
 
-	if(isampdu || (!hdr.IsRts() && !hdr.IsCts()))
+//	if(isampdu || (!hdr.IsRts() && !hdr.IsCts()))
+
+	if (!hdr.IsRts() && !hdr.IsCts())
 		ClearReceiveRecord();
 
 	m_mac->DeaggregateAmpduAndReceive(Packet, rxSnr,txVector, preamble);
@@ -805,6 +810,7 @@ void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector t
 
 void ChannelBondingManager::ReceiveError(ns3::Ptr<ns3::Packet> packet, double rxSnr)
 {
+	/*
 	if(error_packets.ErrorTime != Simulator::Now())
 	{
 		error_packets.ErrorPacket.clear();
@@ -813,10 +819,12 @@ void ChannelBondingManager::ReceiveError(ns3::Ptr<ns3::Packet> packet, double rx
 
 	error_packets.rxSnr = rxSnr;
 	error_packets.ErrorPacket.push_back(packet->Copy());
+	*/
 }
 
 void ChannelBondingManager::ReceivePrimaryError(ns3::Ptr<ns3::Packet> packet, double rxSnr)
 {
+	ClearReceiveRecord();
 	error_packets.ErrorPacket.clear();
 	m_mac->ReceiveError(packet, rxSnr);
 }
