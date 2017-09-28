@@ -4,94 +4,141 @@ import time
 import shutil
 import datetime
 
-
-s = datetime.datetime.now()
-print "start time : " + str(s)
-
-
-input_files = []
-
-procs = []
-
-INPUT_FILE_PATH = "./input/ap/"
-MAX_PROCESS = 16
-
-try:
-    shutil.rmtree('./output')
-
-except OSError as e:
-    if e.errno == 2:
-        pass
-    else:
-        raise
-
-os.makedirs('./output')
-os.makedirs('./output/ap')
-os.makedirs('./output/ap/opt')
-os.makedirs('./output/ap/proposed')
-os.makedirs('./output/ap/waterfall')
-
-os.makedirs('./output/sta')
-os.makedirs('./output/sta/opt')
-os.makedirs('./output/sta/proposed')
-os.makedirs('./output/sta/waterfall')
-
-
-for root, dirs, files in os.walk(INPUT_FILE_PATH + "opt/"):
-    for filename in files:
-        if(filename[0] != '.'):
-            input_files.append("opt/" + filename)
-
-
-for root, dirs, files in os.walk(INPUT_FILE_PATH + "proposed/"):
-    for filename in files:
-        if(filename[0] != '.'):
-            input_files.append("proposed/" + filename)
-
-for root, dirs, files in os.walk(INPUT_FILE_PATH + "waterfall/"):
-    for filename in files:
-        if(filename[0] != '.'):
-            input_files.append("waterfall/" + filename)
+'''
+Function to make command line
+'''
+def buildCommandLine(input_file):
+    cmd = "./waf --run scratch/my_test --command-template=\"%s --test_number="
+    cmd += input_file
+    cmd += "\""
+    # DEBUG: cmd = "echo " + input_file
+    return cmd
 
 '''
-for root, dirs, files in os.walk(INPUT_FILE_PATH):
-    for filename in files:
-        if(filename[0] != '.'):
-            input_files.append(filename)
+Function to run new process 
 '''
-while len(input_files) is not 0:
-    while len(procs) < MAX_PROCESS and len(input_files) is not 0 :
-        #add jobs
-        cmd = "./waf --run scratch/my_test --command-template=\"%s --test_number="
-        cmd += input_files.pop(0)
-        cmd += "\""
-        print cmd
-        fd = subprocess.Popen(cmd, shell=True,
-                              stdin=subprocess.PIPE,
-                              stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE)
-        procs.append(fd)
+def runCommand(command):
+    return subprocess.Popen(command, shell=True,
+                                  stdin=subprocess.PIPE,
+                                  stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE)
 
-    deleted_num = 0
-    for i in range(len (procs)):
-        if procs[i - deleted_num ].poll() is not None:
-            del procs[i - deleted_num ]
-            deleted_num += 1
+'''
+Delete completed process in the list
+
+'''
+def deleteCompleteProcess(proc_list, input_list):
+    for proc in proc_list:
+        if proc.poll() is not None:
+            #check the output
+            if len(input_list) != len(proc_list):
+                # something wrong
+                print("ERROR:: some input file names are leaked")
+                print("Len(input) [%d], Len(proc) [%d]" % (len(input_list), len(proc_list)))
+                del proc
+                exit(-1)
+
+            output_file = input_list[proc_list.index(proc)]
+            
+            del input_list[proc_list.index(proc)]
+            del proc_list[proc_list.index(proc)]
+
+            if not os.path.isfile(OUTPUT_FILE_PATH + output_file):
+                # if there is no file, rerun process
+                cmd = buildCommandLine(input_file_name)
+                print("Re-run: " + cmd)
+                fd = runCommand(cmd)
+                procs.append(fd)
+                input_list.append(output_file)
 
 
-    time.sleep(1)
+'''
+Main script
+'''
 
-while len(procs) is not 0:
-    deleted_num = 0
-    for i in range(len (procs)):
-        if procs[i - deleted_num ].poll() is not None:
-            del procs[i-deleted_num]
-            deleted_num += 1
+if __name__ == '__main__':
 
-    time.sleep(1)
+    s = datetime.datetime.now()
+    print "start time : " + str(s)
 
-print "all test is end"
-e = datetime.datetime.now()
-print "End Time : " + str(e)
-print "spend time : " + str(e - s)
+
+    input_files = []
+
+    procs = []
+
+    INPUT_FILE_PATH = "./input/ap/"
+    OUTPUT_FILE_PATH = "./output/ap/"
+    MAX_PROCESS = 16
+
+    try:
+        shutil.rmtree('./output')
+
+    except OSError as e:
+        if e.errno == 2:
+            pass
+        else:
+            raise
+
+    os.makedirs('./output')
+    os.makedirs('./output/ap')
+    os.makedirs('./output/ap/opt')
+    os.makedirs('./output/ap/proposed')
+    os.makedirs('./output/ap/waterfall')
+
+    os.makedirs('./output/sta')
+    os.makedirs('./output/sta/opt')
+    os.makedirs('./output/sta/proposed')
+    os.makedirs('./output/sta/waterfall')
+
+
+    for root, dirs, files in os.walk(INPUT_FILE_PATH + "opt/"):
+        for filename in files:
+            if(filename[0] != '.'):
+                input_files.append("opt/" + filename)
+
+
+    for root, dirs, files in os.walk(INPUT_FILE_PATH + "proposed/"):
+        for filename in files:
+            if(filename[0] != '.'):
+                input_files.append("proposed/" + filename)
+
+    for root, dirs, files in os.walk(INPUT_FILE_PATH + "waterfall/"):
+        for filename in files:
+            if(filename[0] != '.'):
+                input_files.append("waterfall/" + filename)
+
+    '''
+    for root, dirs, files in os.walk(INPUT_FILE_PATH):
+        for filename in files:
+            if(filename[0] != '.'):
+                input_files.append(filename)
+    '''
+    input_file_name_list = []
+
+    while len(input_files) is not 0:
+        while len(procs) < MAX_PROCESS and len(input_files) is not 0 :
+            input_file_name = input_files.pop(0)
+            input_file_name_list.append(input_file_name)
+
+            #add jobs
+            cmd = buildCommandLine(input_file_name)
+            print cmd
+            fd = runCommand(cmd)
+            procs.append(fd)
+
+        # delete process that is finished
+        deleteCompleteProcess(procs, input_file_name_list)
+
+        # little wait
+        time.sleep(1)
+
+    while len(procs) is not 0:
+        deleteCompleteProcess(procs, input_file_name_list)
+        time.sleep(1)
+
+    print "all test is end"
+    e = datetime.datetime.now()
+    print "End Time : " + str(e)
+    print "spend time : " + str(e - s)
+               
 
