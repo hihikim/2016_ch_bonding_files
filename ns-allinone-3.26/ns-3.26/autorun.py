@@ -4,6 +4,10 @@ import time
 import shutil
 import datetime
 
+
+OUTPUT_FILE_PATH = "./output/ap/"
+
+
 '''
 Function to make command line
 '''
@@ -45,7 +49,7 @@ def deleteCompleteProcess(proc_list, input_list):
 
             if not os.path.isfile(OUTPUT_FILE_PATH + output_file):
                 # if there is no file, rerun process
-                cmd = buildCommandLine(input_file_name)
+                cmd = buildCommandLine(output_flie)
                 print("Re-run: " + cmd)
                 fd = runCommand(cmd)
                 procs.append(fd)
@@ -67,7 +71,6 @@ if __name__ == '__main__':
     procs = []
 
     INPUT_FILE_PATH = "./input/ap/"
-    OUTPUT_FILE_PATH = "./output/ap/"
     MAX_PROCESS = 16
 
     try:
