@@ -3,16 +3,25 @@ import os
 import time
 import shutil
 import datetime
-
+import gflags
+import sys
 
 OUTPUT_FILE_PATH = "./output/ap/"
+FLAGS = gflags.FLAGS
+
+'''
+Definition of flags
+'''
+gflags.DEFINE_bool('up', False, 'Is the test for uplink, otherwise downlink will be used as a default')
 
 
 '''
 Function to make command line
 '''
-def buildCommandLine(input_file):
-    cmd = "./waf --run scratch/my_test --command-template=\"%s --test_number="
+def buildCommandLine(uplink, input_file):
+    cmd = "./waf --run scratch/my_test --command-template=\"%s --link_type="
+    cmd += uplink
+    cmd += " --test_number="
     cmd += input_file
     cmd += "\""
     # DEBUG: cmd = "echo " + input_file
@@ -62,6 +71,7 @@ Main script
 
 if __name__ == '__main__':
 
+    FLAGS(sys.argv)
     s = datetime.datetime.now()
     print "start time : " + str(s)
 
@@ -124,7 +134,11 @@ if __name__ == '__main__':
             input_file_name_list.append(input_file_name)
 
             #add jobs
-            cmd = buildCommandLine(input_file_name)
+            cmd = ''
+	    if FLAGS.up == True:
+		cmd = buildCommandLine("True", input_file_name)
+ 	    else
+		cmd = buildCommandLine("False", input_file_name)
             print cmd
             fd = runCommand(cmd)
             procs.append(fd)
