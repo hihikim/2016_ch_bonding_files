@@ -137,7 +137,7 @@ if __name__ == '__main__':
             cmd = ''
 	    if FLAGS.up == True:
 		cmd = buildCommandLine("True", input_file_name)
- 	    else
+ 	    else:
 		cmd = buildCommandLine("False", input_file_name)
             print cmd
             fd = runCommand(cmd)
