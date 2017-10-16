@@ -58,8 +58,13 @@ def deleteCompleteProcess(proc_list, input_list):
 
             if not os.path.isfile(OUTPUT_FILE_PATH + output_file):
                 # if there is no file, rerun process
-                cmd = buildCommandLine(output_file)
-                print("Re-run: " + cmd)
+            	cmd = ''
+	    	if FLAGS.up == True:
+			cmd = buildCommandLine("True", output_file)
+ 	    	else:
+			cmd = buildCommandLine("False", output_file)
+                
+		print("Re-run: " + cmd)
                 fd = runCommand(cmd)
                 procs.append(fd)
                 input_list.append(output_file)
