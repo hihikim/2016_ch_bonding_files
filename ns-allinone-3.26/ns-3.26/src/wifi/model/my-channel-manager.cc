@@ -812,7 +812,7 @@ void ChannelBondingManager::Error(Ptr<Packet> packet, double rxSnr, uint16_t ch_
 bool ChannelBondingManager::CheckItFirst(Ptr<Packet> packet)
 {
 	Time now = Simulator::Now();
-	if (last_receive_or_error_time.compare(now) != 0) //new packet arrive
+	if (last_receive_or_error_time.Compare(now) != 0) //new packet arrive
 	{
 		RECountLimit = 0;
 		RECount = 1;
@@ -820,7 +820,7 @@ bool ChannelBondingManager::CheckItFirst(Ptr<Packet> packet)
 		ErrReport = false;
 		last_receive_or_error_time = now;
 		last_packet = packet->Copy();
-		ClearReceiveRecord()
+		ClearReceiveRecord();
 		return true;
 	}
 
@@ -890,20 +890,6 @@ void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector t
 	SendPacket (packet, txVector, preamble, NORMAL_MPDU);
 }
 
-
-void ChannelBondingManager::ReceiveError(ns3::Ptr<ns3::Packet> packet, double rxSnr)
-{
-	/*
-	if(error_packets.ErrorTime != Simulator::Now())
-	{
-		error_packets.ErrorPacket.clear();
-		error_packets.ErrorTime = Simulator::Now();
-	}
-
-	error_packets.rxSnr = rxSnr;
-	error_packets.ErrorPacket.push_back(packet->Copy());
-	*/
-}
 
 void ChannelBondingManager::ReceivePrimaryError(ns3::Ptr<ns3::Packet> packet, double rxSnr)
 {
