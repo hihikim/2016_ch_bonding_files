@@ -624,7 +624,6 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> packet, double rxSnr,
 		request_ch = GetChannelWithWidth(request_width);
 		RECountLimit = int(request_width / 20);
 	}
-		
 
 	bool isampdu = false;                              //manage 1 subchannel receive packet
 	WifiMacHeader hdr;
@@ -660,6 +659,12 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> packet, double rxSnr,
 		}
 	}
 
+	if (!ErrReport && RECountLimit != 0 && isErr && RECount >= RECountLimit)
+	{
+		m_mac->ReceiveError(packet, MinErrSnr);
+		ErrReport = true;
+	}
+
 	received_channel[ch_num] = true;
 	last_received_packet[ch_num] = packet->Copy();
 
@@ -667,7 +672,7 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> packet, double rxSnr,
 	{
 		if (isampdu)
 		{
-			if (RECountLimit != 0 &&
+			if (RECountLimit != 0 && !ErrReport && 
 				RECount >= RECountLimit) {
 				ManageReceived(packet, rxSnr, txVector, preamble);
 			}
