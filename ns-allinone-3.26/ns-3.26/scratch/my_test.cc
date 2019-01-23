@@ -1576,7 +1576,7 @@ void NodeManager::PrintThroughputInPeriod()
 			j != i->second.end();
 			++j)
 		{
-			uint32_t through_packet;
+			uint32_t through_packet = 0;
 
 			if(link_type == Down)
 				through_packet = DynamicCast<UdpServer> (serverApp[*j][i->first].Get(0))->GetReceived();
