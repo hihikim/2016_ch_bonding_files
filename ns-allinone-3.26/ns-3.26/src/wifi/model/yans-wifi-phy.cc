@@ -535,7 +535,7 @@ YansWifiPhy::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, WifiPr
 	  exp_v = 3;
 	  break;
   default:
-	  printf("my edit error: wrong channel width")
+	  printf("my edit error: wrong channel width");
 	  exp_v = 0;
   }
   double power_value = GetPowerDbm(txVector.GetTxPowerLevel()) - 3.0103 * exp_v; 
