@@ -869,11 +869,9 @@ void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector t
 //	std::cout<<"time : "<<Now().GetNanoSeconds()<<"ns | address : "<<m_mac->GetAddress()<<" : width "<<request_width<<std::endl;
 
 	ConvertPacket(packet);                       //split packet
-
+	
 	ClearReceiveRecord();
-
-	//txVector.SetChannelWidth(request_width);
-
+	
 	for(std::vector<uint16_t>::iterator i = ch_numbers.begin();
 	   i != ch_numbers.end()
 	   ;++i)
