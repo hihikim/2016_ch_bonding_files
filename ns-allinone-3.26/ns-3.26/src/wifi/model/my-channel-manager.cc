@@ -501,7 +501,7 @@ uint32_t ChannelBondingManager::GetRequestWidth()
 void ChannelBondingManager::SetPhysCallback()
 {
 	void (ns3::ChannelBondingManager::*func) (Ptr<Packet>, double, WifiTxVector, WifiPreamble);
-	void (ns3::ChannelBondingManager::*efun) (Ptr<Packet> packet, double rxSnr);
+	void (ns3::ChannelBondingManager::*efunc) (Ptr<Packet> packet, double rxSnr);
 
 	int num = 0;
 	for(std::vector<uint16_t>::iterator i = ch_numbers.begin(); i != ch_numbers.end() ; ++i)
