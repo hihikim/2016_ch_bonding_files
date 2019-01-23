@@ -614,9 +614,10 @@ void ChannelBondingManager::Receive8Channel (Ptr<Packet> Packet, double rxSnr, W
 
 void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, uint16_t ch_num)
 {
-	bool isFirst;
+	// bool isFirst;
 	
-	isFirst = CheckItFirst(packet);
+	// isFirst = CheckItFirst(packet);
+	CheckItFirst(packet);  //for counting
 
 	bool isampdu = false;                              //manage 1 subchannel receive packet
 	WifiMacHeader hdr;
@@ -757,8 +758,9 @@ void ChannelBondingManager::Error8Channel(Ptr<Packet> packet, double rxSnr)
 void ChannelBondingManager::Error(Ptr<Packet> packet, double rxSnr, uint16_t ch_num)
 {
 
-	bool isFirst;
-	isFirst = CheckItFirst(packet);
+	// bool isFirst;
+	//isFirst = CheckItFirst(packet);
+	CheckItFirst(packet); //counting
 
 	if (!isErr)  //first error
 	{
