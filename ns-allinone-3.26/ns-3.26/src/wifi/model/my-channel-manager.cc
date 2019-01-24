@@ -662,10 +662,16 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> packet, double rxSnr,
 		{
 			if (RECountLimit == 0)
 			{
-				request_width = txVector.GetChannelWidth();
-				request_ch = GetChannelWithWidth(request_width);
-				RECountLimit = int(request_width / 20);
+				uint32_t temp_width = = txVector.GetChannelWidth();				
+				RECountLimit = int(temp_width / 20);
+
+				if (!need_rts_cts)
+				{
+					request_width = temp_width
+					request_ch = GetChannelWithWidth(request_width);
+				}
 			}
+			
 
 			if (!ErrReport && RECountLimit != 0)
 			{
