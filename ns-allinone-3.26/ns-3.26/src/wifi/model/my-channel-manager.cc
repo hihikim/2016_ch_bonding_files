@@ -667,7 +667,7 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> packet, double rxSnr,
 
 				if (!need_rts_cts)
 				{
-					request_width = temp_width
+					request_width = temp_width;
 					request_ch = GetChannelWithWidth(request_width);
 				}
 			}
