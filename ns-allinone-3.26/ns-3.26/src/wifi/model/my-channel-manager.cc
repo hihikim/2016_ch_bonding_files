@@ -42,7 +42,7 @@ ChannelBondingManager::~ChannelBondingManager()
 }
 
 /* static */
-TypeIdf
+TypeId
 ChannelBondingManager::GetTypeId (void)
 {
   static TypeId tid = TypeId ("ns3::ChannelBondingManager")
