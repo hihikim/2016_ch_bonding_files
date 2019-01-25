@@ -42,7 +42,7 @@ ChannelBondingManager::~ChannelBondingManager()
 }
 
 /* static */
-TypeId
+TypeIdf
 ChannelBondingManager::GetTypeId (void)
 {
   static TypeId tid = TypeId ("ns3::ChannelBondingManager")
@@ -552,20 +552,6 @@ void ChannelBondingManager::SetPhysCallback()
 		default:
 			NS_FATAL_ERROR("Wrong subchannels");
 		}
-		/* legacy
-		* 
-		*
-		* if(*i == primary_ch)
-		* {
-		*	m_phys[*i]->SetReceiveErrorCallback (MakeCallback (&ChannelBondingManager::ReceivePrimaryError, this));
-		* }
-		* else
-		* {
-		* 	//m_phys[*i]->SetReceiveErrorCallback (MakeCallback (&ChannelBondingManager::ReceivePrimaryError, this));
-  		* 	m_phys[*i]->SetReceiveErrorCallback (MakeCallback (&ChannelBondingManager::ReceiveError, this));
-		* 	//m_phys[*i]->SetReceiveErrorCallback(MakeNullCallback<void, Ptr<Packet>, double> ());
-		* }
-		*/
 
 		m_phys[*i]->SetReceiveOkCallback(MakeCallback (func, this));
 		m_phys[*i]->SetReceiveErrorCallback(MakeCallback(efunc, this));
@@ -617,7 +603,15 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> packet, double rxSnr,
 	// bool isFirst;
 	
 	// isFirst = CheckItFirst(packet);
-	CheckItFirst(packet);  //for counting
+	if (CheckItFirst(packet, rxSnr)  //check and count receive same packet
+	{
+		MinSnr = rxSnr;
+	}
+	else if (MinSnr > rxSnr)  //use minimal rxsnr packet state
+	{
+		isErr = false;
+	}
+	
 
 	bool isampdu = false;                              //manage 1 subchannel receive packet
 	WifiMacHeader hdr;
@@ -679,7 +673,7 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> packet, double rxSnr,
 				{
 					if (isErr)
 					{
-						m_mac->ReceiveError(packet, MinErrSnr);
+						m_mac->ReceiveError(packet, MinSnr);
 						ErrReport = true;
 					}
 					else
@@ -763,36 +757,34 @@ void ChannelBondingManager::Error8Channel(Ptr<Packet> packet, double rxSnr)
 
 void ChannelBondingManager::Error(Ptr<Packet> packet, double rxSnr, uint16_t ch_num)
 {
+	bool ex_isErr = isErr;
 
-	// bool isFirst;
-	//isFirst = CheckItFirst(packet);
-	CheckItFirst(packet); //counting
-
-	if (!isErr)  //first error
+	if (CheckItFirst(packet)) //counting
 	{
-		MinErrSnr = rxSnr;
-	}
-
-	if (MinErrSnr > rxSnr)
-	{
-		MinErrSnr = rxSnr;
+		MinSnr = rxSnr;
+		isErr = true;
 	}
 
 	if (ch_num == primary_ch)  //if channel is primary then it most be error
 	{
 		isErr = true;   //error is occured
+
+		if (MinSnr > rxSnr)
+			MinSnr = rxSnr;		
 		
 		if (RECountLimit == 0)  //if the channel of first error detection is primary channel then we don't know channel width
 		{             //so just report error
-			m_mac->ReceiveError(packet, MinErrSnr);
+			m_mac->ReceiveError(packet, MinSnr);
 			ErrReport = true;
 		}
 	}
 
 	else
 	{
-		isErr = true;
-
+		if (MinSnr > rxSnr) // use minimal snr channel
+		{
+			isErr = true;
+		}
 		AmpduTag ampdu;
 		WifiMacHeader hdr;
 		AmpduSubframeHeader ampduhdr;
@@ -805,14 +797,17 @@ void ChannelBondingManager::Error(Ptr<Packet> packet, double rxSnr, uint16_t ch_
 			p->PeekHeader(hdr);
 			if (hdr.IsRts() || hdr.IsCts())   // rts/cts is check of channel use
 			{
-				isErr = false;
+				isErr = ex_isErr; //only affected by primary channel
 			}
-		}
+		}		
+
+		if (MinSnr > rxSnr)
+			MinSnr = rxSnr;
 	}
 	
 	if (!ErrReport && RECountLimit != 0 && isErr && RECount >= RECountLimit)
 	{
-		m_mac->ReceiveError(packet, MinErrSnr);
+		m_mac->ReceiveError(packet, MinSnr);
 		ErrReport = true;
 	}
 }

@@ -93,7 +93,7 @@ private:
 	Time last_receive_or_error_time;  //last time of error/receive packet
 	uint16_t RECount; //receive or error count
 	uint16_t RECountLimit;  //required number of receive or error (0: unknown)
-	double MinErrSnr; //least snr value of error packets
+	double MinSnr; //minimum snr packets
 	bool isErr, ErrReport; //true false of error occur, report
 
 	Ptr<Packet> last_packet; //latest errored/received packet
