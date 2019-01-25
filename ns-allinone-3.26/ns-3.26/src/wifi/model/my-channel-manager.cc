@@ -600,7 +600,8 @@ void ChannelBondingManager::Receive8Channel (Ptr<Packet> Packet, double rxSnr, W
 
 void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, uint16_t ch_num)
 {
-	if (CheckItFirst(packet, rxSnr))  //check and count receive same packet
+	bool ex_isErr = isErr;
+	if (CheckItFirst(packet))  //check and count receive same packet
 	{
 		MinSnr = rxSnr;
 	}
@@ -686,6 +687,7 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> packet, double rxSnr,
 		{
 			if (hdr.IsRts() || hdr.IsCts())
 			{
+				isErr = ex_isErr;
 				if (primary_ch == ch_num)
 					NeedRtsCts(true);
 
