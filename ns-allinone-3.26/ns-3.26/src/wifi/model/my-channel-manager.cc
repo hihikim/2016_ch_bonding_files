@@ -600,10 +600,7 @@ void ChannelBondingManager::Receive8Channel (Ptr<Packet> Packet, double rxSnr, W
 
 void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, uint16_t ch_num)
 {
-	// bool isFirst;
-	
-	// isFirst = CheckItFirst(packet);
-	if (CheckItFirst(packet, rxSnr)  //check and count receive same packet
+	if (CheckItFirst(packet, rxSnr))  //check and count receive same packet
 	{
 		MinSnr = rxSnr;
 	}
