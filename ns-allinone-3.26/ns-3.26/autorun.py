@@ -4,7 +4,8 @@ import time
 import shutil
 import datetime
 import gflags
-import random
+# import random
+import numpy as np
 import sys
 
 OUTPUT_FILE_PATH = "./output/ap/"
@@ -141,14 +142,15 @@ if __name__ == '__main__':
 
             #add jobs
             cmd = ''
-        if FLAGS.up == True:
-            cmd = buildCommandLine("True", input_file_name)
-        else:
-            cmd = buildCommandLine("False", input_file_name)
-        print cmd
-        time.sleep(random.random() * 5)  # time delay 0~5 sec
-        fd = runCommand(cmd)
-        procs.append(fd)
+            if FLAGS.up == True:
+                cmd = buildCommandLine("True", input_file_name)
+            else:
+                cmd = buildCommandLine("False", input_file_name)
+            print cmd
+            # time.sleep(random.random() * 5)  # time delay 0~5 sec
+            time.sleep(np.random.rand() * 5)  # time delay 0~5 sec
+            fd = runCommand(cmd)
+            procs.append(fd)
 
         # delete process that is finished
         deleteCompleteProcess(procs, input_file_name_list)
