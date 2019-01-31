@@ -87,7 +87,7 @@ if __name__ == '__main__':
     procs = []
 
     INPUT_FILE_PATH = "./input/ap/"
-    MAX_PROCESS = 16
+    MAX_PROCESS = 15
 
     try:
         shutil.rmtree('./output')
