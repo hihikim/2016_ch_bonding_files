@@ -146,9 +146,9 @@ if __name__ == '__main__':
         else:
             cmd = buildCommandLine("False", input_file_name)
             print cmd
-            time.sleep(random.random() * 5)  # time delay 0~5 sec
-            fd = runCommand(cmd)
-            procs.append(fd)
+        time.sleep(random.random() * 5)  # time delay 0~5 sec
+        fd = runCommand(cmd)
+        procs.append(fd)
 
         # delete process that is finished
         deleteCompleteProcess(procs, input_file_name_list)
