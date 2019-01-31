@@ -21,6 +21,9 @@ NS_LOG_COMPONENT_DEFINE ("ChannelBondingManager");
 ChannelBondingManager::ChannelBondingManager()
 : ch_map(ChannelMapping())
 {
+	last_receive_or_error_time = Time();
+	isErr = false;
+
 	need_rts_cts = false;
 	max_width = 160;
 	primary_ch = 36;
@@ -498,6 +501,7 @@ uint32_t ChannelBondingManager::GetRequestWidth()
 void ChannelBondingManager::SetPhysCallback()
 {
 	void (ns3::ChannelBondingManager::*func) (Ptr<Packet>, double, WifiTxVector, WifiPreamble);
+	void (ns3::ChannelBondingManager::*efunc) (Ptr<Packet> packet, double rxSnr);
 
 	int num = 0;
 	for(std::vector<uint16_t>::iterator i = ch_numbers.begin(); i != ch_numbers.end() ; ++i)
@@ -507,52 +511,50 @@ void ChannelBondingManager::SetPhysCallback()
 		{
 		case 1:
 			func = &ns3::ChannelBondingManager::Receive1Channel;
+			efunc = &ns3::ChannelBondingManager::Error1Channel;
 			break;
 
 		case 2:
 			func = &ns3::ChannelBondingManager::Receive2Channel;
+			efunc = &ns3::ChannelBondingManager::Error2Channel;
 			break;
 
 		case 3:
 			func = &ns3::ChannelBondingManager::Receive3Channel;
+			efunc = &ns3::ChannelBondingManager::Error3Channel;
 			break;
 
 		case 4:
 			func = &ns3::ChannelBondingManager::Receive4Channel;
+			efunc = &ns3::ChannelBondingManager::Error4Channel;
 			break;
 
 		case 5:
 			func = &ns3::ChannelBondingManager::Receive5Channel;
+			efunc = &ns3::ChannelBondingManager::Error5Channel;
 			break;
 
 		case 6:
 			func = &ns3::ChannelBondingManager::Receive6Channel;
+			efunc = &ns3::ChannelBondingManager::Error6Channel;
 			break;
 
 		case 7:
 			func = &ns3::ChannelBondingManager::Receive7Channel;
+			efunc = &ns3::ChannelBondingManager::Error7Channel;
 			break;
 
 		case 8:
 			func = &ns3::ChannelBondingManager::Receive8Channel;
+			efunc = &ns3::ChannelBondingManager::Error8Channel;
 			break;
 
 		default:
 			NS_FATAL_ERROR("Wrong subchannels");
 		}
 
-		if(*i == primary_ch)
-		{
-			m_phys[*i]->SetReceiveErrorCallback (MakeCallback (&ChannelBondingManager::ReceivePrimaryError, this));
-		}
-		else
-		{
-			//m_phys[*i]->SetReceiveErrorCallback (MakeCallback (&ChannelBondingManager::ReceivePrimaryError, this));
-//  			m_phys[*i]->SetReceiveErrorCallback (MakeCallback (&ChannelBondingManager::ReceiveError, this));
-			m_phys[*i]->SetReceiveErrorCallback(MakeNullCallback<void, Ptr<Packet>, double> ());
-		}
-
 		m_phys[*i]->SetReceiveOkCallback(MakeCallback (func, this));
+		m_phys[*i]->SetReceiveErrorCallback(MakeCallback(efunc, this));
 	}
 }
 
@@ -596,28 +598,25 @@ void ChannelBondingManager::Receive8Channel (Ptr<Packet> Packet, double rxSnr, W
 	ReceiveSubChannel(Packet,rxSnr,txVector,preamble, ch_numbers[7]);
 }
 
-void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, uint16_t ch_num)
+void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, uint16_t ch_num)
 {
-	int error_index = -1;
-	//start timer
-	if(ch_num == primary_ch)
+	bool ex_isErr = isErr;
+	if (CheckItFirst(packet))  //check and count receive same packet
 	{
-		if(clean_timer.IsRunning())
-			clean_timer.Cancel();
-
-		clean_timer = Simulator::Schedule(m_mac->GetSifs(),
-												&ChannelBondingManager::ClearReceiveRecord, this
-												);
-
-//  		error_index = CheckError(Packet);
+		MinSnr = rxSnr;
 	}
+	else if (MinSnr > rxSnr)  //use minimal rxsnr packet state
+	{
+		isErr = false;
+	}
+	
 
 	bool isampdu = false;                              //manage 1 subchannel receive packet
 	WifiMacHeader hdr;
 	AmpduTag ampdu;
 	AmpduSubframeHeader ampduhdr;
 
-	Ptr< ns3::Packet> p = Packet->Copy();
+	Ptr<Packet> p = packet->Copy();
 
 	if(p->PeekPacketTag(ampdu))
 	{
@@ -646,107 +645,195 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr,
 		}
 	}
 
-	if(error_index > -1 && !(hdr.IsRts() || hdr.IsCts()) )
-	{
-		m_mac->ReceiveError(Packet, rxSnr);
-		error_packets.ErrorPacket.clear();
-		ClearReceiveRecord();
-	}
+	received_channel[ch_num] = true;
+	last_received_packet[ch_num] = packet->Copy();
 
-	else
-	{
-		received_channel[ch_num] = true;
-		last_received_packet[ch_num] = Packet->Copy();
-
-		if(hdr.GetAddr1() == m_mac->GetAddress())
+	if (hdr.GetAddr1() == m_mac->GetAddress())
+	{		
+		if (isampdu)
 		{
-			if(isampdu)
+			if (RECountLimit == 0)
 			{
+				uint32_t temp_width = txVector.GetChannelWidth();				
+				RECountLimit = int(temp_width / 20);
 
-				//need_rts_cts = false;
-				//NeedRtsCts(false);
-
-				if(!need_rts_cts &&
-					ch_num == primary_ch)
+				if (!need_rts_cts)
 				{
-					request_width = txVector.GetChannelWidth();
+					request_width = temp_width;
 					request_ch = GetChannelWithWidth(request_width);
 				}
-
-//				uint32_t received_num = GetNumberOfReceive();
-				uint32_t received_num = 0;
-				if (ch_num == primary_ch)
-					received_num = request_width/20;
-
-				if(received_num != 0 &&
-					received_num == (request_width/20) ){
-					ManageReceived(Packet, rxSnr, txVector, preamble);
-				}
 			}
+			
 
-			else
+			if (!ErrReport && RECountLimit != 0)
 			{
-			   /*if(hdr.IsRts() || hdr.IsCts() )
+				if (RECount >= RECountLimit)
 				{
-					if(primary_ch == ch_num)
+					if (isErr)
 					{
-						NeedRtsCts(true);
+						m_mac->ReceiveError(packet, MinSnr);
+						ErrReport = true;
 					}
-
-					request_ch = GetUsableBondingChannel(primary_ch);
-
-					if(request_ch == 0)
-					{
-						request_width = 0;
-					}
-
 					else
-						request_width = ch_map.find(request_ch)->second.Width;
-				}*/
-
-				if(hdr.IsRts() || hdr.IsCts())
-				{
-					//std::cout<<"receive ch : "<<ch_num<<std::endl;
-					if(primary_ch == ch_num)
-						NeedRtsCts(true);
-
-					/*if(primary_ch == ch_num && hdr.IsRts())
 					{
-						NeedRtsCts(true);
+						ManageReceived(packet, rxSnr, txVector, preamble);
 					}
-					else if(primary_ch == ch_num && hdr.IsCts())
-					{
-						NeedRtsCts(false);
-					}*/
-
-					uint16_t usable_bonding_ch = GetUsableBondingChannel(primary_ch);
-
-					if(usable_bonding_ch != 0)
-					{
-						request_ch = usable_bonding_ch;
-						request_width = ch_map.find(request_ch)->second.Width;
-					}
-				}
-
-			   if(ch_num == primary_ch){
-					ManageReceived(Packet, rxSnr, txVector, preamble);
-				}
+					
+				}				
 			}
 		}
 
 		else
 		{
-			if(ch_num == primary_ch){
-				ManageReceived(Packet, rxSnr, txVector, preamble);
+			if (hdr.IsRts() || hdr.IsCts())
+			{
+				isErr = ex_isErr;
+				if (primary_ch == ch_num)
+					NeedRtsCts(true);
+
+				uint16_t usable_bonding_ch = GetUsableBondingChannel(primary_ch);
+
+				if (usable_bonding_ch != 0)
+				{
+					request_ch = usable_bonding_ch;
+					request_width = ch_map.find(request_ch)->second.Width;
+				}
+			}
+
+			if (ch_num == primary_ch) {
+				ManageReceived(packet, rxSnr, txVector, preamble);
 			}
 		}
 	}
 
+	else  //not my packet
+	{
+		if (ch_num == primary_ch) {
+			ManageReceived(packet, rxSnr, txVector, preamble);
+		}
+	}
 }
 
+void ChannelBondingManager::Error1Channel(Ptr<Packet> packet, double rxSnr)
+{
+	Error(packet, rxSnr, ch_numbers[0]);
+}
+
+void ChannelBondingManager::Error2Channel(Ptr<Packet> packet, double rxSnr)
+{
+	Error(packet, rxSnr, ch_numbers[1]);
+}
+
+void ChannelBondingManager::Error3Channel(Ptr<Packet> packet, double rxSnr)
+{
+	Error(packet, rxSnr, ch_numbers[2]);
+}
+
+void ChannelBondingManager::Error4Channel(Ptr<Packet> packet, double rxSnr)
+{
+	Error(packet, rxSnr, ch_numbers[3]);
+}
+
+void ChannelBondingManager::Error5Channel(Ptr<Packet> packet, double rxSnr)
+{
+	Error(packet, rxSnr, ch_numbers[4]);
+}
+
+void ChannelBondingManager::Error6Channel(Ptr<Packet> packet, double rxSnr)
+{
+	Error(packet, rxSnr, ch_numbers[5]);
+}
+
+void ChannelBondingManager::Error7Channel(Ptr<Packet> packet, double rxSnr)
+{
+	Error(packet, rxSnr, ch_numbers[6]);
+}
+
+void ChannelBondingManager::Error8Channel(Ptr<Packet> packet, double rxSnr)
+{
+	Error(packet, rxSnr, ch_numbers[7]);
+}
+
+void ChannelBondingManager::Error(Ptr<Packet> packet, double rxSnr, uint16_t ch_num)
+{
+	bool ex_isErr = isErr;
+
+	if (CheckItFirst(packet)) //counting
+	{
+		MinSnr = rxSnr;
+		isErr = true;
+	}
+
+	if (ch_num == primary_ch)  //if channel is primary then it most be error
+	{
+		isErr = true;   //error is occured
+
+		if (MinSnr > rxSnr)
+			MinSnr = rxSnr;		
+		
+		if (RECountLimit == 0)  //if the channel of first error detection is primary channel then we don't know channel width
+		{             //so just report error
+			m_mac->ReceiveError(packet, MinSnr);
+			ErrReport = true;
+		}
+	}
+
+	else
+	{
+		if (MinSnr > rxSnr) // use minimal snr channel
+		{
+			isErr = true;
+		}
+		AmpduTag ampdu;
+		WifiMacHeader hdr;
+		AmpduSubframeHeader ampduhdr;
 
 
-void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
+		Ptr<Packet> p = packet->Copy();
+
+		if (!p->PeekPacketTag(ampdu))
+		{			
+			p->PeekHeader(hdr);
+			if (hdr.IsRts() || hdr.IsCts())   // rts/cts is check of channel use
+			{
+				isErr = ex_isErr; //only affected by primary channel
+			}
+		}		
+
+		if (MinSnr > rxSnr)
+			MinSnr = rxSnr;
+	}
+	
+	if (!ErrReport && RECountLimit != 0 && isErr && RECount >= RECountLimit)
+	{
+		m_mac->ReceiveError(packet, MinSnr);
+		ErrReport = true;
+	}
+}
+
+bool ChannelBondingManager::CheckItFirst(Ptr<Packet> packet)
+{
+	Time now = Simulator::Now();
+	if (last_receive_or_error_time.Compare(now) != 0) //new packet arrive
+	{
+		RECountLimit = 0;
+		RECount = 1;
+		isErr = false;
+		ErrReport = false;
+		last_receive_or_error_time = now;
+		last_packet = packet->Copy();
+		ClearReceiveRecord();
+		return true;
+	}
+
+	else
+	{
+		RECount += 1;
+		return false;
+	}
+}
+
+void ChannelBondingManager::ManageReceived (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
 {
 //	bool isampdu = false;                   //marge receive packet and forwardup to mac-low
 	AmpduTag ampdu;
@@ -754,7 +841,7 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 	AmpduSubframeHeader ampduhdr;
 
 
-	Ptr<ns3::Packet> p = Packet->Copy();
+	Ptr<Packet> p = packet->Copy();
 
 	if(p->PeekPacketTag(ampdu))
 	{
@@ -776,7 +863,7 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> Packet, double rxSnr, Wi
 	if (!hdr.IsRts() && !hdr.IsCts())
 		ClearReceiveRecord();
 
-	m_mac->DeaggregateAmpduAndReceive(Packet, rxSnr,txVector, preamble);
+	m_mac->DeaggregateAmpduAndReceive(packet, rxSnr,txVector, preamble);
 }
 
 void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble, enum mpduType mpdutype)
@@ -784,11 +871,9 @@ void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector t
 //	std::cout<<"time : "<<Now().GetNanoSeconds()<<"ns | address : "<<m_mac->GetAddress()<<" : width "<<request_width<<std::endl;
 
 	ConvertPacket(packet);                       //split packet
-
+	
 	ClearReceiveRecord();
-
-	//txVector.SetChannelWidth(request_width);
-
+	
 	for(std::vector<uint16_t>::iterator i = ch_numbers.begin();
 	   i != ch_numbers.end()
 	   ;++i)
@@ -807,20 +892,6 @@ void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector t
 	SendPacket (packet, txVector, preamble, NORMAL_MPDU);
 }
 
-
-void ChannelBondingManager::ReceiveError(ns3::Ptr<ns3::Packet> packet, double rxSnr)
-{
-	/*
-	if(error_packets.ErrorTime != Simulator::Now())
-	{
-		error_packets.ErrorPacket.clear();
-		error_packets.ErrorTime = Simulator::Now();
-	}
-
-	error_packets.rxSnr = rxSnr;
-	error_packets.ErrorPacket.push_back(packet->Copy());
-	*/
-}
 
 void ChannelBondingManager::ReceivePrimaryError(ns3::Ptr<ns3::Packet> packet, double rxSnr)
 {
@@ -1006,11 +1077,10 @@ uint8_t ChannelBondingManager::GetNumberOfReceive()       //find number of recei
 
 uint32_t ChannelBondingManager::GetConvertedSize(Ptr<const Packet> packet)    //get converted packet size
 {
-
-
+  // legacy
   WifiMacHeader hdr;
   AmpduSubframeHeader ampduhdr;
-  Ptr<Packet> origin_p = packet->Copy();
+  Ptr<Packet> origin_p = packet->Copy();	
 
 
   origin_p->RemoveHeader(ampduhdr);

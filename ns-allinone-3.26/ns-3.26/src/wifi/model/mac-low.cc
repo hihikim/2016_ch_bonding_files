@@ -808,30 +808,7 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
       //m_aggregateQueue > 0 occurs when a RTS/CTS exchange failed before an A-MPDU transmission.
       //In that case, we transmit the same A-MPDU as previously.
 
-	  /*
-	   * original
-	  // my edit begin
-      m_currentPacket = stored_packet->Copy();
-      m_currentHdr = stored_hdr;
-      // my edit end
-
-      m_sentMpdus = m_aggregateQueue->GetSize ();
-	  m_ampdu = true;
-	  if (m_sentMpdus > 1)
-	   {
-		  m_txParams.EnableCompressedBlockAck ();
-	   }
-
-	  else if (m_currentHdr.IsQosData ())
-	   {
-		  //VHT single MPDUs are followed by normal ACKs
-		  m_txParams.EnableAck ();
-	   }
-	  */
-
-
-
-
+	  
      // my edit begin
       m_currentPacket = stored_packet->Copy();
       m_currentHdr = stored_hdr;

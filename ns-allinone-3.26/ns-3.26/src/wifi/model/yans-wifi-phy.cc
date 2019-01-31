@@ -509,8 +509,40 @@ YansWifiPhy::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, WifiPr
   aMpdu.type = mpdutype;
   aMpdu.mpduRefNumber = m_txMpduReferenceNumber;
   NotifyMonitorSniffTx (packet, (uint16_t)GetFrequency (), GetChannelNumber (), dataRate500KbpsUnits, preamble, txVector, aMpdu);
-  m_state->SwitchToTx (txDuration, packet, GetPowerDbm (txVector.GetTxPowerLevel ()), txVector, preamble);
-  m_channel->Send (this, packet, GetPowerDbm (txVector.GetTxPowerLevel ()) + GetTxGain (), txVector, preamble, mpdutype, txDuration);
+  /*
+   * original tx
+   * m_state->SwitchToTx(txDuration, packet, GetPowerDbm(txVector.GetTxPowerLevel()), txVector, preamble);
+   * m_channel->Send(this, packet, GetPowerDbm(txVector.GetTxPowerLevel()) + GetTxGain(), txVector, preamble, mpdutype, txDuration);
+   */
+
+  /*
+   * my edit
+   * make low power if wider channel width
+   */
+  uint16_t exp_v = 0;
+  switch (txVector.GetChannelWidth())
+  {
+  case 20:
+	  exp_v = 0;
+	  break;
+  case 40:
+	  exp_v = 1;
+	  break;
+  case 80:
+	  exp_v = 2;
+	  break;
+  case 160:
+	  exp_v = 3;
+	  break;
+  default:
+	  printf("my edit error: wrong channel width");
+	  exp_v = 0;
+  }
+  double power_value = GetPowerDbm(txVector.GetTxPowerLevel()) - 3.0103 * exp_v; 
+  // if divide number of channels
+  m_state->SwitchToTx(txDuration, packet, power_value, txVector, preamble);
+  m_channel->Send(this, packet, power_value + GetTxGain(), txVector, preamble, mpdutype, txDuration);
+  
 }
 
 void
