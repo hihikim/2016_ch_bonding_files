@@ -145,7 +145,7 @@ if __name__ == '__main__':
             cmd = buildCommandLine("True", input_file_name)
         else:
             cmd = buildCommandLine("False", input_file_name)
-            print cmd
+        print cmd
         time.sleep(random.random() * 5)  # time delay 0~5 sec
         fd = runCommand(cmd)
         procs.append(fd)
