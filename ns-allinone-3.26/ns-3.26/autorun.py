@@ -60,13 +60,13 @@ def deleteCompleteProcess(proc_list, input_list):
 
             if not os.path.isfile(OUTPUT_FILE_PATH + output_file):
                 # if there is no file, rerun process
-            	cmd = ''
-	    	if FLAGS.up == True:
-			cmd = buildCommandLine("True", output_file)
- 	    	else:
-			cmd = buildCommandLine("False", output_file)
-                
-		print("Re-run: " + cmd)
+                cmd = ''
+                if FLAGS.up == True:
+                    cmd = buildCommandLine("True", output_file)
+                else:
+                    cmd = buildCommandLine("False", output_file)
+
+                print("Re-run: " + cmd)
                 fd = runCommand(cmd)
                 procs.append(fd)
                 input_list.append(output_file)
@@ -80,7 +80,7 @@ if __name__ == '__main__':
 
     FLAGS(sys.argv)
     s = datetime.datetime.now()
-    print "start time : " + str(s)
+    print("start time : " + str(s))
 
 
     input_files = []
@@ -146,7 +146,7 @@ if __name__ == '__main__':
                 cmd = buildCommandLine("True", input_file_name)
             else:
                 cmd = buildCommandLine("False", input_file_name)
-            print cmd
+            print(cmd)
             # time.sleep(random.random() * 5)  # time delay 0~5 sec
             time.sleep(np.random.rand() * 5)  # time delay 0~5 sec
             fd = runCommand(cmd)
@@ -162,9 +162,9 @@ if __name__ == '__main__':
         deleteCompleteProcess(procs, input_file_name_list)
         time.sleep(1)
 
-    print "all test is end"
+    print("all test is end")
     e = datetime.datetime.now()
-    print "End Time : " + str(e)
-    print "spend time : " + str(e - s)
+    print("End Time : " + str(e))
+    print("spend time : " + str(e - s))
                
 
