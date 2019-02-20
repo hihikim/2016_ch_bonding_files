@@ -14,7 +14,7 @@ FLAGS = gflags.FLAGS
 '''
 Definition of flags
 '''
-gflags.DEFINE_bool('up', False, 'Is the test for uplink, otherwise downlink will be used as a default')
+gflags.DEFINE_bool('down', True, 'Is the test for downlink, otherwise set this value to False')
 
 
 '''
@@ -61,7 +61,7 @@ def deleteCompleteProcess(proc_list, input_list):
             if not os.path.isfile(OUTPUT_FILE_PATH + output_file):
                 # if there is no file, rerun process
                 cmd = ''
-                if FLAGS.up == True:
+                if FLAGS.down == True:
                     cmd = buildCommandLine("True", output_file)
                 else:
                     cmd = buildCommandLine("False", output_file)
@@ -142,7 +142,7 @@ if __name__ == '__main__':
 
             #add jobs
             cmd = ''
-            if FLAGS.up == True:
+            if FLAGS.down == True:
                 cmd = buildCommandLine("True", input_file_name)
             else:
                 cmd = buildCommandLine("False", input_file_name)
