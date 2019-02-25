@@ -539,13 +539,7 @@ void MacLow::SetChannelManager(const WifiPhyHelper &phy,uint32_t ch_num, uint32_
 	ch_m->SetMyMac(this);
 
 	ch_m->MakePhys(phy, m_phy, ch_num, ch_width, standard);
-
-	m_phy->SetReceiveOkCallback (MakeNullCallback<void, Ptr<Packet>, double, WifiTxVector, enum WifiPreamble> ());
-	m_phy->SetReceiveErrorCallback (MakeNullCallback<void, Ptr<Packet>, double> ());
-	RemovePhyMacLowListener (m_phy);
-
 	ch_m->SetPhysCallback();
-	SetupPhyMacLowListener (m_phy);
 }
 Ptr<ChannelBondingManager>
 MacLow::GetChannelManager()

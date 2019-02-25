@@ -1404,6 +1404,7 @@ void NodeManager::SetTestEnv()
 
 
 		m_mac = DynamicCast<RegularWifiMac> (DynamicCast<WifiNetDevice>(ap_devs[i->first].Get(0))->GetMac());
+		m_mac->ResetWifiPhy();
 		Ptr<MacLow> m_low = m_mac->GetLow();
 		m_low->EnableChannelBonding();
 
