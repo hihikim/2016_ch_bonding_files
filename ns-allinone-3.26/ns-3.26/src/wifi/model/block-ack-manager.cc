@@ -988,6 +988,21 @@ BlockAckManager::SetTxFailedCallback (TxFailed callback)
 }
 
 void
+BlockAckManager::ClearAgreeQueue(Mac48Address recipient, uint8_t tid)
+{
+
+  AgreementsI agreement = m_agreements.find (std::make_pair (recipient, tid));
+  NS_ASSERT (agreement != m_agreements.end ());
+
+  for (PacketQueueI queueIt = agreement->second.second.begin (); queueIt != agreement->second.second.end (); )
+  {
+    if(!AlreadyExists(queueIt->hdr.GetSequenceNumber(),recipient,tid))
+      InsertInRetryQueue (queueIt);
+    queueIt++;
+  }
+}
+
+void
 BlockAckManager::InsertInRetryQueue (PacketQueueI item)
 {
   NS_LOG_INFO ("Adding to retry queue " << (*item).hdr.GetSequenceNumber ());
