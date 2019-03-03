@@ -990,7 +990,10 @@ BlockAckManager::SetTxFailedCallback (TxFailed callback)
 void
 BlockAckManager::ClearAgreeQueue(Mac48Address recipient, uint8_t tid)
 {
-
+  /*
+    * my add function
+	* 
+	*/
   AgreementsI agreement = m_agreements.find (std::make_pair (recipient, tid));
   NS_ASSERT (agreement != m_agreements.end ());
 

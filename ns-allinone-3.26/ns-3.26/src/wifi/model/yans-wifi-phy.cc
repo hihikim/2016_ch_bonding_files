@@ -516,7 +516,7 @@ YansWifiPhy::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, WifiPr
    */
 
   /*
-   * my edit
+   * my edit begin todo commant
    * make low power if wider channel width
    */
   uint16_t exp_v = 0;
@@ -542,7 +542,9 @@ YansWifiPhy::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, WifiPr
   // if divide number of channels
   m_state->SwitchToTx(txDuration, packet, power_value, txVector, preamble);
   m_channel->Send(this, packet, power_value + GetTxGain(), txVector, preamble, mpdutype, txDuration);
-  
+  /*
+   * my edit end
+   */
 }
 
 void

@@ -78,7 +78,7 @@ RegularWifiMac::~RegularWifiMac ()
   NS_LOG_FUNCTION (this);
 }
 
-Ptr<MacLow> RegularWifiMac::GetLow()
+Ptr<MacLow> RegularWifiMac::GetLow()   //todo commant
 {
 	return m_low;
 }
