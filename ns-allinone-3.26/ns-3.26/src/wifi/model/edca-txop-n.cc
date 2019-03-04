@@ -227,7 +227,8 @@ public:
     return m_txop->MapDestAddressForAggregation (hdr);
   }
 
-  //my add func
+  // my custumized function
+  // call ClearAgreeQueue from m_txop
   virtual void ClearAgreeQueue(Mac48Address recipient, uint8_t tid)
   {
     m_txop->ClearAgreeQueue(recipient,tid);

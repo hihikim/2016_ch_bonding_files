@@ -133,9 +133,12 @@ MacLowAggregationCapableTransmissionListener::GetDestAddressForAggregation (cons
   return 0;
 }
 
+// my custumized function
+//  virtual function for ClearAgreeQueue (overiden in block-ack-manager)
+// function for delete duplicated packet in aq
 void
-MacLowAggregationCapableTransmissionListener::ClearAgreeQueue(Mac48Address recipient, uint8_t tid)
-{
+MacLowAggregationCapableTransmissionListener::ClearAgreeQueue(Mac48Address recipient, uint8_t tid)           
+{                                                                                                                                                                                                        
   return;
 }
 
@@ -385,8 +388,11 @@ MacLow::MacLow ()
   m_ampdu = false;
   m_sentMpdus = 0;
   m_aggregateQueue = CreateObject<WifiMacQueue> ();
-
-  enable_ch_bonding = false;
+ 
+ // my customized parameter
+  // parameter for channel bonding check
+  // if operation use channel bonding then enable_ch_bonding is true
+  enable_ch_bonding = false;   
 }
 
 MacLow::~MacLow ()
@@ -530,11 +536,12 @@ MacLow::SetPhy (Ptr<WifiPhy> phy)
   m_phy = phy;
   m_phy->SetReceiveOkCallback (MakeCallback (&MacLow::DeaggregateAmpduAndReceive, this));
   m_phy->SetReceiveErrorCallback (MakeCallback (&MacLow::ReceiveError, this));
-
   SetupPhyMacLowListener (phy);
 }
 
 void MacLow::SetChannelManager(const WifiPhyHelper &phy,uint32_t ch_num, uint32_t ch_width, enum WifiPhyStandard standard){
+    // my customized function
+    // link with ChannelBondingManager for eRTS/CTS
 	ch_m = CreateObject<ChannelBondingManager>();
 	ch_m->SetMyMac(this);
 
@@ -565,12 +572,12 @@ MacLow::GetPhy (void) const
 
 void
 MacLow::ResetPhy (void)
-{
+{ 
   m_phy->SetReceiveOkCallback (MakeNullCallback<void, Ptr<Packet>, double, WifiTxVector, enum WifiPreamble> ());
   m_phy->SetReceiveErrorCallback (MakeNullCallback<void, Ptr<Packet>, double> ());
   RemovePhyMacLowListener (m_phy);
   m_phy = 0;
-  ch_m = 0;
+  ch_m = 0;  // edited for channel bonding: reset pointer of ChannelBondingManager 
 }
 
 void
@@ -775,7 +782,6 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
    * QapScheduler has taken access to the channel from
    * one of the Edca of the QAP.
    */
-  //need edit #2
 
   m_currentPacket = packet->Copy ();
   // remove the priority tag attached, if any
@@ -786,15 +792,13 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
   m_listener = listener;
   m_txParams = params;
 
+  // edited for channel bonding: : if using channel bonding then prepare sending
   if(enable_ch_bonding)
   {
 	  ch_m->CheckChannelBeforeSend();
   }
 
-
   m_currentTxVector = GetDataTxVector (m_currentPacket, &m_currentHdr);
-
-
 
   if (!m_currentHdr.IsQosData () && !m_currentHdr.IsBlockAck () && !m_currentHdr.IsBlockAckReq ())
     {
@@ -809,10 +813,12 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
       //In that case, we transmit the same A-MPDU as previously.
 
 	  
-     // my edit begin
+     // edited for channel bonding: use unmodified packet
       m_currentPacket = stored_packet->Copy();
       m_currentHdr = stored_hdr;
-     // my edit end
+	 
+	 // edited for channel bonding: use MacLow::CalculateOverallTxTime code for calculate txtime in channel bonding option
+	 // thise code is needed for adjust channel bonding option 
       WifiPreamble preamble;
       //standard says RTS packets can have GF format sec 9.6.0e.1 page 110 bullet b 2
       if (m_phy->GetGreenfield () && m_stationManager->GetGreenfieldSupported (m_currentHdr.GetAddr1 ()))
@@ -831,7 +837,6 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
       Time remainingAmpduDuration = m_phy->CalculateTxDuration (m_currentPacket->GetSize (), m_currentTxVector, preamble, m_phy->GetFrequency ());
 
       if(remainingAmpduDuration <= MilliSeconds(10))
-//      if(false)
       {
         m_sentMpdus = m_aggregateQueue->GetSize ();
         m_ampdu = true;
@@ -846,8 +851,8 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
             m_txParams.EnableAck ();
          }
       }
-// below is all my edit
-      else
+   
+      else // edited for channel bonding: using code of MacLow::ForwardDown for modify packet in channel bonding option
       {
         uint8_t tid = GetTid (stored_original_packet, stored_original_hdr);
         AcIndex ac = QosUtilsMapTidToAc (tid);
@@ -869,10 +874,9 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
         stored_original_packet = packet->Copy();
 
         m_ampdu = IsAmpdu (stored_original_packet, stored_original_hdr);
-        //my edit begin
+        // edited for channel bonding:  store original packet
         stored_packet = m_currentPacket->Copy();
         stored_hdr = m_currentHdr;
-        // my edit end
 
         if (m_ampdu)
         {
@@ -900,10 +904,9 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
 
       m_ampdu = IsAmpdu (m_currentPacket, m_currentHdr);
 
-      //my edit begin
+      // edited for channel bonding:  store original packet
       stored_packet = m_currentPacket->Copy();
 	  stored_hdr = m_currentHdr;
-	  // my edit end
 
       if (m_ampdu)
         {
@@ -923,8 +926,8 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
 
   if (NeedRts ())
     {
-      m_txParams.EnableRts ();
-      if(enable_ch_bonding)
+      m_txParams.EnableRts ();  
+      if(enable_ch_bonding)   // edited for channel bonding:  prepare RTS/CTS
         {
           ch_m->NeedRtsCts(true);
         }
@@ -932,7 +935,7 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
   else
     {
       m_txParams.DisableRts ();
-      if(enable_ch_bonding)
+      if(enable_ch_bonding)   // edited for channel bonding:  prepare RTS/CTS
 	  {
 		  ch_m->NeedRtsCts(false);
 	  }
@@ -941,7 +944,7 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
   NS_LOG_DEBUG ("startTx size=" << GetSize (m_currentPacket, &m_currentHdr) <<
                 ", to=" << m_currentHdr.GetAddr1 () << ", listener=" << m_listener);
 
-  if (m_txParams.MustSendRts ())   //need look
+  if (m_txParams.MustSendRts ()) 
     {
       SendRtsForPacket ();
     }
@@ -949,7 +952,7 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
     {
       if ((m_ctsToSelfSupported || m_stationManager->GetUseNonErpProtection ()) && NeedCtsToSelf ())
         {
-    	  if(enable_ch_bonding)
+    	  if(enable_ch_bonding)  // edited for channel bonding:  prepare RTS/CTS
             ch_m->NeedRtsCts(true);
 
           SendCtsToSelf ();
@@ -1027,7 +1030,6 @@ MacLow::NotifySleepNow (void)
 void
 MacLow::ReceiveOk (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, bool ampduSubframe)
 {
-  //need edit #3
   NS_LOG_FUNCTION (this << packet << rxSnr << txVector.GetMode () << preamble);
   /* A packet is received from the PHY.
    * When we have handled this packet,
@@ -1058,7 +1060,7 @@ MacLow::ReceiveOk (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, Wifi
           if (isPrevNavZero
               && hdr.GetAddr1 () == m_self)
             {
-        	    if(enable_ch_bonding)
+        	    if(enable_ch_bonding)   // edited for channel bonding:  prepare RTS/CTS
         	    	ch_m->NeedRtsCts(true);
 
               NS_LOG_DEBUG ("rx RTS from=" << hdr.GetAddr2 () << ", schedule CTS");
@@ -1510,7 +1512,7 @@ WifiTxVector
 MacLow::GetCtsToSelfTxVector (Ptr<const Packet> packet, const WifiMacHeader *hdr) const
 {
   WifiTxVector result = m_stationManager->GetCtsToSelfTxVector (hdr, packet);
-  if(enable_ch_bonding)
+  if(enable_ch_bonding)   // edited for channel bonding:  adjust new channel width
     result.SetChannelWidth(ch_m->GetRequestWidth());
   return result;
 }
@@ -1519,7 +1521,7 @@ WifiTxVector
 MacLow::GetRtsTxVector (Ptr<const Packet> packet, const WifiMacHeader *hdr) const
 {
   Mac48Address to = hdr->GetAddr1 ();
-  WifiTxVector result = m_stationManager->GetRtsTxVector (to, hdr, packet);
+  WifiTxVector result = m_stationManager->GetRtsTxVector (to, hdr, packet);  // edited for channel bonding:  adjust new channel width
   if(enable_ch_bonding)
     result.SetChannelWidth(ch_m->GetRequestWidth());
   return result;
@@ -1530,7 +1532,7 @@ MacLow::GetDataTxVector (Ptr<const Packet> packet, const WifiMacHeader *hdr) con
 {
   Mac48Address to = hdr->GetAddr1 ();
   WifiTxVector result = m_stationManager->GetDataTxVector (to, hdr, packet);
-  if(enable_ch_bonding)
+  if(enable_ch_bonding) // edited for channel bonding:  adjust new channel width
     result.SetChannelWidth(ch_m->GetRequestWidth());
   return result;
 }
@@ -1539,7 +1541,7 @@ WifiTxVector
 MacLow::GetCtsTxVector (Mac48Address to, WifiMode rtsTxMode) const
 {
   WifiTxVector result = m_stationManager->GetCtsTxVector (to, rtsTxMode);
-  if(enable_ch_bonding)
+  if(enable_ch_bonding)  // edited for channel bonding:  adjust new channel width
     result.SetChannelWidth(ch_m->GetRequestWidth());
   return result;
 }
@@ -1548,7 +1550,7 @@ WifiTxVector
 MacLow::GetAckTxVector (Mac48Address to, WifiMode dataTxMode) const
 {
   WifiTxVector result = m_stationManager->GetAckTxVector (to, dataTxMode);
-  if(enable_ch_bonding)
+  if(enable_ch_bonding)   // edited for channel bonding:  adjust new channel width
     result.SetChannelWidth(ch_m->GetRequestWidth());
   return result;
 }
@@ -1557,7 +1559,7 @@ WifiTxVector
 MacLow::GetBlockAckTxVector (Mac48Address to, WifiMode dataTxMode) const
 {
   WifiTxVector result = m_stationManager->GetBlockAckTxVector (to, dataTxMode);
-  if(enable_ch_bonding)
+  if(enable_ch_bonding)   // edited for channel bonding:  adjust new channel width
     result.SetChannelWidth(ch_m->GetRequestWidth());
   return result;
 }
@@ -1798,17 +1800,16 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
                 ", seq=0x" << std::hex << m_currentHdr.GetSequenceControl () << std::dec);
   if (!m_ampdu || hdr->IsRts () || hdr->IsBlockAck ())
     {
-	  if(!enable_ch_bonding)
+	  if(!enable_ch_bonding)        // original operation
 	  {
         m_phy->SendPacket (packet, txVector, preamble);
 	  }
 
-	  //  my add begin
+	  // edited for channel bonding:  check use of channel bonding
 	  else
 	  {
 		 ch_m->SendPacket(packet, txVector, preamble);
 	  }
-	  //  my add end
     }
 
   else
@@ -1837,91 +1838,6 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
       ampdutag.SetAmpdu (true);
       Time delay = Seconds (0);
       Time remainingAmpduDuration = m_phy->CalculateTxDuration (packet->GetSize (), txVector, preamble, m_phy->GetFrequency ());
-
-      /*
-       * my add begin
-       */
-      //marking!
-
-//      if(remainingAmpduDuration > MilliSeconds(10))
-        if(false)
-        {
-          Ptr<const Packet> peekedPacket;
-          WifiMacHeader peekedHdr;
-          Time tstamp;
-          uint8_t tid = GetTid (packet, *hdr);
-          AcIndex ac = QosUtilsMapTidToAc (tid);
-
-          //since a blockack agreement always preceeds mpdu aggregation there should always exist blockAck listener
-          std::map<AcIndex, MacLowAggregationCapableTransmissionListener*>::const_iterator listenerIt = m_edcaListeners.find (ac);
-          Ptr<WifiMacQueue> queue = listenerIt->second->GetQueue ();
-          std::stack<std::pair<Ptr<Packet>,WifiMacHeader>> m_stack;
-          std::pair<Ptr<Packet>,WifiMacHeader> stack_val;
-
-    	  while(true)
-    	  {
-            peekedPacket = listenerIt->second->PeekNextPacketInBaQueue (peekedHdr, (*hdr).GetAddr1 (), tid, &tstamp);
-
-            if(peekedPacket == 0)
-            {
-              break;
-            }
-            else
-            {
-              listenerIt->second->RemoveFromBaQueue (tid, (*hdr).GetAddr1 (), peekedHdr.GetSequenceNumber ());
-            }
-          }
-
-          listenerIt->second->ClearAgreeQueue((*hdr).GetAddr1(),tid);
-
-          while(m_aggregateQueue->GetSize() > 0)
-          {
-            peekedPacket = m_aggregateQueue->Dequeue(&peekedHdr);
-            WifiMacHeader tempHdr = peekedHdr;
-            stack_val = std::make_pair<Ptr<Packet>,WifiMacHeader&>(peekedPacket->Copy(), tempHdr);
-            m_stack.push(stack_val);
-          }
-
-
-          while(!m_stack.empty())
-          {
-            stack_val = m_stack.top();
-            m_stack.pop();
-            queue->PushFront(stack_val.first,stack_val.second);
-          }
- //
-
-
-          FlushAggregateQueue();
-          m_sentMpdus = 0;
-          m_currentPacket = stored_original_packet->Copy();
-          m_currentHdr = stored_original_hdr;
-          m_ampdu = false;
-
-          m_ampdu = IsAmpdu (m_currentPacket, m_currentHdr);
-          //my edit begin
-          stored_packet = m_currentPacket->Copy();
-          stored_hdr = m_currentHdr;
-
-          packet = m_currentPacket->Copy();
-          hdr = &m_currentHdr;
-
-          m_nTxMpdus = m_aggregateQueue->GetSize ();
-          queueSize = m_aggregateQueue->GetSize ();
-
-          vhtSingleMpdu = false;
-
-          if (queueSize == 1)
-          {
-            vhtSingleMpdu = true;
-          }
-          remainingAmpduDuration = m_phy->CalculateTxDuration (packet->GetSize (), txVector, preamble, m_phy->GetFrequency ());
-        }
-      NS_LOG_DEBUG ("first size = "<<packet->GetSize()<<" firstremainingAmpduDuration "<<remainingAmpduDuration.GetNanoSeconds()<<"ns");
-      /*
-       * my add end
-       */
-
 
       if (queueSize > 1 || vhtSingleMpdu)
         {
@@ -1958,16 +1874,7 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
             }
 
           Time mpduDuration = m_phy->CalculateTxDuration (newPacket->GetSize (), txVector, preamble, m_phy->GetFrequency (), mpdutype, 0);
-
-          remainingAmpduDuration -= mpduDuration;
-          /*
-           * my add begin
-           */
-
-          NS_LOG_DEBUG ("Size : "<<newPacket->GetSize ()<< " mpduDuration "<< mpduDuration.GetNanoSeconds() <<"ns | remainingAmpduDuration "<<remainingAmpduDuration.GetNanoSeconds()<<"ns");
-          /*
-           *  my add end
-           */
+          remainingAmpduDuration -= mpduDuration;          
 
           ampdutag.SetRemainingNbOfMpdus (queueSize - 1);
           if (queueSize > 1)
@@ -1978,13 +1885,11 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
             {
               ampdutag.SetRemainingAmpduDuration (NanoSeconds (0));
             }
-
-
           newPacket->AddPacketTag (ampdutag);
 
           if (delay == Seconds (0))
             {
-        	   if(!enable_ch_bonding)
+        	   if(!enable_ch_bonding)      // edited for channel bonding:  if use channel bonding then use channelbondingmanager or just send
                 m_phy->SendPacket (newPacket, txVector, preamble, mpdutype);
 
         	   else

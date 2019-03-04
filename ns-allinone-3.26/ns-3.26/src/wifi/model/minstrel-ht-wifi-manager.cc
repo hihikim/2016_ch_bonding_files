@@ -815,7 +815,7 @@ MinstrelHtWifiManager::UpdateRate (MinstrelHtWifiRemoteStation *station)
       else
         {
 //          NS_ASSERT_MSG (false,"Max retries reached and m_longRetry not cleared properly. longRetry= " << station->m_longRetry);
-//    	  my edit
+// edited for channel bonding:  non stop in error
     	  NS_LOG_DEBUG ("Max retries reached and m_longRetry not cleared properly. longRetry= " << station->m_longRetry);
         }
     }
