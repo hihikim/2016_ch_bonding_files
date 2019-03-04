@@ -16,4 +16,4 @@
 > 2. make input files to ./input
 > 3. make director ./output
 > 4. command ./waf --run scratch/my_test --command-template="%s --link_type=(link option) --test_number=(input file path)"
-link option: True(downlink), False(uplink)
+> link option: True(downlink), False(uplink)
