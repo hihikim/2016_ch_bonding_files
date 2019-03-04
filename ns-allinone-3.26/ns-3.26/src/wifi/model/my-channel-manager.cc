@@ -11,27 +11,19 @@
 #include "mpdu-aggregator.h"
 #include "msdu-aggregator.h"
 
-
-
 namespace ns3 {
-
-
 NS_LOG_COMPONENT_DEFINE ("ChannelBondingManager");
 
-ChannelBondingManager::ChannelBondingManager()
+ChannelBondingManager::ChannelBondingManager()  
 : ch_map(ChannelMapping())
 {
-	last_receive_or_error_time = Time();
-	isErr = false;
+	last_receive_or_error_time = Time(); 
+	isErr = false;     
 
-	need_rts_cts = false;
-	max_width = 160;
-	primary_ch = 36;
+	need_rts_cts = false;     
+	max_width = 160;     
+	primary_ch = 36;     
 	request_width = 160;
-
-	alloc_last_primary_hdr = false;
-	is_sta = false;
-
 	error_packets.ErrorTime= Time("0.0");
 }
 
@@ -249,11 +241,6 @@ void ChannelBondingManager::ChangeMaxWidth(uint32_t Max_Width)
 	this->max_width = Max_Width;
 }
 
-void ChannelBondingManager::SetStation(bool tf)
-{
-	is_sta = tf;
-}
-
 void ChannelBondingManager::MakePhys(const WifiPhyHelper &phy, Ptr<WifiPhy> primary, uint16_t ch_num, uint32_t channel_width, enum WifiPhyStandard standard){
    SetChannelOption(ch_num, channel_width);                          //make each phys
 
@@ -306,7 +293,7 @@ void ChannelBondingManager::ClearReceiveRecord(){
 
 uint16_t ChannelBondingManager::CheckChBonding(uint16_t primary)
 {
-	if (primary == 0)                                      //find suitable bonding channel (idle condition / no consider Rts-Cts width
+	if (primary == 0)                                      // find suitable bonding channel (idle condition / no consider Rts-Cts width
 		NS_FATAL_ERROR("Wrong Channel Number");
 
 	ChannelInfo ch_info;
@@ -376,7 +363,7 @@ bool ChannelBondingManager::CheckAllSubChannelIdle(uint16_t ch_num){
 	}
 }
 
-uint16_t ChannelBondingManager::GetUsableBondingChannel(uint16_t primary)                //get bonding channel in rts-cts environment
+uint16_t ChannelBondingManager::GetUsableBondingChannel(uint16_t primary)                // get bonding channel in rts-cts environment
 {
 	ChannelInfo ch_info;
 	std::map<uint16_t, ChannelInfo>::const_iterator ch_i = ch_map.find(primary);
@@ -434,7 +421,6 @@ uint16_t ChannelBondingManager::GetUsableBondingChannel(uint16_t primary)       
 
 bool ChannelBondingManager::CheckAllSubChannelReceived(uint16_t ch_num)                   //check all sub channel receive rts-cts
 {
-	//std::cout<<"ch_num : "<<ch_num<<"tf : "<<received_channel[ch_num]<<std::endl;
 	ChannelInfo ch_info;
 	std::map<uint16_t, ChannelInfo>::const_iterator ch_i = ch_map.find(ch_num);
 
@@ -624,25 +610,12 @@ void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> packet, double rxSnr,
 		p->RemoveHeader(ampduhdr);
 		p->PeekHeader(hdr);
 		p->AddHeader(ampduhdr);
-		alloc_last_primary_hdr = false;
-
-		if(ch_num == primary_ch){
-			alloc_last_primary_hdr = true;
-
-			last_primary_hdr = hdr;
-		}
 	}
 
 	else
 	{
 		isampdu = false;
 		p->PeekHeader(hdr);
-
-		if(ch_num == primary_ch){
-			alloc_last_primary_hdr = true;
-
-			last_primary_hdr = hdr;
-		}
 	}
 
 	received_channel[ch_num] = true;
@@ -868,11 +841,9 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> packet, double rxSnr, Wi
 
 void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble, enum mpduType mpdutype)
 {                                               //send packet
-//	std::cout<<"time : "<<Now().GetNanoSeconds()<<"ns | address : "<<m_mac->GetAddress()<<" : width "<<request_width<<std::endl;
-
-	ConvertPacket(packet);                       //split packet
+	ConvertPacket(packet);                       // duplicate packets
 	
-	ClearReceiveRecord();
+	ClearReceiveRecord();            
 	
 	for(std::vector<uint16_t>::iterator i = ch_numbers.begin();
 	   i != ch_numbers.end()

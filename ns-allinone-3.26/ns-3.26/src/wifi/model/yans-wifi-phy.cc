@@ -516,7 +516,7 @@ YansWifiPhy::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, WifiPr
    */
 
   /*
-   * my edit begin todo commant
+   * edited for channel bonding:  calculate and adjust power option in channel width
    * make low power if wider channel width
    */
   uint16_t exp_v = 0;
@@ -539,12 +539,9 @@ YansWifiPhy::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, WifiPr
 	  exp_v = 0;
   }
   double power_value = GetPowerDbm(txVector.GetTxPowerLevel()) - 3.0103 * exp_v; 
-  // if divide number of channels
+  // adjust power option
   m_state->SwitchToTx(txDuration, packet, power_value, txVector, preamble);
   m_channel->Send(this, packet, power_value + GetTxGain(), txVector, preamble, mpdutype, txDuration);
-  /*
-   * my edit end
-   */
 }
 
 void
