@@ -12,8 +12,6 @@
 > 3. command ./waf
 > ***
 > How to simulate
-> 1. go to ./ns-allinone-3.26/ns-3.26
-> 2. make input files to ./input
-> 3. make director ./output
-> 4. command ./waf --run scratch/my_test --command-template="%s --link_type=(link option) --test_number=(input file path)"  
-  link option: True(downlink), False(uplink)
+> 1. go to ./ns-allinone-3.26/ns-3.26/scratch
+> 2. make simulation script
+> 3. command ./waf --run scratch/(script name without extension) 
