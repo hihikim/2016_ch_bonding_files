@@ -478,7 +478,9 @@ public:
    */
   int64_t AssignStreams (int64_t stream);
 
-  //my added func
+  /* added for channal bonding
+   * call ClearAgreeQueue from m_txop
+   */
   void ClearAgreeQueue(Mac48Address recipient, uint8_t tid);
 
 

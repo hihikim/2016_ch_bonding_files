@@ -133,9 +133,11 @@ MacLowAggregationCapableTransmissionListener::GetDestAddressForAggregation (cons
   return 0;
 }
 
-// my custumized function
-//  virtual function for ClearAgreeQueue (overiden in block-ack-manager)
-// function for delete duplicated packet in aq
+/*
+  * additional function for channal bonding
+  * virtual function for ClearAgreeQueue (override occured in block-ack-manager)
+  * function for delete duplicated packet in aq
+  */
 void
 MacLowAggregationCapableTransmissionListener::ClearAgreeQueue(Mac48Address recipient, uint8_t tid)           
 {                                                                                                                                                                                                        
@@ -389,9 +391,11 @@ MacLow::MacLow ()
   m_sentMpdus = 0;
   m_aggregateQueue = CreateObject<WifiMacQueue> ();
  
- // my customized parameter
-  // parameter for channel bonding check
-  // if operation use channel bonding then enable_ch_bonding is true
+ /* 
+   * additional parameter for channel bonding
+   * parameter for channel bonding check
+   * if operation use channel bonding then enable_ch_bonding is true
+   */   
   enable_ch_bonding = false;   
 }
 
@@ -540,8 +544,10 @@ MacLow::SetPhy (Ptr<WifiPhy> phy)
 }
 
 void MacLow::SetChannelManager(const WifiPhyHelper &phy,uint32_t ch_num, uint32_t ch_width, enum WifiPhyStandard standard){
-    // my customized function
-    // link with ChannelBondingManager for eRTS/CTS
+    /*
+	  * additional function for channel bonding
+      * make channel bonding manager with input parameters & link with it
+	  */
 	ch_m = CreateObject<ChannelBondingManager>();
 	ch_m->SetMyMac(this);
 
@@ -792,7 +798,7 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
   m_listener = listener;
   m_txParams = params;
 
-  // edited for channel bonding: : if using channel bonding then prepare sending
+  // Edited for channel bonding:  preparing sending 
   if(enable_ch_bonding)
   {
 	  ch_m->CheckChannelBeforeSend();
@@ -813,7 +819,7 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
       //In that case, we transmit the same A-MPDU as previously.
 
 	  
-     // edited for channel bonding: use unmodified packet
+     // Edited for channel bonding: repair previous A-MPDU
       m_currentPacket = stored_packet->Copy();
       m_currentHdr = stored_hdr;
 	 
@@ -852,7 +858,7 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
          }
       }
    
-      else // edited for channel bonding: using code of MacLow::ForwardDown for modify packet in channel bonding option
+      else // edited for channel bonding: modify packet in channel bonding option (code based on MacLow::ForwardDown)
       {
         uint8_t tid = GetTid (stored_original_packet, stored_original_hdr);
         AcIndex ac = QosUtilsMapTidToAc (tid);
@@ -870,11 +876,13 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
         m_currentHdr = *hdr;
         m_ampdu = false;
 
+		// edited for channel bonding:  store original packet for same tid
         stored_original_hdr = *hdr;
         stored_original_packet = packet->Copy();
 
         m_ampdu = IsAmpdu (stored_original_packet, stored_original_hdr);
-        // edited for channel bonding:  store original packet
+		
+        // edited for channel bonding:  copy packet
         stored_packet = m_currentPacket->Copy();
         stored_hdr = m_currentHdr;
 
@@ -898,7 +906,8 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
   else
     {
       //Perform MPDU aggregation if possible
-
+	  
+      // edited for channel bonding:  store original packet for same tid
 	  stored_original_packet = m_currentPacket->Copy();
 	  stored_original_hdr = m_currentHdr;
 
@@ -1805,7 +1814,7 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
         m_phy->SendPacket (packet, txVector, preamble);
 	  }
 
-	  // edited for channel bonding:  check use of channel bonding
+	  // edited for channel bonding:  send packet using channel bonding manager
 	  else
 	  {
 		 ch_m->SendPacket(packet, txVector, preamble);
@@ -1889,7 +1898,7 @@ MacLow::ForwardDown (Ptr<const Packet> packet, const WifiMacHeader* hdr,
 
           if (delay == Seconds (0))
             {
-        	   if(!enable_ch_bonding)      // edited for channel bonding:  if use channel bonding then use channelbondingmanager or just send
+        	   if(!enable_ch_bonding)      // edited for channel bonding:  send packet using channel bonding manager
                 m_phy->SendPacket (newPacket, txVector, preamble, mpdutype);
 
         	   else

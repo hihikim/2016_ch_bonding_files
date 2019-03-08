@@ -50,9 +50,9 @@ void ChannelBondingManager::SetMyMac(Ptr<MacLow> mac)
 	m_mac = mac;
 }
 
-std::map<uint16_t, ChannelInfo >  ChannelBondingManager::ChannelMapping()
+std::map<uint16_t, ChannelInfo >  ChannelBondingManager::ChannelMapping()         // make bonded channels map
 {
-	 static std::map<uint16_t, ChannelInfo >  result;                            //make channel map
+	 static std::map<uint16_t, ChannelInfo >  result;                            
 	 ChannelInfo ch_info;
 
 	 /*
@@ -217,8 +217,8 @@ std::map<uint16_t, ChannelInfo >  ChannelBondingManager::ChannelMapping()
 	 return result;
 }
 
-void ChannelBondingManager::SetChannelOption(uint16_t primary_ch,uint32_t max_width){
-	this->max_width = max_width;                        //set max width and primary_ch
+void ChannelBondingManager::SetChannelOption(uint16_t primary_ch,uint32_t max_width){ // set primary channel & max channel width
+	this->max_width = max_width;
 	this->primary_ch = primary_ch;
 
 	std::map<uint16_t, ChannelInfo>::const_iterator ch_i = ch_map.find(primary_ch);
@@ -236,13 +236,13 @@ void ChannelBondingManager::SetChannelOption(uint16_t primary_ch,uint32_t max_wi
 		received_channel[*i] = false;
 	}
 }
-void ChannelBondingManager::ChangeMaxWidth(uint32_t Max_Width)
+void ChannelBondingManager::ChangeMaxWidth(uint32_t Max_Width)   // change max channel width
 {
 	this->max_width = Max_Width;
 }
 
 void ChannelBondingManager::MakePhys(const WifiPhyHelper &phy, Ptr<WifiPhy> primary, uint16_t ch_num, uint32_t channel_width, enum WifiPhyStandard standard){
-   SetChannelOption(ch_num, channel_width);                          //make each phys
+   SetChannelOption(ch_num, channel_width);                         // create subchannels phy
 
 
    Ptr<NetDevice> device = primary->GetDevice();
@@ -269,7 +269,7 @@ void ChannelBondingManager::MakePhys(const WifiPhyHelper &phy, Ptr<WifiPhy> prim
    }
 }
 
-void ChannelBondingManager::ResetPhys(){
+void ChannelBondingManager::ResetPhys(){           // remove all subchannels
 	for(std::vector<uint16_t>::iterator i = ch_numbers.begin();
 	   i != ch_numbers.end()
 	   ;++i)
@@ -280,7 +280,7 @@ void ChannelBondingManager::ResetPhys(){
 	}
 }
 
-void ChannelBondingManager::ClearReceiveRecord(){
+void ChannelBondingManager::ClearReceiveRecord(){          // clear last_received_packet
 	for(std::vector<uint16_t>::iterator i = ch_numbers.begin();
 	   i != ch_numbers.end()
 	   ;++i)
@@ -291,9 +291,9 @@ void ChannelBondingManager::ClearReceiveRecord(){
 }
 
 
-uint16_t ChannelBondingManager::CheckChBonding(uint16_t primary)
+uint16_t ChannelBondingManager::CheckChBonding(uint16_t primary)      // find widest usable bonded channel (idle condition / no consider Rts-Cts width
 {
-	if (primary == 0)                                      // find suitable bonding channel (idle condition / no consider Rts-Cts width
+	if (primary == 0)                                      
 		NS_FATAL_ERROR("Wrong Channel Number");
 
 	ChannelInfo ch_info;
@@ -330,8 +330,8 @@ uint16_t ChannelBondingManager::CheckChBonding(uint16_t primary)
 	return usable_ch;
 }
 
-bool ChannelBondingManager::CheckAllSubChannelIdle(uint16_t ch_num){
-	ChannelInfo ch_info;                     //find all subchannels are idle
+bool ChannelBondingManager::CheckAllSubChannelIdle(uint16_t ch_num){   // check every sub channels of merged channel are idle
+	ChannelInfo ch_info;
 	std::map<uint16_t, ChannelInfo>::const_iterator ch_i = ch_map.find(ch_num);
 
 	if(ch_i == ch_map.end())
@@ -363,7 +363,7 @@ bool ChannelBondingManager::CheckAllSubChannelIdle(uint16_t ch_num){
 	}
 }
 
-uint16_t ChannelBondingManager::GetUsableBondingChannel(uint16_t primary)                // get bonding channel in rts-cts environment
+uint16_t ChannelBondingManager::GetUsableBondingChannel(uint16_t primary)                // get suitable bonding channel in rts-cts environment
 {
 	ChannelInfo ch_info;
 	std::map<uint16_t, ChannelInfo>::const_iterator ch_i = ch_map.find(primary);
@@ -419,7 +419,7 @@ uint16_t ChannelBondingManager::GetUsableBondingChannel(uint16_t primary)       
 	return usable_ch;
 }
 
-bool ChannelBondingManager::CheckAllSubChannelReceived(uint16_t ch_num)                   //check all sub channel receive rts-cts
+bool ChannelBondingManager::CheckAllSubChannelReceived(uint16_t ch_num)                   //check every sub channels of merged channel receive rts-cts packet
 {
 	ChannelInfo ch_info;
 	std::map<uint16_t, ChannelInfo>::const_iterator ch_i = ch_map.find(ch_num);
@@ -470,16 +470,16 @@ bool ChannelBondingManager::CheckAllSubChannelReceived(uint16_t ch_num)         
 	}
 
 }
-uint16_t ChannelBondingManager::GetPrimaryCh()
+uint16_t ChannelBondingManager::GetPrimaryCh()      // return primary channel number
 {
 	return primary_ch;
 }
-uint32_t ChannelBondingManager::GetMaxWidth()
+uint32_t ChannelBondingManager::GetMaxWidth()     // return max channel width
 {
 	return max_width;
 }
 
-uint32_t ChannelBondingManager::GetRequestWidth()
+uint32_t ChannelBondingManager::GetRequestWidth()    // return current channel width
 {
 	return request_width;
 }
@@ -784,7 +784,7 @@ void ChannelBondingManager::Error(Ptr<Packet> packet, double rxSnr, uint16_t ch_
 	}
 }
 
-bool ChannelBondingManager::CheckItFirst(Ptr<Packet> packet)
+bool ChannelBondingManager::CheckItFirst(Ptr<Packet> packet)  // Checks if the same packet was previously received
 {
 	Time now = Simulator::Now();
 	if (last_receive_or_error_time.Compare(now) != 0) //new packet arrive
@@ -877,7 +877,7 @@ void ChannelBondingManager::CheckChannelBeforeSend()   //set bonding channel in 
 	request_width = ch_map.find(request_ch)->second.Width;
 }
 
-Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)   //split the packet
+Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)   // make duplicated packet for sub channels in current request_ch
 {
 	CleanPacketPieces();
 
@@ -894,7 +894,7 @@ Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)   //s
 	return packet_pieces[primary_ch];
 }
 
-void ChannelBondingManager::CleanPacketPieces()           //clear the storage for splited packet
+void ChannelBondingManager::CleanPacketPieces()           // clear storage of duplicated packets for sending
 {
 	for(std::map< uint16_t, Ptr<Packet> >::iterator i = packet_pieces.begin();
 		i != packet_pieces.end();

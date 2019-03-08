@@ -362,13 +362,11 @@ public:
   void SetTxFailedCallback (TxFailed callback);
 
   /*
-   * my added function
-   */
+    * added for channal bonding
+	* duplicated packet maked in my channel bonding function
+	* this function remove all packet in agreequeue using mac address and tid(ns3 identifier)
+	*/
   void ClearAgreeQueue(Mac48Address recipient, uint8_t tid);
-  /*
-   * clear the packet in agreement queue
-   */
-
 
 private:
   /**

@@ -306,9 +306,10 @@ public:
    */
   virtual Mac48Address GetDestAddressForAggregation (const WifiMacHeader &hdr);
 
-  /*
-   * my added func
-   */
+  /* added for channal bonding
+  * virtual function for ClearAgreeQueue (override occured in block-ack-manager)
+  * function for delete duplicated packet in aq
+  */
   virtual void ClearAgreeQueue(Mac48Address recipient, uint8_t tid);
 };
 
@@ -544,7 +545,7 @@ public:
    *
    * \param phy WifiPhy associated with this MacLow
    */
-  void ResetPhy (void);
+  void ResetPhy (void);    // having changes for channel bonding
   /**
    * Set up WifiRemoteStationManager associated with this MacLow.
    *
@@ -734,11 +735,12 @@ public:
    * Start the transmission of the input packet and notify the listener
    * of transmission events.
    */
-  virtual void StartTransmission (Ptr<const Packet> packet,
+  virtual void StartTransmission (Ptr<const Packet> packet,               // having changes for channel bonding
                                   const WifiMacHeader* hdr,
                                   MacLowTransmissionParameters parameters,
                                   MacLowTransmissionListener *listener);
-
+  
+   
   /**
    * \param packet packet received
    * \param rxSnr snr of packet received
@@ -749,7 +751,7 @@ public:
    * This method is typically invoked by the lower PHY layer to notify
    * the MAC layer that a packet was successfully received.
    */
-  void ReceiveOk (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, bool ampduSubframe);
+  void ReceiveOk (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, bool ampduSubframe);                    // having changes for channel bonding
   /**
    * \param packet packet received.
    * \param rxSnr snr of packet received.
@@ -854,12 +856,12 @@ public:
    * \param hdr the WifiMacHeader
    * \return TXVECTOR for the given packet
    */
-  virtual WifiTxVector GetDataTxVector (Ptr<const Packet> packet, const WifiMacHeader *hdr) const;
+  virtual WifiTxVector GetDataTxVector (Ptr<const Packet> packet, const WifiMacHeader *hdr) const;  // having changes for channel bonding
+  
 
 
-
-  /**---------------------MY EDIT #1-----------------------------------------------
-   * using channel bonding enable
+  /*
+   * additional funtions for channel bondings
    */
 
    void EnableChannelBonding (void);
@@ -914,7 +916,7 @@ private:
    * \param txVector
    * \param preamble
    */
-  void ForwardDown (Ptr<const Packet> packet, const WifiMacHeader *hdr,
+  void ForwardDown (Ptr<const Packet> packet, const WifiMacHeader *hdr,            // having changes for channel bonding
                     WifiTxVector txVector, WifiPreamble preamble);
   /**
    * Forward the MPDU down to WifiPhy for transmission. This is called for each MPDU when MPDU aggregation is used.
@@ -935,7 +937,7 @@ private:
    * \param hdr the WifiMacHeader
    * \return TXVECTOR for the RTS of the given packet
    */
-  WifiTxVector GetRtsTxVector (Ptr<const Packet> packet, const WifiMacHeader *hdr) const;
+  WifiTxVector GetRtsTxVector (Ptr<const Packet> packet, const WifiMacHeader *hdr) const;     // having changes for channel bonding
   /**
    * Return a TXVECTOR for the CTS frame given the destination and the mode of the RTS
    * used by the sender.
@@ -946,7 +948,7 @@ private:
    * \param rtsTxMode the mode of the RTS used by the sender
    * \return TXVECTOR for the CTS
    */
-  WifiTxVector GetCtsTxVector (Mac48Address to, WifiMode rtsTxMode) const;
+  WifiTxVector GetCtsTxVector (Mac48Address to, WifiMode rtsTxMode) const;      // having changes for channel bonding
   /**
    * Return a TXVECTOR for the ACK frame given the destination and the mode of the DATA
    * used by the sender.
@@ -957,7 +959,7 @@ private:
    * \param dataTxMode the mode of the DATA used by the sender
    * \return TXVECTOR for the ACK
    */
-  WifiTxVector GetAckTxVector (Mac48Address to, WifiMode dataTxMode) const;
+  WifiTxVector GetAckTxVector (Mac48Address to, WifiMode dataTxMode) const;     // having changes for channel bonding
   /**
    * Return a TXVECTOR for the Block ACK frame given the destination and the mode of the DATA
    * used by the sender.
@@ -968,7 +970,7 @@ private:
    * \param dataTxMode the mode of the DATA used by the sender
    * \return TXVECTOR for the Block ACK
    */
-  WifiTxVector GetBlockAckTxVector (Mac48Address to, WifiMode dataTxMode) const;
+  WifiTxVector GetBlockAckTxVector (Mac48Address to, WifiMode dataTxMode) const;      // having changes for channel bonding
   /**
    * Return a TXVECTOR for the CTS-to-self frame.
    * The function consults WifiRemoteStationManager, which controls the rate
@@ -978,7 +980,7 @@ private:
    * \param hdr the Wifi header of the packet
    * \return TXVECTOR for the CTS-to-self operation
    */
-  WifiTxVector GetCtsToSelfTxVector (Ptr<const Packet> packet, const WifiMacHeader *hdr) const;
+  WifiTxVector GetCtsToSelfTxVector (Ptr<const Packet> packet, const WifiMacHeader *hdr) const;   // having changes for channel bonding
   /**
    * Return a TXVECTOR for the CTS frame given the destination and the mode of the RTS
    * used by the sender.
@@ -1413,14 +1415,13 @@ private:
   std::vector<Item> m_txPackets;      //!< Contain temporary items to be sent with the next A-MPDU transmission, once RTS/CTS exchange has succeeded. It is not used in other cases.
   uint32_t m_nTxMpdus;                //!<Holds the number of transmitted MPDUs in the last A-MPDU transmission
 
-  /*
-   *------------------------------------MY EDIT #2---------------------------
-   *add bool
-   */
-  bool enable_ch_bonding;
-  Ptr<ChannelBondingManager> ch_m;
-  Ptr<Packet> stored_packet, stored_original_packet;
-  WifiMacHeader stored_hdr, stored_original_hdr;
+  /* 
+   *additional parameter for channel bonding
+   */ 
+  bool enable_ch_bonding;                                                              // parameter for channel bonding check
+  Ptr<ChannelBondingManager> ch_m;                                        // pointer for channel bonding manager that the role of contoling multi channel
+  Ptr<Packet> stored_packet, stored_original_packet;               // store modified & unmodified packet
+  WifiMacHeader stored_hdr, stored_original_hdr;                    // store modified & unmodified header
 };
 
 } //namespace ns3

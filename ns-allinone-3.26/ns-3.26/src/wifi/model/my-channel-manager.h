@@ -60,7 +60,7 @@ public:
 	
 	void SetChannelOption(uint16_t Primary_Ch,uint32_t Max_Width);  // set primary channel & max channel width
 	void ChangeMaxWidth(uint32_t Max_Width);                        // change max channel width
-	void MakePhys(const WifiPhyHelper &phy, Ptr<WifiPhy> primary, uint16_t ch_num, uint32_t channel_width, enum WifiPhyStandard standard);   // make subchannels phy
+	void MakePhys(const WifiPhyHelper &phy, Ptr<WifiPhy> primary, uint16_t ch_num, uint32_t channel_width, enum WifiPhyStandard standard);   // create subchannels phy
 
 	void CheckChannelBeforeSend(void);                 // find widest available channel 
 
@@ -69,11 +69,11 @@ public:
 	void SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble, enum mpduType mpdutype); // send packet
 	void SendPacket(Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble);
 
-	static std::map<uint16_t, ChannelInfo> ChannelMapping();             // channal bonding map
+	static std::map<uint16_t, ChannelInfo> ChannelMapping();             // make bonded channels map
 
 	void ClearReceiveRecord();                   // clear last_received_packet
 
-	Ptr<Packet> ConvertPacket(Ptr<const Packet> packet);
+	Ptr<Packet> ConvertPacket(Ptr<const Packet> packet);   // make duplicated packet for sub channels in current request_ch
 
 
 	void SetPhysCallback();
@@ -114,13 +114,13 @@ private:
 
 	bool need_rts_cts;  // rts/cts flag
 
-	uint16_t CheckChBonding(uint16_t primary);	// find suitable bonding channel (idle condition / no consider Rts-Cts width
+	uint16_t CheckChBonding(uint16_t primary);	// find widest usable bonded channel (idle condition / no consider Rts-Cts width
 
-	bool CheckAllSubChannelIdle(uint16_t ch_num);   // check all sub channels in ch_num(merged channel number ex: 36+40 = 38) are idle
+	bool CheckAllSubChannelIdle(uint16_t ch_num);   // check every sub channels of merged channel are idle
 
 	uint16_t GetUsableBondingChannel(uint16_t primary);  // get suitable bonding channel in rts-cts environment
 
-	bool CheckAllSubChannelReceived(uint16_t ch_num);  //check all sub channels of ch_num(merged channel number ex: 36+40 = 38) receive rts-cts packet
+	bool CheckAllSubChannelReceived(uint16_t ch_num);  //check every sub channels of merged channel receive rts-cts packet
 
 	uint16_t GetChannelWithWidth(uint32_t width);    // width -> merged channel number
 
@@ -158,7 +158,7 @@ private:
 
 	void Error (Ptr<Packet> packet, double rxSnr, uint16_t ch_num);
 
-	bool CheckItFirst(Ptr<Packet> packet);   // this function check the packet is same with previously received packet
+	bool CheckItFirst(Ptr<Packet> packet);   // Checks if the same packet was previously received
 
 	void ReceivePrimaryError (Ptr<Packet> packet, double rxSnr);   // error is occured in primary channel
 
