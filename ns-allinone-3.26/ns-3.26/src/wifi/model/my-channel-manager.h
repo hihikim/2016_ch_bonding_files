@@ -28,17 +28,15 @@
 namespace ns3 {
 class MacLow;
 
-//typedef std::pair<uint16_t, uint32_t> ChannelInfo;
-
-typedef struct
+typedef struct    // Struct to contain channel bonding tree
 {
-	uint16_t Secondary_Ch;	//secondary channel
+	uint16_t Secondary_Ch;	// Secondary channel
 	uint32_t Width;
-	uint16_t L_CHD, R_CHD;	//children channels
-	uint16_t Parent;	 //parrent nodes
+	uint16_t L_CHD, R_CHD;	// Children channels
+	uint16_t Parent;	 // Parrent nodes
 }ChannelInfo;
 
-typedef struct
+typedef struct  // Struct to contain errors occured same time (=duplicate packet)
 {
 	Time ErrorTime;
 	std::vector< Ptr<Packet> > ErrorPacket;
@@ -54,26 +52,26 @@ public:
 
 	ChannelBondingManager();
 	virtual ~ChannelBondingManager();
-	uint16_t GetPrimaryCh();           // return primary channel number
-	uint32_t GetMaxWidth();            // return max channel width
-	uint32_t GetRequestWidth();        // return current channel width
+	uint16_t GetPrimaryCh();           // Return primary channel number
+	uint32_t GetMaxWidth();            // Return max channel width
+	uint32_t GetRequestWidth();        // Return current channel width
 	
-	void SetChannelOption(uint16_t Primary_Ch,uint32_t Max_Width);  // set primary channel & max channel width
-	void ChangeMaxWidth(uint32_t Max_Width);                        // change max channel width
-	void MakePhys(const WifiPhyHelper &phy, Ptr<WifiPhy> primary, uint16_t ch_num, uint32_t channel_width, enum WifiPhyStandard standard);   // create subchannels phy
+	void SetChannelOption(uint16_t Primary_Ch,uint32_t Max_Width);  // Set primary channel & max channel width
+	void ChangeMaxWidth(uint32_t Max_Width);                        // Change max channel width
+	void MakePhys(const WifiPhyHelper &phy, Ptr<WifiPhy> primary, uint16_t ch_num, uint32_t channel_width, enum WifiPhyStandard standard);   // Create subchannels phy
 
-	void CheckChannelBeforeSend(void);                 // find widest available channel 
+	void CheckChannelBeforeSend(void);                 // Adjust channel width 
 
-	void ResetPhys();                                 // remove all subchannels
+	void ResetPhys();                                 // Remove all subchannels
 
-	void SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble, enum mpduType mpdutype); // send packet
+	void SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble, enum mpduType mpdutype); // Send packet
 	void SendPacket(Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble);
 
-	static std::map<uint16_t, ChannelInfo> ChannelMapping();             // make bonded channels map
+	static std::map<uint16_t, ChannelInfo> ChannelMapping();             // Make bonded channels map
 
-	void ClearReceiveRecord();                   // clear last_received_packet
+	void ClearReceiveRecord();                   // Clear last_received_packet
 
-	Ptr<Packet> ConvertPacket(Ptr<const Packet> packet);   // make duplicated packet for sub channels in current request_ch
+	Ptr<Packet> ConvertPacket(Ptr<const Packet> packet);   // Duplicate packets
 
 
 	void SetPhysCallback();
@@ -87,51 +85,51 @@ public:
 
 
 private:
-	Time last_receive_or_error_time;  //last time of error/receive packet(used in duplicated packet check)
-	uint16_t RECount; //receive or error count
-	uint16_t RECountLimit;  //required number of receive or error (0: unknown)
-	double MinSnr; //minimum snr packets
-	bool isErr, ErrReport; //true false of error occur, report
+	Time last_receive_or_error_time;  // Last time occuring error or receiving packet
+	uint16_t RECount; // Count of receiving packet and error
+	uint16_t RECountLimit;  // Number of events required (0: unknown)
+	double MinSnr; // The minimum SNR among the packets
+	bool isErr, ErrReport; // Error flag, report error flag
 
-	Ptr<Packet> last_packet; //latest errored/received packet
-	uint32_t max_width;  // maximum channel width parameter
+	Ptr<Packet> last_packet; // Latest errored/received packet
+	uint32_t max_width;  // Maximum channel width parameter
 
-	uint32_t request_width;  // channel width parameter of sending packet 
-	uint16_t request_ch;  // channel number parameter of sending packet 
+	uint32_t request_width;  // Channel width parameter of sending packet 
+	uint16_t request_ch;  // Channel number parameter of sending packet 
 
 
-	uint16_t primary_ch;   //primary channel parameter
-	std::vector<uint16_t> ch_numbers;  // all channel number of primary and sub channels
-	error_packet_info error_packets;   // recevied error packets
+	uint16_t primary_ch;   // Primary channel number
+	std::vector<uint16_t> ch_numbers;  // Channel number of all channels
+	error_packet_info error_packets;   // Recevied error packets
 
-	Ptr<MacLow> m_mac;   // maclow pointer
-	std::map< uint16_t, Ptr<Packet> > last_received_packet;  //last receive packets
-	std::map< uint16_t, Ptr<Packet> > packet_pieces;   // modified packet for send
+	Ptr<MacLow> m_mac;   // Pointer of MacLow
+	std::map< uint16_t, Ptr<Packet> > last_received_packet;  // Last receive packets
+	std::map< uint16_t, Ptr<Packet> > packet_pieces;   // Modified packet for send
 	
-	std::map<uint16_t, Ptr<WifiPhy> > m_phys;  // phy classes of sub channels & primary channel
+	std::map<uint16_t, Ptr<WifiPhy> > m_phys;  // Phys for channels
 
-	std::map<int,bool> received_channel;  // receive duplicated packet flag
+	std::map<int,bool> received_channel;  // Receive packet flag for individual channels
 
-	bool need_rts_cts;  // rts/cts flag
+	bool need_rts_cts;  // Flag of using rts/cts
 
-	uint16_t CheckChBonding(uint16_t primary);	// find widest usable bonded channel (idle condition / no consider Rts-Cts width
+	uint16_t CheckChBonding(uint16_t primary);	// Find widest usable bonded channel (only consider idle condition)
 
-	bool CheckAllSubChannelIdle(uint16_t ch_num);   // check every sub channels of merged channel are idle
+	bool CheckAllSubChannelIdle(uint16_t ch_num);   // Check every sub channels of merged channel are idle
 
-	uint16_t GetUsableBondingChannel(uint16_t primary);  // get suitable bonding channel in rts-cts environment
+	uint16_t GetUsableBondingChannel(uint16_t primary);  // Get suitable bonding channel considering RTS/CTS event
 
-	bool CheckAllSubChannelReceived(uint16_t ch_num);  //check every sub channels of merged channel receive rts-cts packet
+	bool CheckAllSubChannelReceived(uint16_t ch_num);  // Ensure that all subchannels of the merged channel have received an RTS-CTS
 
-	uint16_t GetChannelWithWidth(uint32_t width);    // width -> merged channel number
+	uint16_t GetChannelWithWidth(uint32_t width);    // Width -> merged channel number
 
-	void CleanPacketPieces();                                // clear storage of duplicated packets for sending
-	std::vector<uint16_t> FindSubChannels(uint16_t ch_num);  // return all sub channels constituting merged channel(ch_num)
+	void CleanPacketPieces();                                // Clear storage of duplicated packets for sending
+	std::vector<uint16_t> FindSubChannels(uint16_t ch_num);  // Return all sub channels constituting merged channel(ch_num)
 
-	uint8_t GetNumberOfReceive();                   // the number of recevied deplicated packet
+	uint8_t GetNumberOfReceive();                   // The number of recevied deplicated packet
 
-	void SetUpChannelNumbers();                           // make sub channels using maximum channel width
+	void SetUpChannelNumbers();                           // Make sub channels using maximum channel width
 
-	int CheckError(Ptr<const Packet> Packet);            // check error is occured in receiving time
+	int CheckError(Ptr<const Packet> Packet);            // Check error is occured in receiving time
 
 	// when phy receive packet, this function operate
 	void Receive1Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
@@ -146,7 +144,7 @@ private:
 
 	void ReceiveOk (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, bool ampduSubframe);
 
-	// when phy receive error, this function operate
+	// When phy receive error, this function operate
 	void Error1Channel(Ptr<Packet> packet, double rxSnr);
 	void Error2Channel(Ptr<Packet> packet, double rxSnr);
 	void Error3Channel(Ptr<Packet> packet, double rxSnr);
@@ -160,10 +158,10 @@ private:
 
 	bool CheckItFirst(Ptr<Packet> packet);   // Checks if the same packet was previously received
 
-	void ReceivePrimaryError (Ptr<Packet> packet, double rxSnr);   // error is occured in primary channel
+	void ReceivePrimaryError (Ptr<Packet> packet, double rxSnr);   // Error is occured in primary channel
 
 
-	const std::map < uint16_t, ChannelInfo > ch_map;	// channel map for merged channel
+	const std::map < uint16_t, ChannelInfo > ch_map;	// Channel map for merged channel
 };
 
 }

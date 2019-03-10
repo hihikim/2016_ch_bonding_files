@@ -516,8 +516,8 @@ YansWifiPhy::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, WifiPr
    */
 
   /*
-   * edited for channel bonding:  calculate and adjust power option in channel width
-   * make low power if wider channel width
+   * Edited for channel bonding: Calculate and adjust power according to channel width
+   * Make lower power in wider channel width
    */
   uint16_t exp_v = 0;
   switch (txVector.GetChannelWidth())

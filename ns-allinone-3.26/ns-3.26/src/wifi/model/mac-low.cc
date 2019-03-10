@@ -134,9 +134,9 @@ MacLowAggregationCapableTransmissionListener::GetDestAddressForAggregation (cons
 }
 
 /*
-  * additional function for channal bonding
-  * virtual function for ClearAgreeQueue (override occured in block-ack-manager)
-  * function for delete duplicated packet in aq
+  * Additional function for channal bonding
+  * Virtual function for ClearAgreeQueue (override occured in block-ack-manager)
+  * Function to delete all duplicate packets in aq
   */
 void
 MacLowAggregationCapableTransmissionListener::ClearAgreeQueue(Mac48Address recipient, uint8_t tid)           
@@ -583,7 +583,7 @@ MacLow::ResetPhy (void)
   m_phy->SetReceiveErrorCallback (MakeNullCallback<void, Ptr<Packet>, double> ());
   RemovePhyMacLowListener (m_phy);
   m_phy = 0;
-  ch_m = 0;  // edited for channel bonding: reset pointer of ChannelBondingManager 
+  ch_m = 0;  // Edited for channel bonding: reset pointer of ChannelBondingManager 
 }
 
 void
@@ -823,7 +823,7 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
       m_currentPacket = stored_packet->Copy();
       m_currentHdr = stored_hdr;
 	 
-	 // edited for channel bonding: use MacLow::CalculateOverallTxTime code for calculate txtime in channel bonding option
+	 // Edited for channel bonding: use MacLow::CalculateOverallTxTime code for calculate txtime in channel bonding option
 	 // thise code is needed for adjust channel bonding option 
       WifiPreamble preamble;
       //standard says RTS packets can have GF format sec 9.6.0e.1 page 110 bullet b 2
@@ -858,7 +858,7 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
          }
       }
    
-      else // edited for channel bonding: modify packet in channel bonding option (code based on MacLow::ForwardDown)
+      else // Edited for channel bonding: Modify packet in channel bonding option (code based on MacLow::ForwardDown)
       {
         uint8_t tid = GetTid (stored_original_packet, stored_original_hdr);
         AcIndex ac = QosUtilsMapTidToAc (tid);
@@ -876,13 +876,13 @@ MacLow::StartTransmission (Ptr<const Packet> packet,
         m_currentHdr = *hdr;
         m_ampdu = false;
 
-		// edited for channel bonding:  store original packet for same tid
+		// Edited for channel bonding:  Store original packet for same tid
         stored_original_hdr = *hdr;
         stored_original_packet = packet->Copy();
 
         m_ampdu = IsAmpdu (stored_original_packet, stored_original_hdr);
 		
-        // edited for channel bonding:  copy packet
+        // Edited for channel bonding:  Copy packet
         stored_packet = m_currentPacket->Copy();
         stored_hdr = m_currentHdr;
 

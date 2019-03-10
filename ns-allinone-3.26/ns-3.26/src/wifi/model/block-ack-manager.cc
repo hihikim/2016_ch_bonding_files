@@ -991,10 +991,10 @@ void
 BlockAckManager::ClearAgreeQueue(Mac48Address recipient, uint8_t tid)
 {
   /*
-    * added for channal bonding
-	* duplicated packet maked in my channel bonding function
-	* this function remove all packet in agreequeue using mac address and tid(ns3 identifier)
-	*/
+   * Additional function for channel bonding
+   * Channel Bonding make duplicate packets causing error in agreequeue
+   * Function to delete all duplicate packets in agreequeue using mac address and tid(ns3 identifier)
+   */
   AgreementsI agreement = m_agreements.find (std::make_pair (recipient, tid));
   NS_ASSERT (agreement != m_agreements.end ());
 

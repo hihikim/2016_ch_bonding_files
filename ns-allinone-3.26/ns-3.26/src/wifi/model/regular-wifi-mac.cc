@@ -78,7 +78,10 @@ RegularWifiMac::~RegularWifiMac ()
   NS_LOG_FUNCTION (this);
 }
 
-Ptr<MacLow> RegularWifiMac::GetLow()   // customized function for channel bonding: get maclow
+/*
+* Additional function for channel bonding : Return pointor of MacLow
+*/
+Ptr<MacLow> RegularWifiMac::GetLow()   
 {
 	return m_low;
 }

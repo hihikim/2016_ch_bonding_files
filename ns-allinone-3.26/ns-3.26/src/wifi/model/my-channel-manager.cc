@@ -470,16 +470,16 @@ bool ChannelBondingManager::CheckAllSubChannelReceived(uint16_t ch_num)         
 	}
 
 }
-uint16_t ChannelBondingManager::GetPrimaryCh()      // return primary channel number
+uint16_t ChannelBondingManager::GetPrimaryCh()      // Return primary channel number
 {
 	return primary_ch;
 }
-uint32_t ChannelBondingManager::GetMaxWidth()     // return max channel width
+uint32_t ChannelBondingManager::GetMaxWidth()     // Return max channel width
 {
 	return max_width;
 }
 
-uint32_t ChannelBondingManager::GetRequestWidth()    // return current channel width
+uint32_t ChannelBondingManager::GetRequestWidth()    // Return current channel width
 {
 	return request_width;
 }
@@ -871,23 +871,21 @@ void ChannelBondingManager::ReceivePrimaryError(ns3::Ptr<ns3::Packet> packet, do
 	m_mac->ReceiveError(packet, rxSnr);
 }
 
-void ChannelBondingManager::CheckChannelBeforeSend()   //set bonding channel in no rts-cts environment
+void ChannelBondingManager::CheckChannelBeforeSend()   // Adjust channel width 
 {
 	request_ch = CheckChBonding(primary_ch);
 	request_width = ch_map.find(request_ch)->second.Width;
 }
 
-Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)   // make duplicated packet for sub channels in current request_ch
+Ptr<Packet> ChannelBondingManager::ConvertPacket(Ptr<const Packet> packet)   // Duplicate packets
 {
 	CleanPacketPieces();
 
-//	Ptr<Packet> origin_p = packet->Copy();
 	std::vector<uint16_t> sub_chs = FindSubChannels(request_ch);
 	for(std::vector<uint16_t>::iterator i = sub_chs.begin() ;
 		i != sub_chs.end() ;
 		++i )
 	{
-//		packet_pieces[*i] = origin_p;
 		packet_pieces[*i] = packet->Copy();
 	}
 

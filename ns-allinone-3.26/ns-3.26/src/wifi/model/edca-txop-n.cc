@@ -227,8 +227,9 @@ public:
     return m_txop->MapDestAddressForAggregation (hdr);
   }
 
-  /* added for channal bonding
-   * call ClearAgreeQueue from m_txop
+  /*
+   * Additional function for channel bonding
+   * Call ClearAgreeQueue from m_txop
    */
   virtual void ClearAgreeQueue(Mac48Address recipient, uint8_t tid)
   {

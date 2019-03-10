@@ -55,7 +55,7 @@ public:
   virtual ~RegularWifiMac ();
 
   /*
-   *my add
+   * Additional function for channel bonding : Return pointor of MacLow
    */
   Ptr<MacLow> GetLow();
 
