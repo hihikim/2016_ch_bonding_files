@@ -86,7 +86,7 @@ int main (int argc, char *argv[])
 	WifiMacHelper mac;
 
 	wifi.SetRemoteStationManager("ns3::MinstrelHtWifiManager", "RtsCtsThreshold", UintegerValue(100),
-		"PacketLength", UintegerValue(PAYLOADSIZE));
+		"PacketLength", UintegerValue(payloadSize));
 
 	NetDeviceContainer staDevice, staDevice2;
 	NetDeviceContainer apDevice, apDevice2;
@@ -107,7 +107,7 @@ int main (int argc, char *argv[])
 
 
 	// make 2nd ap-sta pair
-	Ssid ssid = Ssid("ns3-80211ac2");
+	ssid = Ssid("ns3-80211ac2");
 
 	mac.SetType("ns3::StaWifiMac",
 		"Ssid", SsidValue(ssid));
@@ -134,9 +134,9 @@ int main (int argc, char *argv[])
 	m_low->EnableChannelBonding();
 	m_low->SetChannelManager(phy, 36, 40, WIFI_PHY_STANDARD_80211ac);
 
-	Ptr<RegularWifiMac> m_mac = DynamicCast<RegularWifiMac>(DynamicCast<WifiNetDevice>(apDevice2.Get(0))->GetMac());
+	m_mac = DynamicCast<RegularWifiMac>(DynamicCast<WifiNetDevice>(apDevice2.Get(0))->GetMac());
 
-	Ptr<MacLow> m_low = m_mac->GetLow();
+	m_low = m_mac->GetLow();
 	m_low->EnableChannelBonding();
 	m_low->SetChannelManager(phy, 36, 40, WIFI_PHY_STANDARD_80211ac);
 
@@ -205,10 +205,8 @@ int main (int argc, char *argv[])
 	clientApp.Start(Seconds(1.0));
 	clientApp.Stop(Seconds(simulationTime + 1));
 
-	UdpClientHelper myClient(staNodeInterface2.GetAddress(0), 9);
-	myClient.SetAttribute("MaxPackets", UintegerValue(4294967295u));
-	myClient.SetAttribute("Interval", TimeValue(Time("0.00001"))); //packets/s
-	myClient.SetAttribute("PacketSize", UintegerValue(payloadSize));
+	
+	myClient.SetAttribute("RemoteAddress",AddressValue(staNodeInterface2.GetAddress(0)));
 
 	ApplicationContainer clientApp2 = myClient.Install(wifiApNode2.Get(0));
 	clientApp2.Start(Seconds(1.0));
