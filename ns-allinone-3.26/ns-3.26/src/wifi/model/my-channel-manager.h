@@ -69,7 +69,7 @@ public:
 
 	static std::map<uint16_t, ChannelInfo> ChannelMapping();             // Make bonded channels map
 
-	void ClearReceiveRecord();                   // Clear last_received_packet
+	void ClearReceiveRecord();                   // Clear last received packet record
 
 	Ptr<Packet> ConvertPacket(Ptr<const Packet> packet);   // Duplicate packets
 
@@ -77,10 +77,8 @@ public:
 	void SetPhysCallback();
 	void ManageReceived (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
 	void SetMyMac(Ptr<MacLow> mac);
-	void NeedRtsCts(bool need);
-
-	uint32_t GetConvertedSize(Ptr<const Packet> packet);
-
+	void NeedRtsCts(bool need);                   // Enable RTS/CTS
+	
 	std::map<uint16_t, Ptr<WifiPhy>> GetPhys();
 
 
@@ -118,18 +116,18 @@ private:
 
 	uint16_t GetUsableBondingChannel(uint16_t primary);  // Get suitable bonding channel considering RTS/CTS event
 
-	bool CheckAllSubChannelReceived(uint16_t ch_num);  // Ensure that all subchannels of the merged channel have received an RTS-CTS
+	bool CheckAllSubChannelReceived(uint16_t ch_num);  // Ensure that all subchannels of the merged channel are received an RTS-CTS packet
 
 	uint16_t GetChannelWithWidth(uint32_t width);    // Width -> merged channel number
 
 	void CleanPacketPieces();                                // Clear storage of duplicated packets for sending
-	std::vector<uint16_t> FindSubChannels(uint16_t ch_num);  // Return all sub channels constituting merged channel(ch_num)
+	std::vector<uint16_t> FindSubChannels(uint16_t ch_num);  // Return all subchannels that make up the merged channel.
 
-	uint8_t GetNumberOfReceive();                   // The number of recevied deplicated packet
+	uint8_t GetNumberOfReceive();                   // The number of duplicate packets received
 
-	void SetUpChannelNumbers();                           // Make sub channels using maximum channel width
+	void SetUpChannelNumbers();                           // Assign channel number to all channels
 
-	int CheckError(Ptr<const Packet> Packet);            // Check error is occured in receiving time
+	int CheckError(Ptr<const Packet> Packet);            // Check error is occured 
 
 	// when phy receive packet, this function operate
 	void Receive1Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);

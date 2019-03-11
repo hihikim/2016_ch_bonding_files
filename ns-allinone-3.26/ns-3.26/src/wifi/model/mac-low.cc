@@ -134,10 +134,10 @@ MacLowAggregationCapableTransmissionListener::GetDestAddressForAggregation (cons
 }
 
 /*
-  * Additional function for channal bonding
-  * Virtual function for ClearAgreeQueue (override occured in block-ack-manager)
-  * Function to delete all duplicate packets in aq
-  */
+ * Additional function for channal bonding
+ * Virtual function for ClearAgreeQueue (override occured in block-ack-manager)
+ * Function to delete all duplicate packets in aq
+ */
 void
 MacLowAggregationCapableTransmissionListener::ClearAgreeQueue(Mac48Address recipient, uint8_t tid)           
 {                                                                                                                                                                                                        
@@ -392,10 +392,10 @@ MacLow::MacLow ()
   m_aggregateQueue = CreateObject<WifiMacQueue> ();
  
  /* 
-   * additional parameter for channel bonding
-   * parameter for channel bonding check
-   * if operation use channel bonding then enable_ch_bonding is true
-   */   
+  * Additional parameter for channel bonding
+  * parameter for channel bonding check
+  * if operation use channel bonding then enable_ch_bonding is true
+  */   
   enable_ch_bonding = false;   
 }
 
@@ -545,9 +545,9 @@ MacLow::SetPhy (Ptr<WifiPhy> phy)
 
 void MacLow::SetChannelManager(const WifiPhyHelper &phy,uint32_t ch_num, uint32_t ch_width, enum WifiPhyStandard standard){
     /*
-	  * additional function for channel bonding
-      * make channel bonding manager with input parameters & link with it
-	  */
+	 * Additional function for channel bonding
+     * Make channel bonding manager with input parameters & Link with it
+	 */
 	ch_m = CreateObject<ChannelBondingManager>();
 	ch_m->SetMyMac(this);
 
