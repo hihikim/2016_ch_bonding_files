@@ -1,4 +1,4 @@
-# Modification for dynamic channel bonding
+# Modification of NS3 for dynamic channel bonding
 ***
 # How to use
 > How to install
