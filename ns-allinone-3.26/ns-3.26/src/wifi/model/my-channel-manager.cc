@@ -390,7 +390,6 @@ uint16_t ChannelBondingManager::GetUsableBondingChannel(uint16_t primary)       
 
 	while(true)
 	{
-		//ch_info = ch_map.at(usable_ch);
 		ch_i = ch_map.find(usable_ch);
 
 		if(ch_i == ch_map.end())
