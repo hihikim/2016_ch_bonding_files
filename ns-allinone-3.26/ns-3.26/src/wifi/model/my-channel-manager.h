@@ -64,7 +64,7 @@ public:
 
 	void ResetPhys();                                 // Remove all subchannels
 
-	void SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble, enum mpduType mpdutype); // Send packet
+	void SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble, enum mpduType mpdutype);  // Send duplicate packets through subchannels
 	void SendPacket(Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble);
 
 	static std::map<uint16_t, ChannelInfo> ChannelMapping();             // Make bonded channels map
@@ -75,7 +75,7 @@ public:
 
 
 	void SetPhysCallback();
-	void ManageReceived (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
+	void ManageReceived (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);  // Integrate received packets on all sub channels
 	void SetMyMac(Ptr<MacLow> mac);
 	void NeedRtsCts(bool need);                   // Enable RTS/CTS
 	
@@ -110,13 +110,13 @@ private:
 
 	bool need_rts_cts;  // Flag of using rts/cts
 
-	uint16_t CheckChBonding(uint16_t primary);	// Find widest usable bonded channel (only consider idle condition)
+	uint16_t CheckChBonding(uint16_t primary);	// Find widest usable channel (only consider idle condition)
 
-	bool CheckAllSubChannelIdle(uint16_t ch_num);   // Check every sub channels of merged channel are idle
+	bool CheckAllSubChannelIdle(uint16_t ch_num);   // Check that all subchannels that make up the channel bonding are idle
 
-	uint16_t GetUsableBondingChannel(uint16_t primary);  // Get suitable bonding channel considering RTS/CTS event
+	uint16_t GetUsableBondingChannel(uint16_t primary);  // Get suitable channel bonding considering RTS/CTS event
 
-	bool CheckAllSubChannelReceived(uint16_t ch_num);  // Ensure that all subchannels of the merged channel are received an RTS-CTS packet
+	bool CheckAllSubChannelReceived(uint16_t ch_num);  // Ensure that all subchannels of the channel bonding received an RTS-CTS packet
 
 	uint16_t GetChannelWithWidth(uint32_t width);    // Width -> merged channel number
 
@@ -138,7 +138,7 @@ private:
 	void Receive6Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
 	void Receive7Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
 	void Receive8Channel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble);
-	void ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, uint16_t ch_num);
+	void ReceiveSubChannel (Ptr<Packet> Packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, uint16_t ch_num); // Packets received on one subchannel
 
 	void ReceiveOk (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, bool ampduSubframe);
 
@@ -152,12 +152,9 @@ private:
 	void Error7Channel(Ptr<Packet> packet, double rxSnr);
 	void Error8Channel(Ptr<Packet> packet, double rxSnr);
 
-	void Error (Ptr<Packet> packet, double rxSnr, uint16_t ch_num);
+	void Error (Ptr<Packet> packet, double rxSnr, uint16_t ch_num);  //// Integrate errors on sub channels
 
 	bool CheckItFirst(Ptr<Packet> packet);   // Checks if the same packet was previously received
-
-	void ReceivePrimaryError (Ptr<Packet> packet, double rxSnr);   // Error is occured in primary channel
-
 
 	const std::map < uint16_t, ChannelInfo > ch_map;	// Channel map for merged channel
 };

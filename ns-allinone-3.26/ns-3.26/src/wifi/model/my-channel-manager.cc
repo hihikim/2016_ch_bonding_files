@@ -283,14 +283,14 @@ void ChannelBondingManager::ClearReceiveRecord(){          // Clear last receive
 	for(std::vector<uint16_t>::iterator i = ch_numbers.begin();
 	   i != ch_numbers.end()
 	   ;++i)
-	{                               //clear received record
+	{                               // Clear received packet record
 		received_channel[*i] = false;
 		last_received_packet[*i] = 0;
 	}
 }
 
 
-uint16_t ChannelBondingManager::CheckChBonding(uint16_t primary)      // Find widest usable bonded channel (only consider idle condition)
+uint16_t ChannelBondingManager::CheckChBonding(uint16_t primary)      // Find widest usable channel (only consider idle condition)
 {
 	if (primary == 0)                                      
 		NS_FATAL_ERROR("Wrong Channel Number");
@@ -329,7 +329,7 @@ uint16_t ChannelBondingManager::CheckChBonding(uint16_t primary)      // Find wi
 	return usable_ch;
 }
 
-bool ChannelBondingManager::CheckAllSubChannelIdle(uint16_t ch_num){   // Check every sub channels of merged channel are idle
+bool ChannelBondingManager::CheckAllSubChannelIdle(uint16_t ch_num){   // Check that all subchannels that make up the channel bonding are idle
 	ChannelInfo ch_info;
 	std::map<uint16_t, ChannelInfo>::const_iterator ch_i = ch_map.find(ch_num);
 
@@ -362,7 +362,7 @@ bool ChannelBondingManager::CheckAllSubChannelIdle(uint16_t ch_num){   // Check 
 	}
 }
 
-uint16_t ChannelBondingManager::GetUsableBondingChannel(uint16_t primary)                // Get suitable bonding channel considering RTS/CTS event
+uint16_t ChannelBondingManager::GetUsableBondingChannel(uint16_t primary)                // Get suitable channel bonding considering RTS/CTS event
 {
 	ChannelInfo ch_info;
 	std::map<uint16_t, ChannelInfo>::const_iterator ch_i = ch_map.find(primary);
@@ -417,7 +417,7 @@ uint16_t ChannelBondingManager::GetUsableBondingChannel(uint16_t primary)       
 	return usable_ch;
 }
 
-bool ChannelBondingManager::CheckAllSubChannelReceived(uint16_t ch_num)                   // Ensure that all subchannels of the merged channel received an RTS-CTS packet
+bool ChannelBondingManager::CheckAllSubChannelReceived(uint16_t ch_num)                   // Ensure that all subchannels of the channel bonding received an RTS-CTS packet
 {
 	ChannelInfo ch_info;
 	std::map<uint16_t, ChannelInfo>::const_iterator ch_i = ch_map.find(ch_num);
@@ -582,7 +582,7 @@ void ChannelBondingManager::Receive8Channel (Ptr<Packet> Packet, double rxSnr, W
 	ReceiveSubChannel(Packet,rxSnr,txVector,preamble, ch_numbers[7]);
 }
 
-void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, uint16_t ch_num)
+void ChannelBondingManager::ReceiveSubChannel (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble, uint16_t ch_num)      // Packets received on one subchannel
 {
 	bool ex_isErr = isErr;
 	if (CheckItFirst(packet))  // Check that the same packet was received previously
@@ -725,7 +725,7 @@ void ChannelBondingManager::Error8Channel(Ptr<Packet> packet, double rxSnr)
 	Error(packet, rxSnr, ch_numbers[7]);
 }
 
-void ChannelBondingManager::Error(Ptr<Packet> packet, double rxSnr, uint16_t ch_num)
+void ChannelBondingManager::Error(Ptr<Packet> packet, double rxSnr, uint16_t ch_num)   // Integrate errors on sub channels
 {
 	bool ex_isErr = isErr;
 
@@ -782,7 +782,7 @@ void ChannelBondingManager::Error(Ptr<Packet> packet, double rxSnr, uint16_t ch_
 	}
 }
 
-bool ChannelBondingManager::CheckItFirst(Ptr<Packet> packet)  // Checks if the same packet was previously received
+bool ChannelBondingManager::CheckItFirst(Ptr<Packet> packet)  // Checks whether the same packet was previously received
 {
 	Time now = Simulator::Now();
 	if (last_receive_or_error_time.Compare(now) != 0) // New packet arrive
@@ -804,7 +804,7 @@ bool ChannelBondingManager::CheckItFirst(Ptr<Packet> packet)  // Checks if the s
 	}
 }
 
-void ChannelBondingManager::ManageReceived (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)
+void ChannelBondingManager::ManageReceived (Ptr<Packet> packet, double rxSnr, WifiTxVector txVector, WifiPreamble preamble)   // Integrate received packets from all sub channels
 {
     // Marge receive packet and forwardup to mac-low
 	AmpduTag ampdu;
@@ -832,7 +832,7 @@ void ChannelBondingManager::ManageReceived (Ptr<Packet> packet, double rxSnr, Wi
 	m_mac->DeaggregateAmpduAndReceive(packet, rxSnr,txVector, preamble);
 }
 
-void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble, enum mpduType mpdutype)
+void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble, enum mpduType mpdutype)   // Send duplicate packets through subchannels
 {                                               // Send packet
 	ConvertPacket(packet);                       // Duplicate packets
 	
@@ -854,14 +854,6 @@ void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector t
 void ChannelBondingManager::SendPacket (Ptr<const Packet> packet, WifiTxVector txVector, enum WifiPreamble preamble)
 {
 	SendPacket (packet, txVector, preamble, NORMAL_MPDU);
-}
-
-
-void ChannelBondingManager::ReceivePrimaryError(ns3::Ptr<ns3::Packet> packet, double rxSnr)
-{
-	ClearReceiveRecord();
-	error_packets.ErrorPacket.clear();
-	m_mac->ReceiveError(packet, rxSnr);
 }
 
 void ChannelBondingManager::CheckChannelBeforeSend()   // Adjust channel width 
