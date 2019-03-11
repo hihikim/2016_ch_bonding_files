@@ -735,14 +735,14 @@ void ChannelBondingManager::Error(Ptr<Packet> packet, double rxSnr, uint16_t ch_
 		isErr = true;
 	}
 
-	if (ch_num == primary_ch)  // If channel is primary then it should be error
+	if (ch_num == primary_ch)  // Channel with errors is primary
 	{
 		isErr = true;   // Error is occured
 
 		if (MinSnr > rxSnr)   // Update minimum
 			MinSnr = rxSnr;		
 		
-		if (RECountLimit == 0)  // If the channel of first error detection is primary channel then we don't know channel width
+		if (RECountLimit == 0)  // Other channels do not receive packets until there is an error on the primary channel
 		{             
 			m_mac->ReceiveError(packet, MinSnr);
 			ErrReport = true;
