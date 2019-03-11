@@ -1,4 +1,4 @@
-# 2016_ch_bonding_ns3
+# Modification for dynamic channel bonding
 ***
 # How to use
 > How to install
